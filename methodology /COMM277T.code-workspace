@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"name": "bna-fuhgeddaboudit",
+			"path": ".."
+		},
+		{
+			"name": "waymo-finals-round2",
+			"path": "../../waymo-finals-round2"
+		}
+	],
+	"settings": {}
+}
