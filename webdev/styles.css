@@ -159,7 +159,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%);
+    background: radial-gradient(circle at center, transparent 50%, rgba(255,255,255,0.3) 100%);
     pointer-events: none;
     z-index: 2;
     opacity: 0;
@@ -206,11 +206,11 @@ body {
     width: 100%;
     height: 15px;
     background: linear-gradient(to right,
-        rgba(0, 0, 255, 0.3),
-        rgba(0, 255, 0, 0.5),
-        rgba(255, 255, 0, 0.7),
-        rgba(255, 128, 0, 0.85),
-        rgba(255, 0, 0, 1)
+        #ffffb2,
+        #fecc5c,
+        #fd8d3c,
+        #f03b20,
+        #bd0026
     );
     border-radius: 4px;
     margin-bottom: 8px;
@@ -221,6 +221,49 @@ body {
     justify-content: space-between;
     font-size: 0.75rem;
     color: var(--text-secondary);
+}
+
+/* Cluster legend */
+.cluster-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.cluster-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.cluster-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.cluster-dot.small {
+    background-color: #fecc5c;
+}
+
+.cluster-dot.medium {
+    background-color: #fd8d3c;
+}
+
+.cluster-dot.large {
+    background-color: #f03b20;
+}
+
+.legend-hint {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 5px;
+    text-align: center;
 }
 
 /* ======================= */
@@ -1409,4 +1452,60 @@ body {
 
 .view-on-map-btn:hover {
     background: var(--accent-light);
+}
+
+/* ======================= */
+/* Marker Cluster Styling */
+/* ======================= */
+.marker-cluster {
+    background-clip: padding-box;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.marker-cluster div {
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.marker-cluster-small {
+    background-color: rgba(254, 204, 92, 0.6);
+}
+.marker-cluster-small div {
+    background-color: rgba(254, 204, 92, 0.9);
+    color: #333;
+}
+
+.marker-cluster-medium {
+    background-color: rgba(253, 141, 60, 0.6);
+}
+.marker-cluster-medium div {
+    background-color: rgba(253, 141, 60, 0.9);
+    color: white;
+}
+
+.marker-cluster-large {
+    background-color: rgba(240, 59, 32, 0.6);
+}
+.marker-cluster-large div {
+    background-color: rgba(240, 59, 32, 0.9);
+    color: white;
+}
+
+/* Override default MarkerCluster styles */
+.leaflet-cluster-anim .leaflet-marker-icon, 
+.leaflet-cluster-anim .leaflet-marker-shadow {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-in;
 }

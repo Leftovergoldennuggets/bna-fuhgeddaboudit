@@ -45,14 +45,24 @@
             <div id="main-map" class="full-map"></div>
             <!-- Map overlay for text readability -->
             <div class="map-overlay" id="map-overlay"></div>
-            <!-- Heatmap legend -->
+            <!-- Crash density legend -->
             <div class="heatmap-legend" id="heatmap-legend">
-                <h4>Crash Density</h4>
-                <div class="legend-gradient"></div>
-                <div class="legend-labels">
-                    <span>Low</span>
-                    <span>High</span>
+                <h4>Crash Markers</h4>
+                <div class="cluster-legend">
+                    <div class="cluster-item">
+                        <span class="cluster-dot small"></span>
+                        <span>1-20 crashes</span>
+                    </div>
+                    <div class="cluster-item">
+                        <span class="cluster-dot medium"></span>
+                        <span>21-50 crashes</span>
+                    </div>
+                    <div class="cluster-item">
+                        <span class="cluster-dot large"></span>
+                        <span>50+ crashes</span>
+                    </div>
                 </div>
+                <p class="legend-hint">Click clusters to zoom in</p>
             </div>
             <!-- Crash detail panel (hidden by default) -->
             <div class="crash-detail-panel" id="crash-panel">
@@ -83,31 +93,31 @@
                 </div>
             </div>
 
-            <!-- Step 2: US Overview with Heatmap -->
+            <!-- Step 2: US Overview with Markers -->
             <div class="scrolly-step" data-step="us-overview">
                 <div class="step-content">
                     <h2>The National Picture</h2>
                     <p>Waymo operates autonomous vehicles in <strong>five major metropolitan areas</strong> across the United States.</p>
-                    <p>The <strong class="heatmap-highlight">heatmap overlay</strong> shows crash density - warmer colors indicate more crashes in that area.</p>
+                    <p>Each <strong class="heatmap-highlight">circle marker</strong> represents a crash location. Clusters show areas with multiple crashes - click to zoom in.</p>
                     <p class="step-stat"><span class="big-number">1,100+</span> crashes analyzed</p>
                 </div>
             </div>
 
-            <!-- Step 3: Zooming to California with Heatmap -->
+            <!-- Step 3: Zooming to California -->
             <div class="scrolly-step" data-step="zoom-california">
                 <div class="step-content">
                     <h2>California Leads</h2>
-                    <p>California hosts the majority of Waymo's operations. Notice how the <strong class="heatmap-highlight">heatmap intensifies</strong> around the San Francisco Bay Area.</p>
+                    <p>California hosts the majority of Waymo's operations. Notice the <strong class="heatmap-highlight">dense clusters</strong> around the San Francisco Bay Area.</p>
                     <p>The Bay Area's complex urban environment presents unique challenges for autonomous vehicles.</p>
                 </div>
             </div>
 
-            <!-- Step 4: San Francisco Heatmap Focus -->
+            <!-- Step 4: San Francisco Crash Locations -->
             <div class="scrolly-step" data-step="sf-heatmap">
                 <div class="step-content">
-                    <h2>San Francisco: Crash Density</h2>
-                    <p>With <strong>~45% of all crashes</strong>, San Francisco shows clear hotspots in the heatmap.</p>
-                    <p>The <strong class="heatmap-highlight">brightest areas</strong> indicate neighborhoods with the highest crash concentrations - notice the clusters in downtown, SoMa, and the Mission District.</p>
+                    <h2>San Francisco: Street-Level View</h2>
+                    <p>With <strong>~45% of all crashes</strong>, San Francisco shows clear hotspots.</p>
+                    <p>Zoom in to see <strong class="heatmap-highlight">individual crash locations</strong> on specific streets - notice concentrations in downtown, SoMa, and the Mission District.</p>
                 </div>
             </div>
 
@@ -115,8 +125,8 @@
             <div class="scrolly-step" data-step="sf-transition">
                 <div class="step-content">
                     <h2>From Patterns to Stories</h2>
-                    <p>Behind each point on this heatmap is an individual incident. Let's zoom in further and examine <strong>three specific crashes</strong> that illustrate common scenarios.</p>
-                    <p class="step-hint">The heatmap will fade to reveal individual crash locations...</p>
+                    <p>Behind each marker is an individual incident. Let's focus on crashes with <strong>serious injuries</strong> - moderate, serious, or fatal.</p>
+                    <p class="step-hint">Scroll to see the 8 most serious SF incidents...</p>
                 </div>
             </div>
 
@@ -442,8 +452,10 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Leaflet Heat Plugin for Heatmap -->
-    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+    <!-- Leaflet MarkerCluster for grouping nearby markers -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
     <!-- Main Script -->
     <script src="script.js"></script>
 </body>

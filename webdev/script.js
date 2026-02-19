@@ -40,13 +40,12 @@ const CITY_DATA = {
 // Global State
 // =======================
 let map = null;
-let heatmapLayer = null;
-let crashMarkers = [];
+let crashClusterGroup = null;
 let seriousIncidentMarkers = [];
 let allCrashData = [];
 let seriousIncidentsData = null;
 let currentStep = 'intro';
-let isHeatmapVisible = true;
+let areCrashMarkersVisible = false;
 let areMarkersVisible = false;
 
 // =======================
@@ -81,9 +80,9 @@ function initMap() {
     // Add zoom control to bottom right
     L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
-    // Add tile layer (dark style for visual impact)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    // Add tile layer (light OpenStreetMap style to match existing maps)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
     }).addTo(map);
 }
@@ -97,12 +96,11 @@ async function loadCrashData() {
         allCrashData = await response.json();
         console.log(`Loaded ${allCrashData.length} crash records`);
 
-        // Create heatmap layer
-        createHeatmapLayer();
+        // Create clustered markers (will be added to map when needed)
+        createCrashClusterGroup();
 
     } catch (error) {
         console.error('Error loading crash data:', error);
-        createSampleHeatmapData();
     }
 }
 
@@ -127,70 +125,97 @@ async function loadSeriousIncidents() {
 }
 
 // =======================
-// Heatmap Layer
+// Circle Markers with Clustering (like existing waymo_crashes maps)
 // =======================
-function createHeatmapLayer() {
-    const heatmapData = allCrashData.map(crash => [
-        crash.lat,
-        crash.lon,
-        0.5
-    ]);
+function createCrashClusterGroup() {
+    // Create marker cluster group
+    crashClusterGroup = L.markerClusterGroup({
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        iconCreateFunction: function(cluster) {
+            const count = cluster.getChildCount();
+            let size = 'small';
+            let className = 'marker-cluster-small';
 
-    heatmapLayer = L.heatLayer(heatmapData, {
-        radius: 25,
-        blur: 15,
-        maxZoom: 17,
-        max: 1.0,
-        gradient: {
-            0.0: 'blue',
-            0.25: 'cyan',
-            0.5: 'lime',
-            0.75: 'yellow',
-            1.0: 'red'
-        }
-    });
-}
+            if (count > 50) {
+                size = 'large';
+                className = 'marker-cluster-large';
+            } else if (count > 20) {
+                size = 'medium';
+                className = 'marker-cluster-medium';
+            }
 
-function createSampleHeatmapData() {
-    const sampleData = [];
-    const cities = {
-        sf: { lat: 37.76, lon: -122.42, count: 500 },
-        phoenix: { lat: 33.45, lon: -112.07, count: 300 },
-        la: { lat: 34.05, lon: -118.24, count: 200 }
-    };
-
-    Object.values(cities).forEach(city => {
-        for (let i = 0; i < city.count; i++) {
-            sampleData.push([
-                city.lat + (Math.random() - 0.5) * 0.1,
-                city.lon + (Math.random() - 0.5) * 0.1,
-                0.5
-            ]);
+            return L.divIcon({
+                html: '<div><span>' + count + '</span></div>',
+                className: 'marker-cluster ' + className,
+                iconSize: L.point(40, 40)
+            });
         }
     });
 
-    heatmapLayer = L.heatLayer(sampleData, {
-        radius: 25,
-        blur: 15,
-        maxZoom: 17
+    // Add circle markers for each crash
+    allCrashData.forEach(crash => {
+        // Color based on time period for visual variety
+        let color = '#e94560'; // Default red
+        if (crash.time_period) {
+            if (crash.time_period.includes('Rush')) {
+                color = '#f03b20'; // Red-orange for rush hour
+            } else if (crash.time_period.includes('Night') || crash.time_period.includes('Late')) {
+                color = '#bd0026'; // Dark red for night
+            } else if (crash.time_period.includes('Morning') || crash.time_period.includes('Afternoon')) {
+                color = '#fd8d3c'; // Orange for daytime
+            } else {
+                color = '#fecc5c'; // Yellow-orange for other
+            }
+        }
+
+        const circleMarker = L.circleMarker([crash.lat, crash.lon], {
+            radius: 6,
+            fillColor: color,
+            color: color,
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.6
+        });
+
+        // Add popup with crash info
+        const popupContent = `
+            <div style="min-width: 150px;">
+                <b>City:</b> ${crash.city || 'Unknown'}<br>
+                <b>Time:</b> ${crash.hour !== undefined ? crash.hour + ':00' : 'Unknown'}<br>
+                <b>Day:</b> ${crash.day_of_week || 'Unknown'}<br>
+                <b>Type:</b> ${crash.crash_type || 'Unknown'}<br>
+                <b>Location:</b> ${crash.location_type || 'Unknown'}
+            </div>
+        `;
+        circleMarker.bindPopup(popupContent);
+
+        crashClusterGroup.addLayer(circleMarker);
     });
+
+    console.log(`Created cluster group with ${allCrashData.length} markers`);
 }
 
 // =======================
-// Show/Hide Heatmap
+// Show/Hide Crash Markers
 // =======================
-function showHeatmap() {
-    if (heatmapLayer && !map.hasLayer(heatmapLayer)) {
-        heatmapLayer.addTo(map);
-        isHeatmapVisible = true;
+function showCrashMarkers() {
+    if (!crashClusterGroup) {
+        createCrashClusterGroup();
+    }
+    if (crashClusterGroup && !map.hasLayer(crashClusterGroup)) {
+        crashClusterGroup.addTo(map);
+        areCrashMarkersVisible = true;
     }
     document.getElementById('heatmap-legend')?.classList.add('visible');
 }
 
-function hideHeatmap() {
-    if (heatmapLayer && map.hasLayer(heatmapLayer)) {
-        map.removeLayer(heatmapLayer);
-        isHeatmapVisible = false;
+function hideCrashMarkers() {
+    if (crashClusterGroup && map.hasLayer(crashClusterGroup)) {
+        map.removeLayer(crashClusterGroup);
+        areCrashMarkersVisible = false;
     }
     document.getElementById('heatmap-legend')?.classList.remove('visible');
 }
@@ -497,7 +522,7 @@ function handleStepChange(step) {
     switch(step) {
         case 'intro':
             map.flyTo(CONFIG.views.us.center, CONFIG.views.us.zoom, { duration: CONFIG.animation.zoomDuration });
-            hideHeatmap();
+            hideCrashMarkers();
             hideSeriousIncidentMarkers();
             hideCrashPanel();
             overlay?.classList.remove('visible');
@@ -505,7 +530,7 @@ function handleStepChange(step) {
 
         case 'us-overview':
             map.flyTo(CONFIG.views.us.center, CONFIG.views.us.zoom, { duration: CONFIG.animation.zoomDuration });
-            showHeatmap();
+            showCrashMarkers();
             hideSeriousIncidentMarkers();
             hideCrashPanel();
             overlay?.classList.add('visible');
@@ -513,7 +538,7 @@ function handleStepChange(step) {
 
         case 'zoom-california':
             map.flyTo(CONFIG.views.california.center, CONFIG.views.california.zoom, { duration: CONFIG.animation.zoomDuration });
-            showHeatmap();
+            showCrashMarkers();
             hideSeriousIncidentMarkers();
             hideCrashPanel();
             overlay?.classList.add('visible');
@@ -521,7 +546,7 @@ function handleStepChange(step) {
 
         case 'sf-heatmap':
             map.flyTo(CONFIG.views.sfHeatmap.center, CONFIG.views.sfHeatmap.zoom, { duration: CONFIG.animation.zoomDuration });
-            showHeatmap();
+            showCrashMarkers();
             hideSeriousIncidentMarkers();
             hideCrashPanel();
             overlay?.classList.add('visible');
@@ -529,7 +554,7 @@ function handleStepChange(step) {
 
         case 'sf-transition':
             // Keep same view, prepare for transition
-            showHeatmap();
+            showCrashMarkers();
             hideSeriousIncidentMarkers();
             hideCrashPanel();
             overlay?.classList.add('visible');
@@ -537,9 +562,9 @@ function handleStepChange(step) {
 
         case 'sf-hotspots':
             map.flyTo(CONFIG.views.sfHotspots.center, CONFIG.views.sfHotspots.zoom, { duration: CONFIG.animation.zoomDuration });
-            // Fade out heatmap and show serious incident markers
+            // Hide cluster markers and show serious incident markers
             setTimeout(() => {
-                hideHeatmap();
+                hideCrashMarkers();
                 showSeriousIncidentMarkers();
             }, 500);
             overlay?.classList.add('visible');
@@ -548,7 +573,7 @@ function handleStepChange(step) {
         case 'transition':
             // Zoom back out slightly
             map.flyTo([37.76, -122.42], 11, { duration: CONFIG.animation.zoomDuration });
-            showHeatmap();
+            showCrashMarkers();
             hideSeriousIncidentMarkers();
             hideCrashPanel();
             overlay?.classList.add('visible');
