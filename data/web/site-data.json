@@ -1,0 +1,293 @@
+{
+  "meta": {
+    "generated_at": "2026-02-23T09:56:40.230517",
+    "pipeline_version": "1.0",
+    "total_rows_in_merged": 1123,
+    "date_range_start": 202009,
+    "date_range_end": 202509
+  },
+  "overview": {
+    "total_crashes": 1123,
+    "cities_count": 5,
+    "cities_list": [
+      "Atlanta",
+      "Austin",
+      "Los Angeles",
+      "Phoenix",
+      "San Francisco"
+    ],
+    "total_with_time_data": 1121
+  },
+  "city_breakdown": {
+    "San Francisco": {
+      "code": "SAN_FRANCISCO",
+      "count": 527,
+      "percentage": 46.9
+    },
+    "Phoenix": {
+      "code": "PHOENIX",
+      "count": 312,
+      "percentage": 27.8
+    },
+    "Los Angeles": {
+      "code": "LOS_ANGELES",
+      "count": 208,
+      "percentage": 18.5
+    },
+    "Austin": {
+      "code": "AUSTIN",
+      "count": 61,
+      "percentage": 5.4
+    },
+    "Atlanta": {
+      "code": "ATLANTA",
+      "count": 13,
+      "percentage": 1.2
+    }
+  },
+  "severity": {
+    "police_reported": {
+      "count": 216,
+      "percentage": 19.2
+    },
+    "injury_reported": {
+      "count": 96,
+      "percentage": 8.5
+    },
+    "airbag_any_vehicle": {
+      "count": 40,
+      "percentage": 3.6
+    },
+    "airbag_ego_vehicle": {
+      "count": 7,
+      "percentage": 0.6
+    },
+    "serious_injury": {
+      "count": 3,
+      "percentage": 0.3
+    },
+    "moderate_plus": {
+      "count": 15,
+      "percentage": 1.3
+    }
+  },
+  "crash_types": {
+    "V2V F2R": {
+      "count": 292,
+      "percentage": 26.0
+    },
+    "V2V Lateral": {
+      "count": 235,
+      "percentage": 20.9
+    },
+    "V2V Backing": {
+      "count": 170,
+      "percentage": 15.1
+    },
+    "Single Vehicle": {
+      "count": 106,
+      "percentage": 9.4
+    },
+    "V2V Head-on": {
+      "count": 102,
+      "percentage": 9.1
+    },
+    "V2V Intersection": {
+      "count": 89,
+      "percentage": 7.9
+    },
+    "All Others": {
+      "count": 66,
+      "percentage": 5.9
+    },
+    "Secondary Crash": {
+      "count": 23,
+      "percentage": 2.0
+    },
+    "Motorcycle": {
+      "count": 17,
+      "percentage": 1.5
+    },
+    "Cyclist": {
+      "count": 15,
+      "percentage": 1.3
+    },
+    "Pedestrian": {
+      "count": 8,
+      "percentage": 0.7
+    }
+  },
+  "time_periods": {
+    "Early Morning": {
+      "count": 39,
+      "percentage": 3.5
+    },
+    "Morning Rush": {
+      "count": 154,
+      "percentage": 13.7
+    },
+    "Late Morning": {
+      "count": 105,
+      "percentage": 9.4
+    },
+    "Midday": {
+      "count": 132,
+      "percentage": 11.8
+    },
+    "Afternoon": {
+      "count": 166,
+      "percentage": 14.8
+    },
+    "Evening Rush": {
+      "count": 192,
+      "percentage": 17.1
+    },
+    "Night": {
+      "count": 157,
+      "percentage": 14.0
+    },
+    "Late Night": {
+      "count": 176,
+      "percentage": 15.7
+    }
+  },
+  "temporal": {
+    "rush_hour_count": 346,
+    "rush_hour_percentage": 30.9,
+    "late_night_count": 176,
+    "late_night_percentage": 15.7,
+    "daytime_count": 771,
+    "daytime_percentage": 68.8,
+    "nighttime_count": 350,
+    "nighttime_percentage": 31.2,
+    "hourly_distribution": {
+      "0": 44,
+      "1": 39,
+      "2": 32,
+      "3": 14,
+      "4": 11,
+      "5": 17,
+      "6": 22,
+      "7": 43,
+      "8": 49,
+      "9": 62,
+      "10": 44,
+      "11": 61,
+      "12": 62,
+      "13": 70,
+      "14": 46,
+      "15": 59,
+      "16": 61,
+      "17": 68,
+      "18": 80,
+      "19": 44,
+      "20": 49,
+      "21": 53,
+      "22": 55,
+      "23": 36
+    },
+    "weekend_count": 335,
+    "weekday_count": 785,
+    "weekend_percentage": 29.9,
+    "peak_by_day": {
+      "Monday": {
+        "peak_hour": 18,
+        "total": 154
+      },
+      "Tuesday": {
+        "peak_hour": 11,
+        "total": 139
+      },
+      "Wednesday": {
+        "peak_hour": 9,
+        "total": 144
+      },
+      "Thursday": {
+        "peak_hour": 17,
+        "total": 161
+      },
+      "Friday": {
+        "peak_hour": 18,
+        "total": 187
+      },
+      "Saturday": {
+        "peak_hour": 0,
+        "total": 188
+      },
+      "Sunday": {
+        "peak_hour": 2,
+        "total": 147
+      }
+    }
+  },
+  "city_peaks": {
+    "San Francisco": {
+      "peak_hour": 17,
+      "peak_label": "5:00 PM",
+      "total_crashes": 527
+    },
+    "Austin": {
+      "peak_hour": 18,
+      "peak_label": "6:00 PM",
+      "total_crashes": 61
+    },
+    "Phoenix": {
+      "peak_hour": 18,
+      "peak_label": "6:00 PM",
+      "total_crashes": 310
+    },
+    "Los Angeles": {
+      "peak_hour": 0,
+      "peak_label": "Midnight",
+      "total_crashes": 208
+    },
+    "Atlanta": {
+      "peak_hour": 6,
+      "peak_label": "6:00 AM",
+      "total_crashes": 13
+    }
+  },
+  "location_types": {
+    "Intersection": {
+      "count": 444,
+      "percentage": 39.6
+    },
+    "Street/Road": {
+      "count": 353,
+      "percentage": 31.5
+    },
+    "Parking": {
+      "count": 310,
+      "percentage": 27.7
+    },
+    "Highway/Freeway": {
+      "count": 8,
+      "percentage": 0.7
+    },
+    "Other/Unknown": {
+      "count": 6,
+      "percentage": 0.5
+    }
+  },
+  "day_of_week": {
+    "Monday": 154,
+    "Tuesday": 139,
+    "Wednesday": 144,
+    "Thursday": 161,
+    "Friday": 187,
+    "Saturday": 188,
+    "Sunday": 147
+  },
+  "waymo_context": {
+    "total_rider_only_miles": 127000000,
+    "miles_study_period": "56.7 million",
+    "serious_crash_reduction_pct": 90,
+    "injury_crash_reduction_pct": 81,
+    "airbag_crash_reduction_pct": 82,
+    "pedestrian_injury_reduction_pct": 92,
+    "cyclist_injury_reduction_pct": 82,
+    "intersection_injury_reduction_pct": 96,
+    "source_url": "https://waymo.com/safety/impact/",
+    "study_url": "https://doi.org/10.1080/15389588.2025.2499887"
+  }
+}

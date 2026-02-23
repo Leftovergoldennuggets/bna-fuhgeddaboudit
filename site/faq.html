@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | Waymo Safety Analysis</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Waymo Safety Analysis</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="methodology.html">Methodology</a></li>
+                <li><a href="faq.html" class="active">FAQ</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <section class="page-section">
+        <div class="page-content">
+            <h1>Frequently Asked Questions</h1>
+
+            <p>Quick answers to common questions about this project and the data behind it. For a more detailed technical discussion, see our <a href="methodology.html">Methodology</a> page.</p>
+
+            <!-- FAQ Items -->
+            <div class="faq-list">
+
+                <div class="faq-item open">
+                    <div class="faq-question">Where does this data come from?</div>
+                    <div class="faq-answer">
+                        <p>Two sources: <strong>NHTSA</strong> (the National Highway Traffic Safety Administration) and <strong>Waymo's Safety Impact Data Hub</strong>.</p>
+                        <p>NHTSA requires all autonomous vehicle companies to report every crash publicly through their Standing General Order program. Waymo publishes a curated dataset on their own website that adds crash type classifications and other context. We merge both datasets to create the most complete picture available.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How often is this website updated?</div>
+                    <div class="faq-answer">
+                        <p>The site is designed to update automatically. NHTSA data is continuously available, and Waymo updates their Safety Impact Data Hub approximately every quarter (every 3 months). Our automated pipeline can re-run whenever new data is published.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What counts as a "crash"?</div>
+                    <div class="faq-answer">
+                        <p>Under NHTSA's Standing General Order, companies must report any incident involving an autonomous vehicle that results in property damage, injury, or the deployment of an airbag. This includes very minor incidents — like being bumped by another car in a parking lot — that would normally never make the news.</p>
+                        <p>This low reporting threshold means the crash numbers look high, but the vast majority of reported incidents are minor property-damage-only events.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How does Waymo compare to human drivers?</div>
+                    <div class="faq-answer">
+                        <p>According to Waymo's peer-reviewed research (published in <em>Traffic Injury Prevention</em>), their autonomous vehicles had 90% fewer serious crashes and 81% fewer injury-causing crashes compared to human driver benchmarks over 56.7 million rider-only miles.</p>
+                        <p>However, these comparisons come with important caveats: the study was authored by Waymo researchers, and their vehicles operate in specific conditions (certain cities, mostly good weather, urban environments) that may not perfectly match the "average" human driving experience.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Are the crash locations on the map exact?</div>
+                    <div class="faq-answer">
+                        <p><strong>No.</strong> NHTSA redacts exact GPS coordinates from their public downloads to protect privacy. We approximate crash locations using the city center plus a small random offset. This means the map shows the general area (city level) but not the exact intersection where a crash occurred.</p>
+                        <p>Markers flagged as "approximate location" use this estimation method.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">In which cities does Waymo operate?</div>
+                    <div class="faq-answer">
+                        <p>Based on the crash data, Waymo has reported incidents in San Francisco, Phoenix, Los Angeles, Austin, Atlanta, and Mountain View. San Francisco has by far the most crashes reported, reflecting Waymo's extensive operations there.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Why do most crashes happen during rush hour?</div>
+                    <div class="faq-answer">
+                        <p>About 31% of crashes occur during rush hours (7-9 AM and 5-7 PM). This isn't surprising — these are the times when roads are busiest and the most vehicles (both human-driven and autonomous) are on the road. More traffic means more opportunities for collisions.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What does "V2V F2R" mean?</div>
+                    <div class="faq-answer">
+                        <p>"V2V" stands for "Vehicle to Vehicle" — a crash involving two vehicles. "F2R" means "Front to Rear" — commonly known as a rear-end collision. So "V2V F2R" is a rear-end crash between two vehicles. This is the most common crash type in the dataset, just as it is for human-driven vehicles.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Can I download the raw data?</div>
+                    <div class="faq-answer">
+                        <p>Yes! The original data is publicly available:</p>
+                        <ul>
+                            <li><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order Data</a></li>
+                            <li><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></li>
+                        </ul>
+                        <p>Our code and processing pipeline are also open-source, so you can reproduce the entire analysis.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Who made this?</div>
+                    <div class="faq-answer">
+                        <p>This is a data journalism project by Anders Eidesvik and Kate Li, created for Stanford COMM277T: Computational Journalism. See the <a href="about.html">About Us</a> page for more details.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="section-container">
+            <div class="footer-bottom">
+                <p>A Stanford COMM277T project by Anders Eidesvik and Kate Li.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FAQ accordion + navigation script -->
+    <script>
+        // FAQ accordion toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                // Close other items
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    if (other !== item) other.classList.remove('open');
+                });
+                // Toggle this item
+                item.classList.toggle('open');
+            });
+        });
+
+        // Mobile hamburger toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => {
+                navToggle.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+</html>

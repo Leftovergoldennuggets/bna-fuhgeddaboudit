@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Waymo's Safety Record | Autonomous Vehicle Crash Analysis</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet (mapping library) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet MarkerCluster (groups nearby markers) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+    <!-- Our styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ================================================================ -->
+    <!-- NAVIGATION — Sticky header with links to main sections + pages   -->
+    <!-- ================================================================ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Waymo Safety Analysis</a>
+            <ul class="nav-links">
+                <li><a href="#intro">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="methodology.html">Methodology</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Reading progress bar -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 1: HERO + MAP SCROLLYTELLING                            -->
+    <!-- The map is sticky; text panels scroll over it.                  -->
+    <!-- ================================================================ -->
+    <section id="intro" class="scrolly-section map-scrolly">
+        <!-- Sticky map that stays visible while user scrolls -->
+        <div class="sticky-map-container">
+            <div id="main-map" class="full-map"></div>
+            <div class="map-overlay" id="map-overlay"></div>
+
+            <!-- Crash detail panel (appears when a marker is clicked) -->
+            <div class="crash-detail-panel" id="crash-panel" hidden>
+                <button class="panel-close" id="panel-close">&times;</button>
+                <div class="panel-content" id="panel-content"></div>
+            </div>
+
+            <!-- Scroll hint shown at the start -->
+            <div class="scroll-hint" id="scroll-hint">
+                <span>Scroll to explore</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </div>
+
+        <!-- Scrolly text steps that trigger map transitions -->
+        <div class="scrolly-steps">
+            <!-- Step 1: Hero introduction -->
+            <div class="scrolly-step" data-step="intro">
+                <div class="step-content step-hero">
+                    <span class="step-tag">Data Investigation</span>
+                    <h1>Understanding Waymo's Crash Record</h1>
+                    <p>A comprehensive, data-driven analysis of autonomous vehicle incidents across major U.S. cities — updated automatically with the latest public data.</p>
+                    <div class="step-meta">
+                        <!-- Date comes from data -->
+                        <span>Last updated: <span data-stat="meta.generated_at" data-format="date">--</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: US Overview -->
+            <div class="scrolly-step" data-step="us-overview">
+                <div class="step-content">
+                    <h2>The National Picture</h2>
+                    <p>Waymo operates autonomous vehicles in <strong><span data-stat="overview.cities_count">--</span> major metropolitan areas</strong> across the United States.</p>
+                    <p>Through the NHTSA Standing General Order, every crash — no matter how minor — must be reported publicly.</p>
+                    <p>Our analysis covers <strong><span data-stat="overview.total_crashes">--</span> reported crashes</strong> from the Waymo Safety Impact Data Hub.</p>
+                </div>
+            </div>
+
+            <!-- Step 3: Zoom to California -->
+            <div class="scrolly-step" data-step="zoom-california">
+                <div class="step-content">
+                    <h2>California: The Testing Ground</h2>
+                    <p>San Francisco is where Waymo's robotaxi service first launched at scale. It has the highest concentration of autonomous vehicle miles — and the most crash data.</p>
+                    <p><strong><span data-stat="city_breakdown.San Francisco.percentage">--</span>%</strong> of all reported Waymo crashes occur in the San Francisco area.</p>
+                </div>
+            </div>
+
+            <!-- Step 4: SF Heatmap -->
+            <div class="scrolly-step" data-step="sf-heatmap">
+                <div class="step-content">
+                    <h2>San Francisco Crash Density</h2>
+                    <p><strong><span data-stat="city_breakdown.San Francisco.count">--</span> crashes</strong> have been reported in the San Francisco area.</p>
+                    <p>The cluster markers show where crashes concentrate. Click any cluster to zoom in and see individual incidents.</p>
+                </div>
+            </div>
+
+            <!-- Step 5: Serious incidents -->
+            <div class="scrolly-step" data-step="sf-serious">
+                <div class="step-content">
+                    <h2>The Most Serious Incidents</h2>
+                    <p>The vast majority of crashes are minor — property damage only, with no injuries.</p>
+                    <p>But <strong><span data-stat="severity.moderate_plus.count">--</span> crashes</strong> involved moderate, serious, or fatal injuries, and <strong><span data-stat="severity.injury_reported.count">--</span></strong> had any injury reported at all.</p>
+                    <p class="step-note">Click the red markers to read the full incident narratives.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 2: KEY STATISTICS                                       -->
+    <!-- Animated counters that populate from site-data.json              -->
+    <!-- ================================================================ -->
+    <section id="stats" class="stats-section">
+        <div class="section-container">
+            <h2 class="section-title">By the Numbers</h2>
+            <p class="section-subtitle">Key statistics from <span data-stat="overview.total_crashes">--</span> reported Waymo crashes</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" data-stat="overview.total_crashes" data-animate="true">--</div>
+                    <div class="stat-label">Total Crashes Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-stat="overview.cities_count" data-animate="true">--</div>
+                    <div class="stat-label">Cities</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-stat="severity.injury_reported.percentage" data-animate="true" data-suffix="%">--</div>
+                    <div class="stat-label">Injury Reported Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-stat="severity.police_reported.percentage" data-animate="true" data-suffix="%">--</div>
+                    <div class="stat-label">Police Reported Rate</div>
+                </div>
+            </div>
+
+            <!-- Waymo safety context from published research -->
+            <div class="safety-context">
+                <h3>How Does This Compare?</h3>
+                <p>According to Waymo's <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed research</a> covering 56.7 million rider-only miles:</p>
+                <div class="context-stats">
+                    <div class="context-stat">
+                        <span class="context-number" data-stat="waymo_context.serious_crash_reduction_pct" data-suffix="%">--</span>
+                        <span class="context-label">fewer serious crashes vs. human drivers</span>
+                    </div>
+                    <div class="context-stat">
+                        <span class="context-number" data-stat="waymo_context.injury_crash_reduction_pct" data-suffix="%">--</span>
+                        <span class="context-label">fewer injury-causing crashes vs. human drivers</span>
+                    </div>
+                    <div class="context-stat">
+                        <span class="context-number" data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span>
+                        <span class="context-label">rider-only miles driven (through Sept 2025)</span>
+                    </div>
+                </div>
+                <p class="context-source">Source: <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 3: TEMPORAL ANALYSIS                                    -->
+    <!-- When do crashes happen? Rush hour patterns, day/night, etc.     -->
+    <!-- ================================================================ -->
+    <section id="temporal" class="analysis-section">
+        <div class="section-container">
+            <h2 class="section-title">When Do Crashes Happen?</h2>
+            <p class="section-subtitle">Temporal patterns from <span data-stat="overview.total_with_time_data">--</span> crashes with time data</p>
+
+            <div class="analysis-grid">
+                <div class="analysis-card highlight">
+                    <div class="analysis-number" data-stat="temporal.rush_hour_percentage" data-suffix="%">--</div>
+                    <div class="analysis-label">Rush Hour Crashes</div>
+                    <p class="analysis-desc">7-9 AM &amp; 5-7 PM — when roads are busiest</p>
+                </div>
+                <div class="analysis-card">
+                    <div class="analysis-number" data-stat="temporal.late_night_percentage" data-suffix="%">--</div>
+                    <div class="analysis-label">Late Night Crashes</div>
+                    <p class="analysis-desc">11 PM - 4 AM</p>
+                </div>
+                <div class="analysis-card">
+                    <div class="analysis-number" data-stat="temporal.daytime_percentage" data-suffix="%">--</div>
+                    <div class="analysis-label">Daytime</div>
+                    <p class="analysis-desc">6 AM - 8 PM</p>
+                </div>
+            </div>
+
+            <!-- Scrollytelling figure: time-of-day analysis -->
+            <div class="figure-container">
+                <img src="assets/images/time_of_day_analysis.png" alt="Time of day crash analysis showing hourly distribution, time period breakdown, weekday vs weekend patterns, and day vs night split" class="analysis-figure" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 4: SPATIAL ANALYSIS                                     -->
+    <!-- Where do crashes happen? City breakdowns.                       -->
+    <!-- ================================================================ -->
+    <section id="spatial" class="analysis-section alt-bg">
+        <div class="section-container">
+            <h2 class="section-title">Where Do Crashes Happen?</h2>
+            <p class="section-subtitle">Geographic distribution across Waymo's operating cities</p>
+
+            <!-- City cards — dynamically generated from site-data.json -->
+            <div class="city-cards" id="city-cards-container">
+                <!-- Populated by JavaScript from site-data.json city_breakdown -->
+            </div>
+
+            <!-- Location type analysis figure -->
+            <div class="figure-container">
+                <img src="assets/images/location_time_analysis.png" alt="Location type analysis showing crash distribution by location type and hourly patterns" class="analysis-figure" loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 5: EXPLORE THE DATA                                     -->
+    <!-- Interactive map with filters — the main interactive feature.    -->
+    <!-- ================================================================ -->
+    <section id="explore" class="explore-section">
+        <div class="section-container">
+            <h2 class="section-title">Explore the Data</h2>
+            <p class="section-subtitle">Filter and explore all <span data-stat="overview.total_crashes">--</span> crashes interactively</p>
+
+            <div class="explore-layout">
+                <!-- Filter sidebar -->
+                <div class="explore-filters" id="explore-filters">
+                    <h3>Filters</h3>
+
+                    <!-- City filter -->
+                    <div class="filter-group">
+                        <label>City</label>
+                        <div class="filter-buttons" id="city-filter">
+                            <!-- Populated by JS from crash_data.json cities -->
+                        </div>
+                    </div>
+
+                    <!-- Crash type filter -->
+                    <div class="filter-group">
+                        <label>Crash Type</label>
+                        <div class="filter-checkboxes" id="crash-type-filter">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Time period filter -->
+                    <div class="filter-group">
+                        <label>Time Period</label>
+                        <div class="filter-checkboxes" id="time-filter">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Live stats -->
+                    <div class="filter-stats" id="filter-stats">
+                        <div class="filter-stat">
+                            <span id="filtered-count">--</span>
+                            <span>crashes shown</span>
+                        </div>
+                    </div>
+
+                    <button class="reset-filters" id="reset-filters">Reset All Filters</button>
+                </div>
+
+                <!-- Explore map -->
+                <div class="explore-map-container">
+                    <div id="explore-map" class="explore-map"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- FOOTER                                                          -->
+    <!-- ================================================================ -->
+    <footer class="site-footer">
+        <div class="section-container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Waymo Crash Data Analysis</h3>
+                    <p>A Stanford COMM277T data journalism project by Anders Eidesvik and Kate Li.</p>
+                    <p>Last updated: <span data-stat="meta.generated_at" data-format="date">--</span></p>
+                </div>
+                <div class="footer-links">
+                    <h4>Data Sources</h4>
+                    <ul>
+                        <li><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order Data</a></li>
+                        <li><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></li>
+                    </ul>
+                    <h4>Pages</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="methodology.html">Methodology</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Data updates automatically when new NHTSA/Waymo reports are published.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================================================================ -->
+    <!-- SCRIPTS                                                         -->
+    <!-- ================================================================ -->
+    <!-- External libraries -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <!-- Our scripts (loaded in dependency order) -->
+    <script src="js/data-loader.js"></script>
+    <script src="js/stat-renderer.js"></script>
+    <script src="js/map-controller.js"></script>
+    <script src="js/scrollytelling.js"></script>
+    <script src="js/explore.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methodology | Waymo Safety Analysis</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Waymo Safety Analysis</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="methodology.html" class="active">Methodology</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <section class="page-section">
+        <div class="page-content">
+            <h1>Methodology</h1>
+
+            <p>This page documents our complete data processing methodology, including limitations, caveats, and known biases. Transparency is central to this project — we want you to understand exactly how we produced every number on this website.</p>
+
+            <!-- ========== DATA SOURCES ========== -->
+            <h2>Data Sources</h2>
+
+            <h3>NHTSA Standing General Order (SGO) Data</h3>
+            <p>The <a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">National Highway Traffic Safety Administration</a> requires all companies operating Level 3+ autonomous vehicles to report any crash within a set timeframe. This creates the most comprehensive public record of AV incidents in the United States.</p>
+
+            <p>NHTSA provides two separate files:</p>
+            <ul>
+                <li><strong>Pre-June 16, 2025 (Amendment 2):</strong> The archived dataset covering reports filed before NHTSA updated their reporting format.</li>
+                <li><strong>Post-June 16, 2025 (Amendment 3):</strong> The current active dataset with an updated column structure.</li>
+            </ul>
+
+            <p>These files contain crashes from <em>all</em> AV companies (Waymo, Cruise, Zoox, Tesla FSD, etc.). We filter for Waymo-only crashes using the "Reporting Entity" field.</p>
+
+            <h3>Waymo Safety Impact Data Hub</h3>
+            <p>Waymo publishes a curated dataset at their <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. This dataset (CSV2) includes crash type classifications, outcome group membership, and links to the corresponding SGO Report IDs.</p>
+
+            <p>The Hub data is updated approximately quarterly and currently covers September 2020 through September 2025.</p>
+
+            <!-- ========== PIPELINE ========== -->
+            <h2>Data Processing Pipeline</h2>
+
+            <p>Our data pipeline runs in five automated steps:</p>
+
+            <h3>Step 1: Download</h3>
+            <p>We download all three raw CSV files directly from NHTSA and Waymo's public servers. The pipeline includes error detection for cases where URLs may have changed (particularly the Waymo Hub URL, which includes a date range in the filename that changes quarterly).</p>
+
+            <h3>Step 2: Merge and Clean</h3>
+            <p>This is the core data processing step:</p>
+            <ol>
+                <li><strong>Filter:</strong> From the NHTSA data, we keep only rows where Reporting Entity = "Waymo LLC". The full NHTSA dataset includes many other companies.</li>
+                <li><strong>Harmonize:</strong> The pre- and post-June 2025 files have different column names (due to the Amendment 2 → 3 transition). We rename columns from the older format to match the newer format.</li>
+                <li><strong>Combine:</strong> The two NHTSA files are stacked into a single dataset.</li>
+                <li><strong>Deduplicate:</strong> Some crashes have multiple report versions (updates filed over time). We keep only the latest version of each report, identified by the Report ID and Report Version fields.</li>
+                <li><strong>Merge:</strong> We perform a left join of the Waymo Hub data with the NHTSA data, using the Hub's "SGO Report ID" column and NHTSA's "Report ID" column. The Hub is the base — all Hub rows are preserved, and NHTSA fields are added where a match exists.</li>
+            </ol>
+
+            <h3>Step 3: Compute Statistics</h3>
+            <p>Every number displayed on the website is computed in this step and saved to a JSON file. This includes:</p>
+            <ul>
+                <li>Total crash counts and city breakdowns</li>
+                <li>Time-of-day analysis (rush hour, late night, daytime/nighttime splits)</li>
+                <li>Crash type distributions</li>
+                <li>Severity indicators (police-reported, injury-reported, airbag deployment, serious injury)</li>
+                <li>Location type analysis (intersection, street, parking, highway)</li>
+                <li>Day-of-week patterns</li>
+            </ul>
+
+            <h3>Step 4: Generate Map Data</h3>
+            <p>Each crash record is converted into a simplified JSON object for the Leaflet map, including coordinates, time data, crash type, and city.</p>
+
+            <h3>Step 5: Extract Serious Incidents</h3>
+            <p>Crashes involving moderate, serious, or fatal injuries are extracted into a separate file with their full NHTSA narratives, enabling the detailed incident view on the map.</p>
+
+            <!-- ========== LIMITATIONS ========== -->
+            <h2>Limitations and Caveats</h2>
+
+            <h3>Coordinate Approximation</h3>
+            <p>NHTSA redacts latitude and longitude values from public data downloads, replacing them with "[MAY CONTAIN PERSONALLY IDENTIFIABLE INFORMATION]". As a result, we cannot plot exact crash locations.</p>
+            <p>Instead, we approximate each crash's location using the city center coordinates plus a small random offset. This means:</p>
+            <ul>
+                <li>Crash markers on the map show the <em>general area</em> (city level), not the exact intersection or street.</li>
+                <li>Cluster patterns within a city reflect the random distribution, not actual hotspot locations.</li>
+                <li>Markers flagged as "approximate location" in popups use this estimation method.</li>
+            </ul>
+
+            <h3>Reporting Thresholds</h3>
+            <p>The NHTSA SGO requires reporting of any crash, but companies may interpret "crash" slightly differently. Additionally, some minor incidents (e.g., a parked car being bumped with no damage) might not be consistently reported across all companies.</p>
+
+            <h3>Severity Assessment</h3>
+            <p>We report severity using four independent boolean indicators rather than a composite score:</p>
+            <ul>
+                <li><strong>Police-reported:</strong> Whether law enforcement responded to the scene</li>
+                <li><strong>Injury reported:</strong> Whether any injury (of any severity) was reported</li>
+                <li><strong>Airbag deployed:</strong> Whether any vehicle's airbag deployed</li>
+                <li><strong>Serious injury:</strong> Whether a suspected serious injury was reported</li>
+            </ul>
+            <p>We deliberately avoid creating composite "severity scores" because the weighting of different factors would be arbitrary and potentially misleading.</p>
+
+            <h3>Waymo Safety Comparisons</h3>
+            <p>The statistics comparing Waymo to human drivers (e.g., "90% fewer serious crashes") come from Waymo's own <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed research paper</a> published in the journal <em>Traffic Injury Prevention</em>. While the paper has undergone peer review, it is important to note:</p>
+            <ul>
+                <li>The study was authored by Waymo researchers</li>
+                <li>The comparison benchmarks may not perfectly match Waymo's operating conditions (urban environments, specific cities, time of day, weather)</li>
+                <li>Autonomous vehicles currently operate in a limited set of conditions that may be systematically different from the average human driving environment</li>
+            </ul>
+
+            <h3>Dataset Coverage</h3>
+            <p>The Waymo Hub dataset does not include every NHTSA-reported crash. Some NHTSA crashes are excluded by Waymo's own methodology (e.g., incidents that don't meet their definition of a reportable crash). Our merge process preserves all Hub crashes and flags NHTSA-only crashes separately.</p>
+
+            <h3>Temporal Limitations</h3>
+            <p>Crash time data comes from the "Incident Time" field in the NHTSA reports. A small number of records have missing or unparseable times, which are excluded from time-of-day analyses. The overall coverage is high (typically &gt;99% of records have valid time data).</p>
+
+            <!-- ========== AUTOMATION ========== -->
+            <h2>Automated Updates</h2>
+
+            <p>This website is designed to be "evergreen" — every statistic is computed from data, and the entire pipeline can be re-run when new data becomes available.</p>
+
+            <p>A GitHub Actions workflow is configured to:</p>
+            <ol>
+                <li>Download the latest data from NHTSA and Waymo</li>
+                <li>Run the full processing pipeline</li>
+                <li>Regenerate all JSON files and chart images</li>
+                <li>Commit and push any changes to the repository</li>
+            </ol>
+
+            <p>This ensures the website stays current without manual intervention. However, the Waymo Hub URL changes quarterly (the filename includes a date range), so this URL may need periodic manual updates in the configuration file.</p>
+
+            <!-- ========== REPRODUCIBILITY ========== -->
+            <h2>Reproducibility</h2>
+
+            <p>To reproduce our analysis:</p>
+            <ol>
+                <li>Clone the repository</li>
+                <li>Install dependencies: <code>pip install -r requirements.txt</code></li>
+                <li>Run the pipeline: <code>make data</code></li>
+                <li>View the results: <code>make serve</code></li>
+            </ol>
+
+            <p>The pipeline uses a fixed random seed (42) for coordinate approximation, ensuring reproducible map layouts across runs.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="section-container">
+            <div class="footer-bottom">
+                <p>A Stanford COMM277T project by Anders Eidesvik and Kate Li.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Navigation script -->
+    <script>
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        if (navToggle && navLinks) {
+            navToggle.addEventListener('click', () => {
+                navToggle.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        }
+    </script>
+</body>
+</html>

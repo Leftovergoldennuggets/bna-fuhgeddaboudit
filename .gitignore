@@ -1,1 +1,14 @@
 .DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Raw and processed data (large CSVs — re-downloadable via pipeline)
+data/raw/
+data/processed/
+
+# OS files
+.DS_Store
+Thumbs.db
