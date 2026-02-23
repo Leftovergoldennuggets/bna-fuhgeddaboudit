@@ -1,0 +1,88 @@
+# =============================================================================
+# deploy-pages.yml — Deploy the website to GitHub Pages
+# =============================================================================
+# This workflow builds a deployable version of the site and publishes it
+# to GitHub Pages. It runs automatically after the data-update workflow
+# finishes, and also whenever site files or data are pushed to main.
+#
+# Why a separate build step?
+#   Locally, the site lives in site/ and loads data from ../data/web/.
+#   GitHub Pages needs everything under one directory. This workflow
+#   copies both into a flat _site/ folder so all paths work.
+#
+# The published site URL will be:
+#   https://<username>.github.io/bna-fuhgeddaboudit/
+# =============================================================================
+
+name: Deploy to GitHub Pages
+
+on:
+  # Run after the data-update workflow completes
+  workflow_run:
+    workflows: ["Update Crash Data"]
+    types: [completed]
+
+  # Run when site files or data are pushed to main
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "data/web/**"
+
+  # Manual trigger
+  workflow_dispatch:
+
+# Grant permissions to deploy to Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only allow one deployment at a time
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Build the deployable site structure:
+      #   _site/
+      #   ├── index.html, about.html, methodology.html, faq.html
+      #   ├── css/styles.css
+      #   ├── js/*.js
+      #   ├── assets/images/*.png
+      #   └── data/web/*.json      ← data files moved here
+      #
+      # The JS data-loader detects GitHub Pages and adjusts paths automatically.
+      - name: Build site
+        run: |
+          mkdir -p _site
+          # Copy all site files
+          cp -r site/* _site/
+          # Copy data files into the site directory
+          mkdir -p _site/data/web
+          cp data/web/*.json _site/data/web/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_site"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

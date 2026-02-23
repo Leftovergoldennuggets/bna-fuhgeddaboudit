@@ -21,8 +21,14 @@
 // ============================================
 const DataLoader = (function () {
 
-    // Base path to the JSON data files (relative to site/ directory)
-    const DATA_BASE = "../data/web/";
+    // Base path to the JSON data files.
+    // Locally: site is served from project root, HTML is in site/, data is in data/web/
+    //   → path from site/ to data/web/ is "../data/web/"
+    // GitHub Pages: the deploy workflow copies data into the site folder
+    //   → path is just "data/web/"
+    // We detect which environment we're in by checking the hostname.
+    const isGitHubPages = window.location.hostname.includes("github.io");
+    const DATA_BASE = isGitHubPages ? "data/web/" : "../data/web/";
 
     /**
      * Fetch a single JSON file and return its parsed contents.
