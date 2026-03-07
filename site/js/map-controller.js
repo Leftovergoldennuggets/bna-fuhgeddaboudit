@@ -239,45 +239,12 @@ const MapController = (function () {
     function buildSeriousMarkers() {
         if (!incidentData || !incidentData.all_incidents) return;
 
-        // Add dynamic styles for pulsing markers (only once)
-        if (!document.getElementById("serious-marker-styles")) {
-            const style = document.createElement("style");
-            style.id = "serious-marker-styles";
-            style.textContent = `
-                .serious-marker { position: relative; }
-                .serious-dot {
-                    width: 14px; height: 14px;
-                    background: #8b2020;
-                    border: 2px solid white;
-                    border-radius: 50%;
-                    position: absolute;
-                    top: 50%; left: 50%;
-                    transform: translate(-50%, -50%);
-                    cursor: pointer;
-                }
-                .serious-pulse {
-                    width: 30px; height: 30px;
-                    background: rgba(139, 32, 32, 0.3);
-                    border-radius: 50%;
-                    position: absolute;
-                    top: 50%; left: 50%;
-                    transform: translate(-50%, -50%);
-                    animation: serious-pulse 2s infinite;
-                }
-                @keyframes serious-pulse {
-                    0%   { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-                    100% { transform: translate(-50%, -50%) scale(2);   opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
         incidentData.all_incidents.forEach((incident) => {
             const icon = L.divIcon({
                 className: "serious-marker",
-                html: '<div class="serious-pulse"></div><div class="serious-dot"></div>',
-                iconSize: [30, 30],
-                iconAnchor: [15, 15],
+                html: '<div style="width:14px;height:14px;background:#8b2020;border:2px solid white;border-radius:50%;cursor:pointer;"></div>',
+                iconSize: [14, 14],
+                iconAnchor: [7, 7],
             });
 
             const marker = L.marker([incident.lat, incident.lon], { icon: icon });
