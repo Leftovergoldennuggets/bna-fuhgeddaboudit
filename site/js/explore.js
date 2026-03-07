@@ -2,19 +2,17 @@
  * explore.js — Interactive "Explore the Data" section
  * =====================================================
  * Manages the filter sidebar and a separate explore map where users
- * can filter crashes by city, crash type, and time period.
+ * can filter crashes by severity, road user type, city, and time of day.
  *
- * Features:
- *   - City filter buttons (click to toggle)
- *   - Crash type checkboxes
- *   - Time period checkboxes
- *   - Live-updating marker count
- *   - Reset button to clear all filters
- *   - Separate Leaflet map instance (independent from scrollytelling map)
+ * Filter dimensions (designed for regular people, not experts):
+ *   - Severity: All / Any injury / Serious only
+ *   - Involved: All / Pedestrian / Cyclist / Motorcycle
+ *   - City: All / San Francisco / Phoenix / LA / Austin / Atlanta
+ *   - Time of day: All / Daytime / Night / Rush hour
  *
  * Dependencies:
  *   - Leaflet + MarkerCluster (from CDN)
- *   - map-controller.js (for formatCityName, formatHour, CITY_COORDS)
+ *   - map-controller.js (for formatCityName, formatHour, formatCrashType, CITY_COORDS)
  *   - data-loader.js (for crash data)
  */
 
@@ -29,12 +27,18 @@ const Explore = (function () {
     let allCrashes = [];            // Full crash dataset (from crash_data.json)
     let allMarkers = [];            // Parallel array of Leaflet markers
 
-    // Active filters (empty = show all)
+    // Active filters (null = show all for that dimension)
     let filters = {
-        cities: new Set(),          // Selected city codes (e.g., "SAN_FRANCISCO")
-        crashTypes: new Set(),      // Selected crash types (e.g., "V2V Lateral")
-        timePeriods: new Set(),     // Selected time periods (e.g., "Morning Rush")
+        cities: new Set(),          // Selected city codes
+        severity: null,             // null | "injury" | "serious"
+        roadUser: null,             // null | "Pedestrian" | "Cyclist" | "Motorcycle"
+        timeOfDay: null,            // null | "daytime" | "night" | "rush"
     };
+
+    // Muted color palette — severity drives the color (earth tones)
+    const MARKER_GREY = "#b0a696";
+    const MARKER_AMBER = "#c4841d";
+    const MARKER_RED = "#8b2020";
 
     // ============================================
     // Initialize
@@ -55,10 +59,11 @@ const Explore = (function () {
         // Build all markers (one per crash)
         buildMarkers();
 
-        // Populate filter controls from the data
+        // Populate filter controls
+        buildSeverityFilter();
+        buildRoadUserFilter();
         buildCityFilter(stats);
-        buildCrashTypeFilter(stats);
-        buildTimePeriodFilter(stats);
+        buildTimeFilter();
 
         // Set up the reset button
         const resetBtn = document.getElementById("reset-filters");
@@ -85,8 +90,9 @@ const Explore = (function () {
             attributionControl: true,
         });
 
+        // Base tiles: CARTO light without labels
         L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+            "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
             {
                 attribution:
                     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
@@ -94,6 +100,12 @@ const Explore = (function () {
                 subdomains: "abcd",
                 maxZoom: 19,
             }
+        ).addTo(exploreMap);
+
+        // Label layer on top
+        L.tileLayer(
+            "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }
         ).addTo(exploreMap);
 
         exploreCluster = L.markerClusterGroup({
@@ -119,24 +131,12 @@ const Explore = (function () {
     // Build Markers
     // ============================================
 
-    /** Color palette for crash types */
-    const TYPE_COLORS = {
-        "V2V F2R":          "#3182ce",  // Blue
-        "V2V Lateral":      "#38a169",  // Green
-        "V2V Backing":      "#d69e2e",  // Gold
-        "Single Vehicle":   "#805ad5",  // Purple
-        "V2V Head-on":      "#e53e3e",  // Red
-        "V2V Intersection": "#dd6b20",  // Orange
-        "All Others":       "#718096",  // Gray
-        "Secondary Crash":  "#2d3748",  // Dark
-        "Motorcycle":       "#b83280",  // Pink
-        "Cyclist":          "#00b5d8",  // Teal
-        "Pedestrian":       "#c53030",  // Dark red
-    };
-
     function buildMarkers() {
-        allCrashes.forEach((crash, i) => {
-            const color = TYPE_COLORS[crash.crash_type] || "#718096";
+        allCrashes.forEach((crash) => {
+            // Color by severity: serious=red, injury=amber, else grey
+            let color = MARKER_GREY;
+            if (crash.is_serious) color = MARKER_RED;
+            else if (crash.has_injury) color = MARKER_AMBER;
 
             const marker = L.circleMarker([crash.lat, crash.lon], {
                 radius: 5,
@@ -154,10 +154,13 @@ const Explore = (function () {
 
             marker.bindPopup(
                 `<div class="crash-popup">` +
-                `<strong>${crash.crash_type}</strong><br>` +
+                `<strong>${MapController.formatCrashType(crash.crash_type)}</strong><br>` +
                 `<span class="popup-city">${MapController.formatCityName(crash.city)}</span><br>` +
                 `<span class="popup-date">${dateStr} at ${hourStr}</span><br>` +
                 `<span class="popup-type">Location: ${crash.location_type}</span>` +
+                (crash.has_injury
+                    ? `<br><em style="color:#c4841d">Injury reported</em>`
+                    : "") +
                 (crash.is_estimated_location
                     ? `<br><em class="popup-estimated">Approximate location</em>`
                     : "") +
@@ -174,120 +177,132 @@ const Explore = (function () {
     // ============================================
 
     /**
-     * Create city filter buttons from the data.
-     * "All" is selected by default (no filter active).
+     * Helper: create underlined text toggle buttons in a container.
+     * One option is "All" (value = null), the rest are specific values.
+     *
+     * @param {HTMLElement} container — DOM element to append toggles to
+     * @param {Array} options — [{label: "All", value: null}, {label: "Any injury", value: "injury"}, ...]
+     * @param {string} filterKey — key in the `filters` object to update
      */
-    function buildCityFilter(stats) {
-        const container = document.getElementById("city-filter");
-        if (!container || !stats.city_breakdown) return;
+    function buildToggleGroup(container, options, filterKey) {
+        if (!container) return;
 
-        // "All Cities" button
-        const allBtn = document.createElement("button");
-        allBtn.className = "filter-btn active";
-        allBtn.textContent = "All Cities";
-        allBtn.dataset.city = "ALL";
-        allBtn.addEventListener("click", () => {
-            filters.cities.clear();
-            container.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
-            allBtn.classList.add("active");
-            applyFilters();
-        });
-        container.appendChild(allBtn);
-
-        // One button per city
-        Object.entries(stats.city_breakdown).forEach(([cityName, info]) => {
+        options.forEach(({ label, value }) => {
             const btn = document.createElement("button");
-            btn.className = "filter-btn";
-            btn.textContent = `${cityName} (${info.count})`;
-            btn.dataset.city = info.code;
+            btn.className = "filter-toggle";
+            btn.textContent = label;
+            btn.dataset.value = value === null ? "all" : value;
+
+            // "All" starts active
+            if (value === null) btn.classList.add("active");
+
             btn.addEventListener("click", () => {
-                // Toggle this city
-                if (filters.cities.has(info.code)) {
-                    filters.cities.delete(info.code);
-                    btn.classList.remove("active");
+                if (filterKey === "cities") {
+                    // City uses Set-based toggling (multi-select)
+                    handleCityToggle(container, btn, value);
                 } else {
-                    filters.cities.add(info.code);
-                    btn.classList.add("active");
+                    // Single-select: click to select, click again to deselect
+                    if (filters[filterKey] === value) {
+                        // Already selected — deselect (go back to "All")
+                        filters[filterKey] = null;
+                    } else {
+                        filters[filterKey] = value;
+                    }
+                    // Update UI: highlight active toggle
+                    container.querySelectorAll(".filter-toggle").forEach(t => t.classList.remove("active"));
+                    if (filters[filterKey] === null) {
+                        container.querySelector('[data-value="all"]').classList.add("active");
+                    } else {
+                        btn.classList.add("active");
+                    }
+                    applyFilters();
                 }
-                // Update "All" button state
-                allBtn.classList.toggle("active", filters.cities.size === 0);
-                applyFilters();
             });
+
             container.appendChild(btn);
         });
     }
 
     /**
-     * Create crash type checkboxes.
+     * Severity filter: All / Any injury / Serious only
      */
-    function buildCrashTypeFilter(stats) {
-        const container = document.getElementById("crash-type-filter");
-        if (!container || !stats.crash_types) return;
-
-        Object.entries(stats.crash_types).forEach(([typeName, info]) => {
-            const label = document.createElement("label");
-            label.className = "filter-checkbox";
-
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.value = typeName;
-            checkbox.checked = true; // All checked by default
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    filters.crashTypes.delete(typeName);
-                } else {
-                    filters.crashTypes.add(typeName);
-                }
-                applyFilters();
-            });
-
-            const color = TYPE_COLORS[typeName] || "#718096";
-            label.innerHTML = "";
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(
-                ` ${typeName} (${info.count})`
-            ));
-
-            // Add a small color dot
-            const dot = document.createElement("span");
-            dot.className = "type-dot";
-            dot.style.backgroundColor = color;
-            label.insertBefore(dot, label.firstChild.nextSibling);
-
-            container.appendChild(label);
-        });
+    function buildSeverityFilter() {
+        const container = document.getElementById("severity-filter");
+        buildToggleGroup(container, [
+            { label: "All", value: null },
+            { label: "Any injury", value: "injury" },
+            { label: "Serious", value: "serious" },
+        ], "severity");
     }
 
     /**
-     * Create time period checkboxes.
+     * Road user filter: All / Pedestrian / Cyclist / Motorcycle
      */
-    function buildTimePeriodFilter(stats) {
-        const container = document.getElementById("time-filter");
-        if (!container || !stats.time_periods) return;
+    function buildRoadUserFilter() {
+        const container = document.getElementById("road-user-filter");
+        buildToggleGroup(container, [
+            { label: "All crashes", value: null },
+            { label: "Pedestrian", value: "Pedestrian" },
+            { label: "Cyclist", value: "Cyclist" },
+            { label: "Motorcycle", value: "Motorcycle" },
+        ], "roadUser");
+    }
 
-        Object.entries(stats.time_periods).forEach(([periodName, info]) => {
-            const label = document.createElement("label");
-            label.className = "filter-checkbox";
+    /**
+     * City filter: All + individual cities.
+     * Uses the same toggle UI but with Set-based multi-select.
+     */
+    function buildCityFilter(stats) {
+        const container = document.getElementById("city-filter");
+        if (!container || !stats.city_breakdown) return;
 
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.value = periodName;
-            checkbox.checked = true;
-            checkbox.addEventListener("change", () => {
-                if (checkbox.checked) {
-                    filters.timePeriods.delete(periodName);
-                } else {
-                    filters.timePeriods.add(periodName);
-                }
-                applyFilters();
-            });
-
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(
-                ` ${periodName} (${info.count})`
-            ));
-            container.appendChild(label);
+        // Build options array from data
+        const options = [{ label: "All cities", value: null }];
+        Object.entries(stats.city_breakdown).forEach(([cityName, info]) => {
+            options.push({ label: `${cityName} (${info.count})`, value: info.code });
         });
+
+        buildToggleGroup(container, options, "cities");
+    }
+
+    /**
+     * Handle city toggle (multi-select with Set)
+     */
+    function handleCityToggle(container, btn, value) {
+        const allBtn = container.querySelector('[data-value="all"]');
+
+        if (value === null) {
+            // Clicked "All" — clear everything
+            filters.cities.clear();
+            container.querySelectorAll(".filter-toggle").forEach(t => t.classList.remove("active"));
+            allBtn.classList.add("active");
+        } else {
+            // Toggle specific city
+            if (filters.cities.has(value)) {
+                filters.cities.delete(value);
+                btn.classList.remove("active");
+            } else {
+                filters.cities.add(value);
+                btn.classList.add("active");
+            }
+            // Update "All" button
+            allBtn.classList.toggle("active", filters.cities.size === 0);
+        }
+
+        applyFilters();
+    }
+
+    /**
+     * Time of day filter: All / Daytime / Night / Rush hour
+     */
+    function buildTimeFilter() {
+        const container = document.getElementById("time-filter");
+        buildToggleGroup(container, [
+            { label: "All", value: null },
+            { label: "Daytime (6am–8pm)", value: "daytime" },
+            { label: "Night (8pm–6am)", value: "night" },
+            { label: "Rush hour", value: "rush" },
+        ], "timeOfDay");
     }
 
     // ============================================
@@ -304,19 +319,36 @@ const Explore = (function () {
         allCrashes.forEach((crash, i) => {
             let show = true;
 
-            // City filter: if any cities selected, crash must be in one of them
+            // City filter
             if (filters.cities.size > 0 && !filters.cities.has(crash.city)) {
                 show = false;
             }
 
-            // Crash type filter: if any types UNCHECKED, hide those types
-            if (filters.crashTypes.size > 0 && filters.crashTypes.has(crash.crash_type)) {
+            // Severity filter
+            if (filters.severity === "injury" && !crash.has_injury) {
+                show = false;
+            }
+            if (filters.severity === "serious" && !crash.is_serious) {
                 show = false;
             }
 
-            // Time period filter: if any periods UNCHECKED, hide those periods
-            if (filters.timePeriods.size > 0 && filters.timePeriods.has(crash.time_period)) {
+            // Road user filter
+            if (filters.roadUser && crash.crash_type !== filters.roadUser) {
                 show = false;
+            }
+
+            // Time of day filter (derived from hour)
+            if (filters.timeOfDay && crash.hour !== null) {
+                const h = crash.hour;
+                if (filters.timeOfDay === "daytime" && (h < 6 || h >= 20)) {
+                    show = false;
+                }
+                if (filters.timeOfDay === "night" && (h >= 6 && h < 20)) {
+                    show = false;
+                }
+                if (filters.timeOfDay === "rush" && !((h >= 7 && h < 10) || (h >= 17 && h < 19))) {
+                    show = false;
+                }
             }
 
             if (show) {
@@ -331,7 +363,7 @@ const Explore = (function () {
             countEl.textContent = shownCount.toLocaleString("en-US");
         }
 
-        // If a city filter is active, zoom to that city
+        // Zoom to city if a single city is selected
         if (filters.cities.size === 1) {
             const cityCode = [...filters.cities][0];
             const coords = MapController.CITY_COORDS[cityCode];
@@ -339,7 +371,6 @@ const Explore = (function () {
                 exploreMap.flyTo([coords.lat, coords.lon], 11, { duration: 1 });
             }
         } else if (filters.cities.size === 0) {
-            // Reset to US overview
             exploreMap.flyTo([37.0902, -95.7129], 4, { duration: 1 });
         }
     }
@@ -349,18 +380,13 @@ const Explore = (function () {
      */
     function resetFilters() {
         filters.cities.clear();
-        filters.crashTypes.clear();
-        filters.timePeriods.clear();
+        filters.severity = null;
+        filters.roadUser = null;
+        filters.timeOfDay = null;
 
-        // Reset UI
-        document.querySelectorAll("#city-filter .filter-btn").forEach((btn) => {
-            btn.classList.toggle("active", btn.dataset.city === "ALL");
-        });
-        document.querySelectorAll("#crash-type-filter input").forEach((cb) => {
-            cb.checked = true;
-        });
-        document.querySelectorAll("#time-filter input").forEach((cb) => {
-            cb.checked = true;
+        // Reset all toggle UIs
+        document.querySelectorAll(".filter-toggle").forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.value === "all");
         });
 
         applyFilters();

@@ -38,7 +38,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Step 5: Initialize scroll-driven transitions
         Scrollytelling.init();
 
-        // Step 6: Initialize the interactive explore section
+        // Step 6: Build interactive charts (replaces static PNG images)
+        Charts.buildHourlyChart(data.stats);
+        Charts.buildDayOfWeekChart(data.stats);
+        Charts.buildLocationTypeChart(data.stats);
+
+        // Step 7: Initialize the interactive explore section
         Explore.init(data.crashes, data.stats);
 
         console.log("[App] All modules initialized successfully");

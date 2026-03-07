@@ -40,6 +40,28 @@ const MapController = (function () {
         "MOUNTAIN_VIEW": { lat: 37.3861, lon: -122.0839, name: "Mountain View" },
     };
 
+    // --- Plain-English Crash Type Labels ---
+    // The data uses Waymo's official codes (e.g., "V2V F2R").
+    // We translate them here so regular people can understand.
+    const CRASH_TYPE_LABELS = {
+        "V2V F2R":          "Rear-end",
+        "V2V Lateral":      "Side-impact",
+        "V2V Backing":      "Backing up",
+        "V2V Head-on":      "Head-on",
+        "V2V Intersection": "Intersection",
+        "Single Vehicle":   "Single vehicle",
+        "All Others":       "Other",
+        "Secondary Crash":  "Chain reaction",
+        "Motorcycle":       "Motorcycle",
+        "Cyclist":          "Cyclist",
+        "Pedestrian":       "Pedestrian",
+    };
+
+    /** Convert a raw crash type code to a human-readable label */
+    function formatCrashType(code) {
+        return CRASH_TYPE_LABELS[code] || code;
+    }
+
     // --- Module State ---
     let map = null;                // Leaflet map instance
     let cityMarkersLayer = null;   // Layer group for city overview markers
@@ -78,9 +100,9 @@ const MapController = (function () {
             attributionControl: true,
         });
 
-        // Add CartoDB Positron tiles (clean, light basemap)
+        // Base tiles: CARTO light without labels (quiet backdrop for data)
         L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+            "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
             {
                 attribution:
                     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
@@ -88,6 +110,12 @@ const MapController = (function () {
                 subdomains: "abcd",
                 maxZoom: 19,
             }
+        ).addTo(map);
+
+        // Label layer on top (so place names appear above markers)
+        L.tileLayer(
+            "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }
         ).addTo(map);
 
         // Add zoom control in the bottom-right corner
@@ -148,7 +176,7 @@ const MapController = (function () {
 
             const marker = L.circleMarker([cityCoord.lat, cityCoord.lon], {
                 radius: radius,
-                fillColor: "#3182ce",
+                fillColor: "#8b6f47",
                 color: "#fff",
                 weight: 2,
                 opacity: 1,
@@ -169,20 +197,11 @@ const MapController = (function () {
      * Each crash gets a small circle marker colored by time period.
      */
     function buildCrashMarkers() {
-        // Color palette for time periods
-        const TIME_COLORS = {
-            "Early Morning": "#805ad5",  // Purple
-            "Morning Rush":  "#d69e2e",  // Gold
-            "Late Morning":  "#38a169",  // Green
-            "Midday":        "#3182ce",  // Blue
-            "Afternoon":     "#dd6b20",  // Orange
-            "Evening Rush":  "#e53e3e",  // Red
-            "Night":         "#2d3748",  // Dark gray
-            "Late Night":    "#553c9a",  // Deep purple
-        };
-
+        // Earth-tone color by severity (matches explore map)
         crashData.forEach((crash) => {
-            const color = TIME_COLORS[crash.time_period] || "#718096";
+            let color = "#b0a696";  // default: warm grey
+            if (crash.is_serious) color = "#8b2020";      // deep red
+            else if (crash.has_injury) color = "#c4841d";  // amber
 
             const marker = L.circleMarker([crash.lat, crash.lon], {
                 radius: 5,
@@ -198,7 +217,7 @@ const MapController = (function () {
             const hourStr = crash.hour !== null ? formatHour(crash.hour) : "Unknown";
             marker.bindPopup(
                 `<div class="crash-popup">` +
-                `<strong>${crash.crash_type}</strong><br>` +
+                `<strong>${formatCrashType(crash.crash_type)}</strong><br>` +
                 `<span class="popup-city">${formatCityName(crash.city)}</span><br>` +
                 `<span class="popup-date">${dateStr} at ${hourStr}</span><br>` +
                 `<span class="popup-type">Location: ${crash.location_type}</span>` +
@@ -228,18 +247,17 @@ const MapController = (function () {
                 .serious-marker { position: relative; }
                 .serious-dot {
                     width: 14px; height: 14px;
-                    background: #e53e3e;
-                    border: 3px solid white;
+                    background: #8b2020;
+                    border: 2px solid white;
                     border-radius: 50%;
                     position: absolute;
                     top: 50%; left: 50%;
                     transform: translate(-50%, -50%);
                     cursor: pointer;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
                 }
                 .serious-pulse {
                     width: 30px; height: 30px;
-                    background: rgba(229, 62, 62, 0.4);
+                    background: rgba(139, 32, 32, 0.3);
                     border-radius: 50%;
                     position: absolute;
                     top: 50%; left: 50%;
@@ -390,7 +408,7 @@ const MapController = (function () {
 
         content.innerHTML = `
             <div class="panel-header">
-                <h3>${incident.crash_type || "Incident"}</h3>
+                <h3>${formatCrashType(incident.crash_type) || "Incident"}</h3>
                 <p class="panel-meta">${incident.date || "Unknown date"} at ${incident.time || "Unknown time"}</p>
             </div>
 
@@ -467,6 +485,8 @@ const MapController = (function () {
         getClusterGroup,
         formatHour,
         formatCityName,
+        formatCrashType,
+        CRASH_TYPE_LABELS,
         VIEWS,
         CITY_COORDS,
     };

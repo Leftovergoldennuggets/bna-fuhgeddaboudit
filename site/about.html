@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
@@ -36,51 +36,54 @@
         <div class="page-content">
             <h1>About This Project</h1>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Self-driving cars are now a daily reality on American streets. Waymo operates a commercial robotaxi service in San Francisco, Phoenix, Los Angeles, Austin, and Atlanta &mdash; the largest autonomous vehicle deployment in the world.</p>
+
+            <p>But how safe are these cars, really? This project gathers every publicly reported crash involving a Waymo vehicle and presents the data in a way anyone can understand.</p>
 
             <h2>The Team</h2>
 
             <div class="team-grid">
                 <div class="team-card">
                     <h3>Anders Eidesvik</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                    <p><em>[Bio coming soon]</em></p>
                 </div>
                 <div class="team-card">
                     <h3>Kate Li</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p><em>[Bio coming soon]</em></p>
                 </div>
             </div>
 
             <h2>Why This Matters</h2>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Every time a Waymo vehicle is involved in a crash &mdash; no matter how minor &mdash; the company is legally required to report it to the National Highway Traffic Safety Administration. That data is public, but it is buried in government spreadsheets that are difficult to parse and full of technical jargon.</p>
 
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <p>We built this website because we believe the public deserves to see this data clearly. Autonomous vehicles are being tested on the streets where people live, work, and walk their kids to school. Residents in these cities did not sign up for a safety experiment, but they are part of one.</p>
 
-            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+            <p>Our goal is not to argue that self-driving cars are safe or unsafe. It is to show you the evidence and let you draw your own conclusions.</p>
 
             <h2>Design Principles</h2>
 
             <ul>
-                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-                <li>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
-                <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</li>
-                <li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.</li>
+                <li><strong>Transparency first.</strong> Every number on this site can be traced back to a specific public data source. Our full methodology is documented. Our code is open-source.</li>
+                <li><strong>Plain language.</strong> We translate technical crash classifications into everyday English. If your neighbor would not understand a label, we rewrite it.</li>
+                <li><strong>Let the data speak.</strong> We avoid editorializing. We present the numbers, the context, and the primary sources. You decide what they mean.</li>
+                <li><strong>Evergreen.</strong> This site updates itself. When new crash reports are published, our pipeline pulls the latest data and regenerates every chart and statistic automatically.</li>
             </ul>
 
             <h2>Data Sources</h2>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit:</p>
+            <p>This project draws on two primary public data sources:</p>
+
             <ul>
-                <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
-                <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                <li><strong><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order reports</a></strong> &mdash; The federal government requires all companies testing Level 3+ autonomous vehicles to report every crash. This dataset includes incident narratives, severity assessments, and location information.</li>
+                <li><strong><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></strong> &mdash; Waymo publishes its own curated dataset that adds crash type classifications and links each incident to the corresponding federal report.</li>
             </ul>
 
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>We merge these two sources in an automated pipeline that runs quarterly. The full technical details are on our <a href="methodology.html">methodology page</a>.</p>
 
             <h2>Contact</h2>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p>This is a Stanford COMM277T data journalism project. For questions about the data, methodology, or to report an issue, please reach out to Anders or Kate. <em>[Contact details coming soon]</em></p>
         </div>
     </section>
 

@@ -52,6 +52,19 @@ const StatRenderer = (function () {
                 }
                 return value;
 
+            case "yearmonth":
+                // Convert 202009 to "Sept 2020"
+                if (typeof value === "number") {
+                    const year = Math.floor(value / 100);
+                    const month = value % 100;
+                    const monthNames = [
+                        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"
+                    ];
+                    return monthNames[month - 1] + " " + year;
+                }
+                return String(value);
+
             default:
                 // For numbers, add commas (1123 → "1,123")
                 if (typeof value === "number" && Number.isFinite(value)) {

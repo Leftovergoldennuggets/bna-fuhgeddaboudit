@@ -487,6 +487,12 @@ def main():
         if pd.notna(row["_date"]):
             date_str = row["_date"].strftime("%Y-%m-%d")
 
+        # Severity flags for filtering
+        has_injury = bool(row.get("Is Any-Injury-Reported", False))
+        is_serious = bool(row.get("Is Suspected Serious Injury+", False))
+        crash_type = row.get("Crash Type", "Unknown")
+        is_vulnerable = crash_type in ("Pedestrian", "Cyclist", "Motorcycle")
+
         record = {
             "lat": round(float(lat), 6),
             "lon": round(float(lon), 6),
@@ -495,11 +501,14 @@ def main():
             "day_num": int(row["_day_num"]) if pd.notna(row["_day_num"]) else None,
             "time_period": row["_time_period"],
             "location_type": row["_location_type"],
-            "crash_type": row.get("Crash Type", "Unknown"),
+            "crash_type": crash_type,
             "city": row.get("Location", "Unknown"),
             "date": date_str,
             "is_weekend": bool(row["_is_weekend"]) if pd.notna(row["_is_weekend"]) else False,
             "is_estimated_location": is_estimated,
+            "has_injury": has_injury,
+            "is_serious": is_serious,
+            "is_vulnerable_road_user": is_vulnerable,
         }
         map_data.append(record)
 
