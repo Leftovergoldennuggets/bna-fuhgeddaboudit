@@ -87,7 +87,13 @@
             </ul>
 
             <h3>Step 4: Generate Map Data</h3>
-            <p>Each crash record is converted into a simplified JSON object for the Leaflet map, including coordinates, time data, crash type, and city.</p>
+            <p>Each crash record is geocoded and converted into a simplified JSON object for the Leaflet map. We use a multi-strategy geocoding approach with OpenStreetMap's Nominatim service:</p>
+            <ol>
+                <li><strong>Intersection parsing:</strong> Addresses like "7th Street &amp; Market Street" are split and geocoded as intersections.</li>
+                <li><strong>Street address lookup:</strong> Full addresses are geocoded directly.</li>
+                <li><strong>Fallback:</strong> If geocoding fails, the crash is placed at the city center and flagged as an approximate location.</li>
+            </ol>
+            <p>Results are cached locally to avoid repeated API calls. The current geocoding success rate is 92% (1,026 of 1,119 mapped crashes placed at their real street location). Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
 
             <h3>Step 5: Extract Serious Incidents</h3>
             <p>Crashes involving moderate, serious, or fatal injuries are extracted into a separate file with their full NHTSA narratives, enabling the detailed incident view on the map.</p>
@@ -95,14 +101,14 @@
             <!-- ========== LIMITATIONS ========== -->
             <h2>Limitations and Caveats</h2>
 
-            <h3>Coordinate Approximation</h3>
-            <p>NHTSA redacts latitude and longitude values from public data downloads, replacing them with "[MAY CONTAIN PERSONALLY IDENTIFIABLE INFORMATION]". As a result, we cannot plot exact crash locations.</p>
-            <p>Instead, we approximate each crash's location using the city center coordinates plus a small random offset. This means:</p>
+            <h3>Crash Locations and Geocoding</h3>
+            <p>NHTSA redacts GPS coordinates from public data, but provides street addresses for nearly all crashes in the "Location Address / Description" field. We geocode these addresses using OpenStreetMap's Nominatim service with a multi-strategy approach (intersection parsing, direct address lookup, city-bounded search).</p>
+            <p>Current accuracy: <strong>92% of crashes</strong> (1,026 of 1,119) are placed at their real street location. The remaining 8% fall back to city-center placement and are flagged as approximate. Accuracy varies by city:</p>
             <ul>
-                <li>Crash markers on the map show the <em>general area</em> (city level), not the exact intersection or street.</li>
-                <li>Cluster patterns within a city reflect the random distribution, not actual hotspot locations.</li>
-                <li>Markers flagged as "approximate location" in popups use this estimation method.</li>
+                <li>San Francisco: 98%, Los Angeles: 98%, Austin: 97%</li>
+                <li>Atlanta: 85%, Phoenix: 77% (some reports have less detailed addresses)</li>
             </ul>
+            <p>Geocode results are cached in <code>geocode_cache.json</code> to ensure reproducibility and avoid repeated API calls.</p>
 
             <h3>Reporting Thresholds</h3>
             <p>The NHTSA SGO requires reporting of any crash, but companies may interpret "crash" slightly differently. Additionally, some minor incidents (e.g., a parked car being bumped with no damage) might not be consistently reported across all companies.</p>
@@ -140,7 +146,7 @@
             <ol>
                 <li>Download the latest data from NHTSA and Waymo</li>
                 <li>Run the full processing pipeline</li>
-                <li>Regenerate all JSON files and chart images</li>
+                <li>Regenerate all JSON data files</li>
                 <li>Commit and push any changes to the repository</li>
             </ol>
 
@@ -157,7 +163,7 @@
                 <li>View the results: <code>make serve</code></li>
             </ol>
 
-            <p>The pipeline uses a fixed random seed (42) for coordinate approximation, ensuring reproducible map layouts across runs.</p>
+            <p>Geocoding results are cached in <code>geocode_cache.json</code> (committed to the repository), so map layouts are identical across runs without re-querying the geocoding service.</p>
         </div>
     </section>
 

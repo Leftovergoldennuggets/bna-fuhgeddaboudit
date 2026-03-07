@@ -50,9 +50,16 @@
                 </div>
 
                 <div class="faq-item">
+                    <div class="faq-question">What time period does this cover?</div>
+                    <div class="faq-answer">
+                        <p>The dataset covers <strong>September 2020 through September 2025</strong> — five years of Waymo crash reports. It includes 1,123 total reported incidents across five U.S. cities.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
                     <div class="faq-question">How often is this website updated?</div>
                     <div class="faq-answer">
-                        <p>The site is designed to update automatically. NHTSA data is continuously available, and Waymo updates their Safety Impact Data Hub approximately every quarter (every 3 months). Our automated pipeline can re-run whenever new data is published.</p>
+                        <p>The site is designed to update automatically every quarter. NHTSA data is continuously available, and Waymo updates their Safety Impact Data Hub approximately every three months (around March, June, September, and December). Our automated pipeline re-runs whenever new data is published.</p>
                     </div>
                 </div>
 
@@ -60,7 +67,20 @@
                     <div class="faq-question">What counts as a "crash"?</div>
                     <div class="faq-answer">
                         <p>Under NHTSA's Standing General Order, companies must report any incident involving an autonomous vehicle that results in property damage, injury, or the deployment of an airbag. This includes very minor incidents — like being bumped by another car in a parking lot — that would normally never make the news.</p>
-                        <p>This low reporting threshold means the crash numbers look high, but the vast majority of reported incidents are minor property-damage-only events.</p>
+                        <p>This low reporting threshold means the crash numbers look high, but the vast majority of reported incidents are minor property-damage-only events with no injuries.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">How serious are these crashes?</div>
+                    <div class="faq-answer">
+                        <p>The vast majority are minor — property damage only, with no injuries. Out of 1,123 reported crashes:</p>
+                        <ul>
+                            <li><strong>96</strong> had any injury reported at all</li>
+                            <li><strong>15</strong> involved moderate, serious, or fatal injuries</li>
+                            <li><strong>1</strong> involved a fatality (a secondary crash where a human-driven vehicle struck the Waymo)</li>
+                        </ul>
+                        <p>On the map, crashes are color-coded by severity: grey for no injury, amber for any injury, and red for serious incidents. You can click the red markers during the "Most Serious Incidents" section to read the full NHTSA narratives.</p>
                     </div>
                 </div>
 
@@ -75,29 +95,38 @@
                 <div class="faq-item">
                     <div class="faq-question">Are the crash locations on the map exact?</div>
                     <div class="faq-answer">
-                        <p><strong>No.</strong> NHTSA redacts exact GPS coordinates from their public downloads to protect privacy. We approximate crash locations using the city center plus a small random offset. This means the map shows the general area (city level) but not the exact intersection where a crash occurred.</p>
-                        <p>Markers flagged as "approximate location" use this estimation method.</p>
+                        <p><strong>Most are accurate to the street level.</strong> NHTSA redacts GPS coordinates but provides street addresses for nearly all crashes. We geocode these addresses using OpenStreetMap's Nominatim service, achieving a 92% success rate (1,026 out of 1,119 mapped crashes placed at their real street location).</p>
+                        <p>The remaining 8% of markers use an approximate city-center location and are flagged as "approximate location" in their popups. Accuracy varies by city — San Francisco (98%) and Los Angeles (98%) have the highest rates, while Phoenix (77%) is lower due to less detailed address descriptions in some reports.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">In which cities does Waymo operate?</div>
                     <div class="faq-answer">
-                        <p>Based on the crash data, Waymo has reported incidents in San Francisco, Phoenix, Los Angeles, Austin, Atlanta, and Mountain View. San Francisco has by far the most crashes reported, reflecting Waymo's extensive operations there.</p>
+                        <p>Based on the crash data, Waymo has reported incidents in five major cities:</p>
+                        <ul>
+                            <li><strong>San Francisco</strong> — 527 crashes (46.9%)</li>
+                            <li><strong>Phoenix</strong> — 312 crashes (27.8%)</li>
+                            <li><strong>Los Angeles</strong> — 208 crashes (18.5%)</li>
+                            <li><strong>Austin</strong> — 61 crashes (5.4%)</li>
+                            <li><strong>Atlanta</strong> — 13 crashes (1.2%)</li>
+                        </ul>
+                        <p>San Francisco has the most crashes because Waymo has operated there the longest and runs the most vehicles. A small number of crashes (2) occurred in Mountain View near Waymo's headquarters.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">What are the most common crash types?</div>
+                    <div class="faq-answer">
+                        <p>The most common crash type is <strong>rear-end collisions</strong> — where another vehicle hits the back of the Waymo. This is also the most common crash type for human drivers. Other frequent types include side-impact collisions and intersection crashes.</p>
+                        <p>Crashes involving pedestrians, cyclists, or motorcyclists are less common but receive special attention because of the higher potential for injury. You can filter by these categories in the Explore section.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">Why do most crashes happen during rush hour?</div>
                     <div class="faq-answer">
-                        <p>About 31% of crashes occur during rush hours (7-9 AM and 5-7 PM). This isn't surprising — these are the times when roads are busiest and the most vehicles (both human-driven and autonomous) are on the road. More traffic means more opportunities for collisions.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">What does "V2V F2R" mean?</div>
-                    <div class="faq-answer">
-                        <p>"V2V" stands for "Vehicle to Vehicle" — a crash involving two vehicles. "F2R" means "Front to Rear" — commonly known as a rear-end collision. So "V2V F2R" is a rear-end crash between two vehicles. This is the most common crash type in the dataset, just as it is for human-driven vehicles.</p>
+                        <p>About 31% of crashes occur during rush hours (7–9 AM and 5–7 PM). This isn't surprising — these are the times when roads are busiest and the most vehicles (both human-driven and autonomous) are on the road. More traffic means more opportunities for collisions.</p>
                     </div>
                 </div>
 
