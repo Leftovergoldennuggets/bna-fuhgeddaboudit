@@ -9,6 +9,14 @@ __pycache__/
 data/raw/
 data/processed/
 
+# Legacy directories (kept locally for reference, removed from repo)
+cleaned-data/
+figures/
+methodology-kate/
+notebooks-anders-OLD/
+webdev/
+webdev-kate/
+
 # OS files
 .DS_Store
 Thumbs.db
