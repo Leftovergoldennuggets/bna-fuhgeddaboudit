@@ -63,13 +63,13 @@ def main():
         print(f"  Script: {script}")
         print()
 
-        # Run the script as a subprocess
+        # Run the script as a subprocess (each step is its own Python process)
         result = subprocess.run(
-            [sys.executable, script_path],
-            cwd=os.path.dirname(pipeline_dir),  # Run from project root
+            [sys.executable, script_path],  # sys.executable = the same Python that's running this script
+            cwd=os.path.dirname(pipeline_dir),  # Run from project root so relative paths work
         )
 
-        # Stop if any step fails
+        # Stop if any step fails (returncode 0 = success, anything else = error)
         if result.returncode != 0:
             print()
             print(f"PIPELINE FAILED at step: {script}")
@@ -81,7 +81,7 @@ def main():
         print()
 
     # Done!
-    elapsed = time.time() - start_time
+    elapsed = time.time() - start_time  # Wall clock seconds since pipeline started
     print("=" * 60)
     print("PIPELINE COMPLETE")
     print("=" * 60)

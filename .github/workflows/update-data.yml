@@ -23,6 +23,14 @@ on:
 
   # Quarterly schedule (Waymo releases ~Dec 15, Mar 15, Jun 15, Sep 15)
   # Runs at 10:00 AM UTC on the 15th of Mar, Jun, Sep, Dec
+  # For this part we consulted Claude who recommended cron scheduling for quarterly
+  # automation. The cron syntax "0 10 15 3,6,9,12 *" has five fields:
+  # ┌─── minute (0)          = at the top of the hour
+  # │ ┌─── hour (10)         = 10 AM UTC
+  # │ │ ┌─── day of month (15) = the 15th
+  # │ │ │ ┌─── month (3,6,9,12) = March, June, September, December
+  # │ │ │ │ ┌─── day of week (*) = any day
+  # This runs the pipeline four times a year, timed to when Waymo publishes new data.
   schedule:
     - cron: "0 10 15 3,6,9,12 *"
 
@@ -32,10 +40,14 @@ jobs:
 
     steps:
       # --- Checkout the repository ---
+      # uses: actions/checkout@v4 downloads your repo code onto the GitHub runner.
+      # Every workflow needs this — otherwise the runner has an empty folder.
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # --- Set up Python ---
+      # uses: actions/setup-python@v5 installs Python on the runner.
+      # cache: "pip" saves downloaded packages between runs so it's faster next time.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -52,7 +64,9 @@ jobs:
         run: python pipeline/run_pipeline.py
 
       # --- Check if anything changed ---
-      # If the new data is identical to what's already committed, skip the commit
+      # If the new data is identical to what's already committed, skip the commit.
+      # The >> "$GITHUB_OUTPUT" syntax writes a variable that later steps can read.
+      # It's how one step passes information to another step (like "did data change?").
       - name: Check for data changes
         id: check-changes
         run: |
@@ -66,6 +80,8 @@ jobs:
           fi
 
       # --- Commit and push updated files ---
+      # if: this step only runs when the condition is true (data actually changed).
+      # Without this, we'd create empty commits every quarter when nothing changed.
       - name: Commit updated data
         if: steps.check-changes.outputs.changed == 'true'
         run: |

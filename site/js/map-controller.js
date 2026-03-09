@@ -18,16 +18,19 @@
 // ============================================
 // MapController Module
 // ============================================
+
+// IIFE module pattern — keeps all variables private, only exposes what we return at the bottom.
+// See scrollytelling.js for a full explanation of this pattern.
 const MapController = (function () {
 
     // --- Map View Presets ---
-    // These define the center and zoom for each scrollytelling step
+    // These define the center [latitude, longitude] and zoom level for each scrollytelling step
     const VIEWS = {
-        "intro":           { center: [39.8283, -98.5795], zoom: 4 },
-        "us-overview":     { center: [37.0902, -95.7129], zoom: 4 },
-        "zoom-california": { center: [36.7783, -119.4179], zoom: 6 },
-        "sf-heatmap":      { center: [37.7749, -122.4194], zoom: 12 },
-        "sf-serious":      { center: [37.7749, -122.4194], zoom: 12 },
+        "intro":           { center: [39.8283, -98.5795], zoom: 4 },   // Full US view
+        "us-overview":     { center: [37.0902, -95.7129], zoom: 4 },   // Full US view (slightly different center)
+        "zoom-california": { center: [36.7783, -119.4179], zoom: 6 },  // California zoom
+        "sf-heatmap":      { center: [37.7749, -122.4194], zoom: 12 }, // San Francisco street level
+        "sf-serious":      { center: [37.7749, -122.4194], zoom: 12 }, // Same SF view, different markers
     };
 
     // --- City Coordinates (for overview markers) ---
@@ -59,18 +62,20 @@ const MapController = (function () {
 
     /** Convert a raw crash type code to a human-readable label */
     function formatCrashType(code) {
+        // Look up the code in our labels; if not found, just return the original code
         return CRASH_TYPE_LABELS[code] || code;
     }
 
     // --- Module State ---
-    let map = null;                // Leaflet map instance
-    let cityMarkersLayer = null;   // Layer group for city overview markers
-    let clusterGroup = null;       // MarkerCluster group for all crash dots
-    let seriousMarkersLayer = null; // Layer group for serious incident markers
-    let currentView = "intro";     // Track current scrollytelling step
-    let crashData = [];            // Raw crash data from JSON
-    let incidentData = null;       // Serious incidents from JSON
-    let statsData = null;          // Site stats from JSON
+    // These variables are private to this module (hidden inside the IIFE)
+    let map = null;                // The Leaflet map instance
+    let cityMarkersLayer = null;   // Layer group for city overview circle markers
+    let clusterGroup = null;       // MarkerCluster group that groups nearby crash dots
+    let seriousMarkersLayer = null; // Layer group for serious incident red dot markers
+    let currentView = "intro";     // Track which scrollytelling step we're on
+    let crashData = [];            // All crash records from crash_data.json
+    let incidentData = null;       // Serious incidents from serious_incidents.json
+    let statsData = null;          // Site stats from site-data.json
 
     // ============================================
     // Initialize the map
@@ -85,72 +90,85 @@ const MapController = (function () {
      * @param {Object} stats    — site-data.json
      */
     function init(crashes, incidents, stats) {
+        // Store the data so other functions in this module can use it
         crashData = crashes;
         incidentData = incidents;
         statsData = stats;
 
-        // Create the map in the #main-map container
+        // L.map() creates a new Leaflet map inside the HTML element with id="main-map"
         map = L.map("main-map", {
-            center: VIEWS.intro.center,
-            zoom: VIEWS.intro.zoom,
-            zoomControl: false,           // We'll add custom zoom control
-            scrollWheelZoom: false,        // Disable scroll zoom (would conflict with scrollytelling)
-            doubleClickZoom: false,
-            dragging: true,
-            attributionControl: true,
+            center: VIEWS.intro.center,       // Starting center point [lat, lon]
+            zoom: VIEWS.intro.zoom,           // Starting zoom level
+            zoomControl: false,               // Hide default zoom buttons (we add custom ones below)
+            scrollWheelZoom: false,           // Disable scroll zoom (would conflict with scrollytelling)
+            doubleClickZoom: false,           // Disable double-click zoom
+            dragging: true,                   // Allow click-and-drag to pan
+            attributionControl: true,         // Show the map credits in the corner
         });
 
-        // Base tiles: CARTO light without labels (quiet backdrop for data)
+        // L.tileLayer() adds the map background images (called "tiles")
+        // CARTO light without labels gives a clean, quiet backdrop for our data dots
         L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
             {
                 attribution:
                     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
                     '&copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: "abcd",
-                maxZoom: 19,
+                subdomains: "abcd",  // Load tiles from a/b/c/d subdomains for speed
+                maxZoom: 19,         // Maximum zoom level allowed
             }
-        ).addTo(map);
+        ).addTo(map);  // .addTo(map) adds this tile layer to the map
 
-        // Label layer on top (so place names appear above markers)
+        // Second tile layer: just the city/street labels, drawn on top of our markers
         L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }
+            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }  // "shadowPane" puts labels above markers
         ).addTo(map);
 
-        // Add zoom control in the bottom-right corner
+        // Add zoom +/- buttons in the bottom-right corner
         L.control.zoom({ position: "bottomright" }).addTo(map);
 
-        // Create layer groups (empty for now — filled as scrollytelling progresses)
-        cityMarkersLayer = L.layerGroup().addTo(map);
+        // L.layerGroup() creates an empty container for markers — we add markers to it later
+        cityMarkersLayer = L.layerGroup().addTo(map);  // .addTo(map) makes it visible right away
+
+        // For this part we consulted Claude who recommended the Leaflet MarkerCluster plugin
+        // for handling 1,000+ crash markers on the map. Without clustering, plotting every
+        // marker individually would make the map unreadable (a mess of overlapping dots) and
+        // slow to render. MarkerCluster automatically groups nearby markers into numbered
+        // circles that show how many crashes are in that area. As you zoom in, clusters
+        // split apart into smaller groups and eventually into individual markers. The
+        // `maxClusterRadius` controls how close markers need to be to get grouped together.
         clusterGroup = L.markerClusterGroup({
-            maxClusterRadius: 50,
-            spiderfyOnMaxZoom: true,
-            showCoverageOnHover: false,
+            maxClusterRadius: 50,          // Markers within 50px get clustered together
+            spiderfyOnMaxZoom: true,       // At max zoom, spread out overlapping markers
+            showCoverageOnHover: false,    // Don't show cluster boundary on hover
+            // Custom function to style each cluster bubble
             iconCreateFunction: function (cluster) {
+                // cluster.getChildCount() = how many markers are in this cluster
                 const count = cluster.getChildCount();
+                // Choose a size class based on how many markers
                 let size = "small";
                 if (count > 50) size = "large";
                 else if (count > 20) size = "medium";
+                // L.divIcon() creates a marker from an HTML div (instead of an image)
                 return L.divIcon({
-                    html: "<div><span>" + count + "</span></div>",
-                    className: "marker-cluster marker-cluster-" + size,
-                    iconSize: L.point(40, 40),
+                    html: "<div><span>" + count + "</span></div>",  // Show the count number
+                    className: "marker-cluster marker-cluster-" + size,  // CSS class for styling
+                    iconSize: L.point(40, 40),  // Size of the cluster bubble in pixels
                 });
             },
         });
+        // Note: clusterGroup is NOT added to the map yet — it appears during the "sf-heatmap" step
+
+        // Empty layer group for serious incident markers (added during "sf-serious" step)
         seriousMarkersLayer = L.layerGroup();
 
-        // Build city overview markers
-        buildCityMarkers();
+        // Build all three types of markers
+        buildCityMarkers();      // Big circles showing crash count per city
+        buildCrashMarkers();     // Individual crash dot markers (in clusters)
+        buildSeriousMarkers();   // Red dots for serious incidents
 
-        // Build crash cluster markers (not added to map yet)
-        buildCrashMarkers();
-
-        // Build serious incident markers (not added to map yet)
-        buildSeriousMarkers();
-
-        // Set up crash detail panel close button
+        // Set up the crash detail side panel (close button, Escape key)
         initCrashPanel();
 
         console.log("[MapController] Map initialized");
@@ -165,44 +183,54 @@ const MapController = (function () {
      * These are shown during the US overview step.
      */
     function buildCityMarkers() {
+        // Exit early if stats data isn't available
         if (!statsData || !statsData.city_breakdown) return;
 
+        // Object.entries() converts the city_breakdown object into [cityName, info] pairs
         Object.entries(statsData.city_breakdown).forEach(([cityName, info]) => {
+            // Look up this city's lat/lon coordinates
             const cityCoord = CITY_COORDS[info.code];
-            if (!cityCoord) return;
+            if (!cityCoord) return;  // Skip if we don't have coordinates for this city
 
-            // Size the circle based on crash count
+            // Size the circle based on crash count (more crashes = bigger circle)
+            // Math.sqrt() prevents huge cities from being TOO big
             const radius = Math.max(8, Math.sqrt(info.count) * 1.5);
 
+            // L.circleMarker() creates a circle on the map at the given [lat, lon]
             const marker = L.circleMarker([cityCoord.lat, cityCoord.lon], {
-                radius: radius,
-                fillColor: "#8b6f47",
-                color: "#fff",
-                weight: 2,
-                opacity: 1,
-                fillOpacity: 0.8,
+                radius: radius,          // Circle size in pixels
+                fillColor: "#8b6f47",    // Earth-tone fill color
+                color: "#fff",           // White border
+                weight: 2,              // Border thickness
+                opacity: 1,             // Border opacity (1 = fully visible)
+                fillOpacity: 0.8,       // Fill opacity (slightly transparent)
             });
 
+            // .bindTooltip() attaches a tooltip that appears on hover
+            // Template literal: `text ${variable}` inserts the variable's value into the string
             marker.bindTooltip(
                 `<strong>${cityName}</strong><br>${info.count} crashes (${info.percentage}%)`,
-                { direction: "top", className: "city-tooltip" }
+                { direction: "top", className: "city-tooltip" }  // Tooltip appears above the marker
             );
 
+            // .addLayer() adds this marker to the cityMarkersLayer group
             cityMarkersLayer.addLayer(marker);
         });
     }
 
     /**
      * Create individual crash dot markers and add them to the cluster group.
-     * Each crash gets a small circle marker colored by time period.
+     * Each crash gets a small circle marker colored by severity.
      */
     function buildCrashMarkers() {
-        // Earth-tone color by severity (matches explore map)
+        // Loop through every crash record
         crashData.forEach((crash) => {
+            // Choose color by severity: red for serious, amber for injury, grey for default
             let color = "#b0a696";  // default: warm grey
-            if (crash.is_serious) color = "#8b2020";      // deep red
-            else if (crash.has_injury) color = "#c4841d";  // amber
+            if (crash.is_serious) color = "#8b2020";      // deep red for serious
+            else if (crash.has_injury) color = "#c4841d";  // amber for any injury
 
+            // L.circleMarker() — similar to buildCityMarkers but smaller dots
             const marker = L.circleMarker([crash.lat, crash.lon], {
                 radius: 5,
                 fillColor: color,
@@ -212,22 +240,26 @@ const MapController = (function () {
                 fillOpacity: 0.7,
             });
 
-            // Popup with crash details
+            // Popup with crash details — shown when the user clicks the marker
             const dateStr = crash.date || "Unknown date";
             const hourStr = crash.hour !== null ? formatHour(crash.hour) : "Unknown";
+            // .bindPopup() attaches a popup that appears on click
+            // Template literals (`...${variable}...`) let us embed variables directly in strings
             marker.bindPopup(
                 `<div class="crash-popup">` +
                 `<strong>${formatCrashType(crash.crash_type)}</strong><br>` +
                 `<span class="popup-city">${formatCityName(crash.city)}</span><br>` +
                 `<span class="popup-date">${dateStr} at ${hourStr}</span><br>` +
                 `<span class="popup-type">Location: ${crash.location_type}</span>` +
+                // Ternary operator: condition ? valueIfTrue : valueIfFalse
                 (crash.is_estimated_location
                     ? `<br><em class="popup-estimated">Approximate location</em>`
                     : "") +
                 `</div>`,
-                { maxWidth: 250 }
+                { maxWidth: 250 }  // Limit popup width to 250 pixels
             );
 
+            // Add this marker to the cluster group (not directly to the map)
             clusterGroup.addLayer(marker);
         });
     }
@@ -237,20 +269,25 @@ const MapController = (function () {
      * These are shown during the "sf-serious" scrollytelling step.
      */
     function buildSeriousMarkers() {
+        // Exit early if incident data isn't available
         if (!incidentData || !incidentData.all_incidents) return;
 
-        // Use SF-only incidents for the scrollytelling step (zoomed into SF)
+        // Use SF-only incidents for the scrollytelling step (we're zoomed into SF)
         const incidents = incidentData.sf_incidents || incidentData.all_incidents;
         incidents.forEach((incident) => {
+            // L.divIcon() creates a custom marker from HTML (instead of an image file)
             const icon = L.divIcon({
-                className: "serious-marker",
+                className: "serious-marker",  // CSS class for additional styling
                 html: '<div style="width:14px;height:14px;background:#8b2020;border:2px solid white;border-radius:50%;cursor:pointer;"></div>',
-                iconSize: [14, 14],
-                iconAnchor: [7, 7],
+                iconSize: [14, 14],     // Total size of the icon in pixels [width, height]
+                iconAnchor: [7, 7],     // The point of the icon that sits on the map coordinate (center)
             });
 
+            // L.marker() creates a standard marker (not a circle) at the given [lat, lon]
             const marker = L.marker([incident.lat, incident.lon], { icon: icon });
+            // When clicked, show the crash detail panel with this incident's info
             marker.on("click", () => showCrashPanel(incident));
+            // Add to the serious markers layer group
             seriousMarkersLayer.addLayer(marker);
         });
     }
@@ -263,32 +300,35 @@ const MapController = (function () {
      * Transition the map to a named view.
      * Called by scrollytelling.js when a new step becomes active.
      *
-     * @param {string} stepId — One of the keys in VIEWS
+     * @param {string} stepId — One of the keys in VIEWS (e.g., "sf-heatmap")
      */
     function goToStep(stepId) {
-        if (!map) return;
+        if (!map) return;           // Safety check: map must exist
         const view = VIEWS[stepId];
-        if (!view) return;
+        if (!view) return;          // Ignore unknown steps
 
+        // Remember which step we're on
         currentView = stepId;
 
-        // Animate the map to the new position
+        // .flyTo() smoothly animates the map to a new center and zoom level
         map.flyTo(view.center, view.zoom, { duration: 1.5, easeLinearity: 0.25 });
 
-        // Toggle layers based on the current step
+        // Show/hide the right marker layers for this step
         updateLayers(stepId);
 
-        // Toggle the dark overlay on the left side of the map
+        // Toggle the dark overlay on the left side of the map (darkens behind text)
         const overlay = document.getElementById("map-overlay");
         if (overlay) {
             if (stepId !== "intro") {
+                // .classList.add() adds a CSS class to the element
                 overlay.classList.add("active");
             } else {
+                // .classList.remove() removes a CSS class from the element
                 overlay.classList.remove("active");
             }
         }
 
-        // Hide scroll hint after first step
+        // Hide the "scroll down" hint arrow after the user has scrolled past intro
         const hint = document.getElementById("scroll-hint");
         if (hint && stepId !== "intro") {
             hint.classList.add("hidden");
@@ -297,19 +337,23 @@ const MapController = (function () {
 
     /**
      * Show/hide marker layers depending on the scrollytelling step.
+     * switch/case checks stepId against multiple options and runs the matching block.
      */
     function updateLayers(stepId) {
+        // switch checks the value of stepId against each "case"
         switch (stepId) {
             case "intro":
             case "us-overview":
                 // Show city circles, hide crash dots and serious markers
+                // map.hasLayer() checks if a layer is currently on the map
                 if (!map.hasLayer(cityMarkersLayer)) map.addLayer(cityMarkersLayer);
+                // .removeLayer() takes a layer off the map (hides it)
                 if (map.hasLayer(clusterGroup)) map.removeLayer(clusterGroup);
                 if (map.hasLayer(seriousMarkersLayer)) map.removeLayer(seriousMarkersLayer);
-                break;
+                break;  // "break" exits the switch — without it, the next case would also run
 
             case "zoom-california":
-                // Transition: show city markers, start removing clusters
+                // Similar to above — show city markers, hide clusters and serious
                 if (!map.hasLayer(cityMarkersLayer)) map.addLayer(cityMarkersLayer);
                 if (map.hasLayer(clusterGroup)) map.removeLayer(clusterGroup);
                 if (map.hasLayer(seriousMarkersLayer)) map.removeLayer(seriousMarkersLayer);
@@ -318,6 +362,7 @@ const MapController = (function () {
             case "sf-heatmap":
                 // Show crash clusters, hide city overview markers
                 if (map.hasLayer(cityMarkersLayer)) map.removeLayer(cityMarkersLayer);
+                // .addLayer() puts a layer on the map (makes it visible)
                 if (!map.hasLayer(clusterGroup)) map.addLayer(clusterGroup);
                 if (map.hasLayer(seriousMarkersLayer)) map.removeLayer(seriousMarkersLayer);
                 break;
@@ -339,18 +384,21 @@ const MapController = (function () {
      * Set up click handlers for the crash detail panel close button.
      */
     function initCrashPanel() {
+        // Find the panel and close button elements
         const panel = document.getElementById("crash-panel");
         const closeBtn = document.getElementById("panel-close");
 
         if (closeBtn) {
+            // When the close button is clicked, hide the panel
             closeBtn.addEventListener("click", () => {
-                panel.hidden = true;
-                panel.classList.remove("active");
+                panel.hidden = true;                    // HTML "hidden" attribute hides the element
+                panel.classList.remove("active");       // Also remove the "active" CSS class
             });
         }
 
-        // Close on Escape key
+        // Close the panel when the Escape key is pressed
         document.addEventListener("keydown", (e) => {
+            // e.key tells us which key was pressed
             if (e.key === "Escape" && panel) {
                 panel.hidden = true;
                 panel.classList.remove("active");
@@ -368,13 +416,17 @@ const MapController = (function () {
         const content = document.getElementById("panel-content");
         if (!panel || !content) return;
 
-        // Determine severity badge color
+        // Determine severity badge color based on the severity text
         let severityClass = "severity-low";
+        // .toLowerCase() converts to lowercase so we can compare case-insensitively
         const sev = (incident.severity || "").toLowerCase();
+        // .includes() checks if a string contains a substring
         if (sev.includes("fatal")) severityClass = "severity-high";
         else if (sev.includes("serious")) severityClass = "severity-high";
         else if (sev.includes("moderate")) severityClass = "severity-medium";
 
+        // .innerHTML sets the HTML content inside the element
+        // Template literal with backticks allows multi-line strings and ${variable} insertions
         content.innerHTML = `
             <div class="panel-header">
                 <h3>${formatCrashType(incident.crash_type) || "Incident"}</h3>
@@ -408,10 +460,11 @@ const MapController = (function () {
             ` : ""}
         `;
 
-        panel.hidden = false;
-        panel.classList.add("active");
+        // Show the panel
+        panel.hidden = false;                // Remove the "hidden" attribute to make it visible
+        panel.classList.add("active");       // Add CSS class for slide-in animation
 
-        // Center map on the incident
+        // .flyTo() animates the map to center on this incident's location
         if (map && incident.lat && incident.lon) {
             map.flyTo([incident.lat, incident.lon], 15, { duration: 0.8 });
         }
@@ -423,16 +476,16 @@ const MapController = (function () {
 
     /** Convert 24-hour number to display string (e.g., 17 → "5:00 PM") */
     function formatHour(hour) {
-        if (hour === 0) return "12:00 AM";
-        if (hour === 12) return "12:00 PM";
-        if (hour < 12) return hour + ":00 AM";
-        return (hour - 12) + ":00 PM";
+        if (hour === 0) return "12:00 AM";   // Midnight special case
+        if (hour === 12) return "12:00 PM";  // Noon special case
+        if (hour < 12) return hour + ":00 AM";        // Morning hours
+        return (hour - 12) + ":00 PM";                // Afternoon/evening hours
     }
 
     /** Convert city code to display name (e.g., "SAN_FRANCISCO" → "San Francisco") */
     function formatCityName(code) {
-        const city = CITY_COORDS[code];
-        return city ? city.name : code;
+        const city = CITY_COORDS[code];        // Look up the city by its code
+        return city ? city.name : code;        // Return the name, or the raw code if not found
     }
 
     /** Get the Leaflet map instance (used by explore.js) */
@@ -445,7 +498,7 @@ const MapController = (function () {
         return clusterGroup;
     }
 
-    // Public API
+    // Public API — these are the only things accessible from outside the module
     return {
         init,
         goToStep,
@@ -459,4 +512,6 @@ const MapController = (function () {
         VIEWS,
         CITY_COORDS,
     };
+
+// The closing })() immediately runs the function and stores the returned object in MapController
 })();

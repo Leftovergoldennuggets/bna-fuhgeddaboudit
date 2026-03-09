@@ -113,7 +113,7 @@ def clean_coordinate(val):
         return None
     try:
         val_str = str(val).strip()
-        if "PERSONALLY" in val_str.upper() or val_str == "" or "[" in val_str:
+        if "PERSONALLY" in val_str.upper() or val_str == "" or "[" in val_str:  # NHTSA redacts coords as "[PERSONALLY IDENTIFIABLE]"
             return None
         return float(val_str)
     except (ValueError, TypeError):
@@ -218,6 +218,13 @@ def split_intersection(address):
     Returns (street_a, street_b) or (address, None) if not an intersection.
     """
     # Try splitting on "near", "at", "and", "&"
+    # For this part we consulted Claude who recommended using a regular expression (regex)
+    # to split intersection addresses. The pattern r'\s*[&/]\s*' means: match zero or more
+    # whitespace characters (\s*), then either an ampersand & or forward slash / (the [&/]
+    # character class), then zero or more whitespace again. The r prefix makes it a "raw
+    # string" so backslashes are treated literally (not as escape characters). This handles
+    # addresses like "Market St & 7th St" or "Market St / 7th St" with any amount of
+    # spacing around the separator.
     for separator in [r"\s+near\s+", r"\s+at\s+", r"\s+and\s+", r"\s*&\s*"]:
         parts = re.split(separator, address, maxsplit=1, flags=re.IGNORECASE)
         if len(parts) == 2 and parts[0].strip() and parts[1].strip():
@@ -232,6 +239,16 @@ def split_intersection(address):
     return address, None
 
 
+# For this part we consulted Claude who recommended a multi-strategy geocoding approach
+# with persistent caching. Geocoding (converting street addresses to latitude/longitude
+# coordinates) often fails because addresses in crash reports are messy and inconsistent.
+# Instead of giving up after one attempt, this function tries multiple strategies in order:
+# (1) parse as an intersection ("A St & B St"), (2) try the full address directly,
+# (3) search within the city bounds as a fallback. If all strategies fail, the marker
+# is placed at the city center and flagged as approximate. Results are saved to a JSON
+# cache file so that re-running the pipeline doesn't hit the geocoding API again — this
+# is important because Nominatim (OpenStreetMap's free geocoder) has a rate limit of
+# 1 request per second.
 def build_geocode_queries(address, city_code):
     """
     Build MULTIPLE geocoding queries to try for a single address.
@@ -291,11 +308,11 @@ def try_geocode(geocoder, queries, city_code):
     for query in queries:
         try:
             result = geocoder.geocode(query)
-            time.sleep(1.0)  # Rate limit: 1 request/second (Nominatim policy)
+            time.sleep(1.0)  # Rate limit: max 1 request/second (Nominatim usage policy)
 
             if result:
                 lat, lon = result.latitude, result.longitude
-                # Sanity check: result must be near the expected city
+                # Sanity check: result must be within ~30 miles of the expected city
                 if abs(lat - expected_lat) < 0.5 and abs(lon - expected_lon) < 0.5:
                     return {"lat": round(lat, 6), "lon": round(lon, 6)}
                 # If too far away, try the next query
@@ -316,10 +333,11 @@ def geocode_addresses(df, cache):
 
     Returns the updated cache dict.
     """
-    # Set up the geocoder with a descriptive user agent (required by Nominatim)
+    # Set up the geocoder with a descriptive user agent (required by Nominatim TOS)
+    # Nominatim is OpenStreetMap's free geocoding service — no API key needed
     geocoder = Nominatim(
         user_agent="waymo-crash-analysis-stanford-comm277t",
-        timeout=10,
+        timeout=10,  # seconds to wait before giving up on a single request
     )
 
     # Build list of unique addresses that need geocoding
@@ -336,7 +354,8 @@ def geocode_addresses(df, cache):
             continue
         seen_keys.add(cache_key)
 
-        # Skip only SUCCESSFUL cache hits — retry previously failed ones (null)
+        # Skip only SUCCESSFUL cache hits — retry previously failed ones (null/None)
+        # A None value in the cache means "we tried and failed" — worth retrying with new strategies
         cached = cache.get(cache_key)
         if cached is not None:
             continue
@@ -442,7 +461,7 @@ def main():
         print(f"  Cache updated: {new_entries} new entries (total: {len(cache)})")
     print()
 
-    # Use a fixed random seed for reproducible fallback jitter
+    # Use a fixed random seed so the same addresses always get the same fallback positions
     rng = np.random.default_rng(seed=42)
 
     # Build the JSON array
@@ -473,10 +492,17 @@ def main():
                 coords_geocoded += 1
             else:
                 # Priority 3: Fall back to city center with random jitter
+                # For this part we consulted Claude who recommended adding random jitter (tiny random
+                # offsets) to markers that fall back to the city center location. Without jitter, all
+                # failed-geocoding markers in the same city would stack on the exact same pixel, making
+                # it look like there's only one crash when there might be dozens. np.random.uniform
+                # generates a random number in a range — here roughly ±0.01 degrees, which is about
+                # ±0.7 miles. The random seed (np.random.seed) ensures the same "random" offsets are
+                # generated every time the pipeline runs, so the map looks identical across runs.
                 if city_code and city_code in CITIES:
                     city_info = CITIES[city_code]
-                    lat = city_info["lat"] + rng.uniform(-0.02, 0.02)
-                    lon = city_info["lon"] + rng.uniform(-0.02, 0.02)
+                    lat = city_info["lat"] + rng.uniform(-0.02, 0.02)  # ~1.4 miles random offset
+                    lon = city_info["lon"] + rng.uniform(-0.02, 0.02)  # Spreads dots around city center
                     is_estimated = True
                     coords_estimated += 1
                 else:
@@ -488,10 +514,27 @@ def main():
             date_str = row["_date"].strftime("%Y-%m-%d")
 
         # Severity flags for filtering
-        has_injury = bool(row.get("Is Any-Injury-Reported", False))
-        is_serious = bool(row.get("Is Suspected Serious Injury+", False))
+        has_injury = bool(row.get("Is Any-Injury-Reported", False))  # From Waymo Hub boolean column
         crash_type = row.get("Crash Type", "Unknown")
-        is_vulnerable = crash_type in ("Pedestrian", "Cyclist", "Motorcycle")
+        is_vulnerable = crash_type in ("Pedestrian", "Cyclist", "Motorcycle")  # Vulnerable road users (VRU)
+
+        # Severity level from NHTSA "Highest Injury Severity Alleged" column.
+        # This matches the definition used in 05_generate_incidents.py and the
+        # scrollytelling section (moderate + serious + fatal = 15 incidents).
+        severity_raw = str(row.get("Highest Injury Severity Alleged", "")).lower()
+        if "fatal" in severity_raw:
+            severity_level = "fatal"
+        elif "serious" in severity_raw:
+            severity_level = "serious"
+        elif "moderate" in severity_raw:
+            severity_level = "moderate"
+        elif has_injury:
+            severity_level = "minor"
+        else:
+            severity_level = "none"
+
+        # is_serious = moderate, serious, or fatal (the "moderate_plus" group)
+        is_serious = severity_level in ("moderate", "serious", "fatal")
 
         record = {
             "lat": round(float(lat), 6),
@@ -508,6 +551,7 @@ def main():
             "is_estimated_location": is_estimated,
             "has_injury": has_injury,
             "is_serious": is_serious,
+            "severity_level": severity_level,
             "is_vulnerable_road_user": is_vulnerable,
         }
         map_data.append(record)
@@ -522,7 +566,7 @@ def main():
     print("Saving crash_data.json...")
     os.makedirs(os.path.dirname(WEB_CRASH_DATA), exist_ok=True)
     with open(WEB_CRASH_DATA, "w") as f:
-        json.dump(map_data, f)
+        json.dump(map_data, f)  # No indent — keeps file smaller (~400 KB vs ~1.5 MB)
 
     size_kb = os.path.getsize(WEB_CRASH_DATA) / 1024
     print(f"  Saved: {WEB_CRASH_DATA} ({size_kb:.0f} KB)")

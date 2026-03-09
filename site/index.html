@@ -1,19 +1,24 @@
 <!DOCTYPE html>
+<!-- lang="en" tells browsers and screen readers this page is in English -->
 <html lang="en">
 <head>
+    <!-- charset="UTF-8" means the page can display special characters like em-dashes and accents -->
     <meta charset="UTF-8">
+    <!-- This makes the page scale properly on phones instead of showing a tiny desktop version -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Every Waymo Crash, Mapped | Autonomous Vehicle Crash Analysis</title>
 
     <!-- Fonts -->
+    <!-- "preconnect" tells the browser to start connecting to Google Fonts early, so fonts load faster -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- CDN link: loads fonts from Google's servers instead of our own (faster, cached across sites) -->
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Leaflet (mapping library) -->
+    <!-- CDN link: Leaflet is an open-source mapping library (like Google Maps but free) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <!-- Leaflet MarkerCluster (groups nearby markers) -->
+    <!-- CDN link: MarkerCluster plugin groups nearby map markers into numbered circles -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
@@ -34,13 +39,16 @@
                 <li><a href="methodology.html">Methodology</a></li>
                 <li><a href="faq.html">FAQ</a></li>
             </ul>
+            <!-- aria-label="Toggle navigation" is for screen readers (accessibility) —
+                 it tells blind users what this button does, since it has no visible text -->
             <button class="nav-toggle" aria-label="Toggle navigation">
+                <!-- These 3 spans become the 3 horizontal lines of the hamburger menu icon -->
                 <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
 
-    <!-- Reading progress bar -->
+    <!-- Reading progress bar — the thin line at the top that fills as you scroll down -->
     <div class="progress-bar">
         <div class="progress-fill" id="progress-fill"></div>
     </div>
@@ -70,7 +78,9 @@
 
         <!-- Scrolly text steps that trigger map transitions -->
         <div class="scrolly-steps">
-            <!-- Step 1: Hero introduction (visible immediately) -->
+            <!-- data-step="intro" tells our scrollytelling JS which map view to show.
+                 When this step scrolls into view, the JS reads data-step and
+                 flies the map to the matching location/zoom level. -->
             <div class="scrolly-step is-active" data-step="intro">
                 <div class="step-content step-hero">
                     <span class="step-tag">Autonomous Vehicles</span>
@@ -78,18 +88,25 @@
                     <p>The federal government requires companies operating self-driving cars to report crashes that result in injury, airbag deployment, or significant property damage. This is every reported Waymo crash on record.</p>
                     <p class="step-byline">By Anders Eidesvik and Kate Li</p>
                     <div class="step-meta">
+                        <!-- data-stat="meta.date_range_start" tells JS to look up this value
+                             in site-data.json and insert it here. The "--" is a placeholder
+                             shown before the data loads.
+                             data-format="yearmonth" tells JS to format the date nicely (e.g. "Sep 2020"). -->
                         <span>Covering <span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></span>
+                        <!-- data-format="date" formats as a full date like "Feb 23, 2026" -->
                         <span>Updated <span data-stat="meta.generated_at" data-format="date">--</span></span>
                     </div>
                 </div>
             </div>
 
-            <!-- Step 2: US Overview -->
+            <!-- data-step="us-overview" — similar to above: triggers the US-wide map view -->
             <div class="scrolly-step" data-step="us-overview">
                 <div class="step-content">
                     <h2>The National Picture</h2>
+                    <!-- data-stat works the same as above — JS fills in the number from site-data.json -->
                     <p>Waymo operates autonomous vehicles in <strong><span data-stat="overview.cities_count">--</span> major metropolitan areas</strong> across the United States.</p>
                     <p>Through the NHTSA Standing General Order, <strong><span data-stat="overview.total_crashes">--</span> crashes</strong> have been reported across these cities — everything from freeway collisions to parking lot fender-benders.</p>
+                    <!-- data-format="millions" formats big numbers like "56.7 million" -->
                     <p>Over the same period, Waymo has driven more than <strong><span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span></strong> rider-only miles.</p>
                 </div>
             </div>
@@ -134,18 +151,22 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
+                    <!-- data-animate="true" makes the number count up from 0 when it scrolls into view -->
                     <div class="stat-number" data-stat="overview.total_crashes" data-animate="true">--</div>
                     <div class="stat-label">Total Crashes Analyzed</div>
                 </div>
                 <div class="stat-card">
+                    <!-- data-animate works the same as above -->
                     <div class="stat-number" data-stat="overview.cities_count" data-animate="true">--</div>
                     <div class="stat-label">Cities</div>
                 </div>
                 <div class="stat-card">
+                    <!-- data-suffix="%" appends a percent sign after the number -->
                     <div class="stat-number" data-stat="severity.injury_reported.percentage" data-animate="true" data-suffix="%">--</div>
                     <div class="stat-label">Resulted in Any Injury</div>
                 </div>
                 <div class="stat-card">
+                    <!-- Same pattern: data-stat + data-animate + data-suffix -->
                     <div class="stat-number" data-stat="severity.police_reported.percentage" data-animate="true" data-suffix="%">--</div>
                     <div class="stat-label">Involved Police Response</div>
                 </div>
@@ -154,6 +175,9 @@
             <!-- Waymo safety context from published research -->
             <div class="safety-context">
                 <h3>How Does This Compare?</h3>
+                <!-- target="_blank" opens the link in a new tab.
+                     rel="noopener" is a security measure — it prevents the new tab
+                     from being able to access or control this page via JavaScript. -->
                 <p>Waymo publishes crash rate comparisons on its <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>, applying a <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed methodology</a> (Kusano et al., 2025) to data covering <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> rider-only miles. These figures come from Waymo's own analysis. While the methodology has been peer-reviewed and adheres to industry best practices (the RAVE checklist), the comparisons are made against human driver benchmarks that may not perfectly match Waymo's specific operating conditions.</p>
                 <div class="context-stats">
                     <div class="context-stat">
@@ -190,6 +214,8 @@
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Waymo Vehicle Speed at Time of Crash</h3>
+                    <!-- <canvas> is an HTML element that Chart.js draws charts onto.
+                         The id="speed-chart" lets our JS find this element and render the chart here. -->
                     <canvas id="speed-chart"></canvas>
                     <p class="chart-note">Based on <span data-stat="crash_circumstances.speed_stats.total_with_speed_data">--</span> crashes with speed data. Median speed: <span data-stat="crash_circumstances.speed_stats.median_speed_mph">--</span> mph. Mean: <span data-stat="crash_circumstances.speed_stats.mean_speed_mph">--</span> mph.</p>
                 </div>
@@ -200,6 +226,7 @@
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Crashes by Type</h3>
+                    <!-- Another canvas for Chart.js — same idea as above -->
                     <canvas id="crash-type-chart"></canvas>
                 </div>
             </div>
@@ -236,7 +263,7 @@
                 </div>
             </div>
 
-            <!-- Interactive charts (replaced static PNG) -->
+            <!-- Interactive charts -->
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Crashes by Hour of Day</h3>
@@ -264,7 +291,7 @@
                 <!-- Populated by JavaScript from site-data.json city_breakdown -->
             </div>
 
-            <!-- Interactive chart (replaced static PNG) -->
+            <!-- Interactive chart -->
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Crashes by Location Type</h3>
@@ -379,14 +406,25 @@
     </footer>
 
     <!-- ================================================================ -->
-    <!-- SCRIPTS                                                         -->
+    <!-- SCRIPTS — loaded at the bottom so the HTML is ready before JS runs -->
     <!-- ================================================================ -->
-    <!-- External libraries -->
+
+    <!-- External libraries (CDN links — loaded from other servers, not ours) -->
+    <!-- Leaflet: the mapping library that draws our interactive maps -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- MarkerCluster: groups nearby markers into clusters (depends on Leaflet, so loaded after it) -->
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <!-- Chart.js: draws bar charts and other visualizations on <canvas> elements -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
-    <!-- Our scripts (loaded in dependency order) -->
+    <!-- Our scripts (loaded in dependency order — each one may depend on the one before it):
+         1. data-loader.js — fetches JSON data files from the server
+         2. stat-renderer.js — finds data-stat attributes and fills in numbers
+         3. map-controller.js — creates and controls the Leaflet maps
+         4. scrollytelling.js — detects which step is on screen, triggers map transitions
+         5. explore.js — builds the filter UI and filterable explore map
+         6. charts.js — creates all Chart.js bar/line charts
+         7. app.js — ties everything together, kicks off on page load -->
     <script src="js/data-loader.js"></script>
     <script src="js/stat-renderer.js"></script>
     <script src="js/map-controller.js"></script>

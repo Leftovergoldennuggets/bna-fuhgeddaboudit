@@ -8,6 +8,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- CDN link: loads fonts from Google's servers (see index.html for more detail) -->
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Styles -->
@@ -25,6 +26,7 @@
                 <li><a href="methodology.html">Methodology</a></li>
                 <li><a href="faq.html">FAQ</a></li>
             </ul>
+            <!-- aria-label tells screen readers what this button does (accessibility) -->
             <button class="nav-toggle" aria-label="Toggle navigation">
                 <span></span><span></span><span></span>
             </button>
@@ -75,6 +77,7 @@
             <p>This project draws on two primary public data sources:</p>
 
             <ul>
+                <!-- target="_blank" opens link in a new tab; rel="noopener" is a security measure -->
                 <li><strong><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order reports</a></strong> &mdash; The federal government requires all companies testing Level 3+ autonomous vehicles to report every crash. This dataset includes incident narratives, severity assessments, and location information.</li>
                 <li><strong><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></strong> &mdash; Waymo publishes its own curated dataset that adds crash type classifications and links each incident to the corresponding federal report.</li>
             </ul>
@@ -96,12 +99,18 @@
         </div>
     </footer>
 
-    <!-- Navigation script (for mobile toggle) -->
+    <!-- Inline script for the mobile hamburger menu toggle.
+         This page doesn't need the full JS bundle (maps, charts, etc.) —
+         it only needs this small script to open/close the mobile nav menu.
+         "Inline" means the code is written directly in the HTML instead of a separate .js file. -->
     <script>
         // Mobile hamburger toggle
+        // Find the hamburger button and the nav links list
         const navToggle = document.querySelector('.nav-toggle');
         const navLinks = document.querySelector('.nav-links');
         if (navToggle && navLinks) {
+            // When the hamburger is clicked, toggle the "active" class on both elements.
+            // CSS uses .active to show/hide the menu and animate the hamburger icon.
             navToggle.addEventListener('click', () => {
                 navToggle.classList.toggle('active');
                 navLinks.classList.toggle('active');

@@ -11,7 +11,7 @@ import os
 # ---------------------------------------------------------------------------
 # Where the project root is (one level up from this pipeline/ directory)
 # ---------------------------------------------------------------------------
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # e.g., /Users/you/bna-fuhgeddaboudit
 
 
 # ===========================================================================
@@ -58,10 +58,10 @@ WAYMO_HUB_URL = (
 # Processed data = intermediate merged CSV (gitignored)
 # Web data = JSON files the website reads (committed to git)
 
-RAW_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
-PROCESSED_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
-WEB_DIR = os.path.join(PROJECT_ROOT, "data", "web")
-STATIC_DIR = os.path.join(PROJECT_ROOT, "data", "static")
+RAW_DIR = os.path.join(PROJECT_ROOT, "data", "raw")           # Downloaded CSVs land here
+PROCESSED_DIR = os.path.join(PROJECT_ROOT, "data", "processed")  # Intermediate merged CSV
+WEB_DIR = os.path.join(PROJECT_ROOT, "data", "web")           # JSON files the site reads
+STATIC_DIR = os.path.join(PROJECT_ROOT, "data", "static")     # Hand-maintained reference data
 
 # Raw data file paths (where downloads get saved)
 RAW_NHTSA_POST = os.path.join(RAW_DIR, "nhtsa_ads_post_june16.csv")
@@ -70,7 +70,7 @@ RAW_WAYMO_HUB = os.path.join(RAW_DIR, "waymo_hub_csv2.csv")
 
 # Processed (intermediate) file paths
 PROCESSED_MERGED = os.path.join(PROCESSED_DIR, "waymo_merged.csv")
-PROCESSED_EXTRAS = os.path.join(PROCESSED_DIR, "waymo_extras_not_in_hub.csv")
+PROCESSED_EXTRAS = os.path.join(PROCESSED_DIR, "waymo_extras_not_in_hub.csv")  # NHTSA crashes Waymo didn't include
 
 # Web-ready JSON file paths (the website reads these)
 WEB_SITE_DATA = os.path.join(WEB_DIR, "site-data.json")
@@ -94,7 +94,7 @@ SITE_IMAGES_DIR = os.path.join(PROJECT_ROOT, "site", "assets", "images")
 # FILTER SETTINGS
 # ===========================================================================
 # We only analyze Waymo crashes from the NHTSA data (which includes all AV companies)
-WAYMO_ENTITY_NAME = "Waymo LLC"
+WAYMO_ENTITY_NAME = "Waymo LLC"  # Exact string in the NHTSA "Reporting Entity" column
 
 
 # ===========================================================================
@@ -177,14 +177,14 @@ WAYMO_PUBLISHED_STATS = {
 # Used in 03_compute_statistics.py to categorize where crashes happen.
 LOCATION_PATTERNS = {
     "Intersection": [
-        r"\bintersection\b",
+        r"\bintersection\b",   # \b = word boundary, so "intersection" but not "intersectional"
         r"\bcrossing\b",
         r"\bjunction\b",
     ],
     "Highway/Freeway": [
         r"\bhighway\b",
         r"\bfreeway\b",
-        r"\bi-\d+\b",
+        r"\bi-\d+\b",          # Matches interstate numbers like "I-10", "I-280"
         r"\bramp\b",
         r"\bexpressway\b",
     ],

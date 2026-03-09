@@ -20,14 +20,16 @@
 // ============================================
 // Charts Module
 // ============================================
+
+// IIFE module pattern — keeps all variables private, only exposes what we return at the bottom
 const Charts = (function () {
 
     // Shared color constants (earth tone palette)
-    const GREY = "#b8b0a6";
-    const ACCENT = "#8b6f47";
-    const BORDER_COLOR = "#d4d0cc";
-    const TEXT_COLOR = "#6b6b6b";
-    const TEXT_DARK = "#333333";
+    const GREY = "#b8b0a6";        // Default bar color
+    const ACCENT = "#8b6f47";      // Highlighted bar color (for peak values)
+    const BORDER_COLOR = "#d4d0cc"; // Grid line and axis border color
+    const TEXT_COLOR = "#6b6b6b";   // Light text for axis ticks
+    const TEXT_DARK = "#333333";    // Darker text for category labels
 
     // Shared font settings for the editorial look
     const MONO_FONT = "'IBM Plex Mono', 'Courier New', monospace";
@@ -35,19 +37,20 @@ const Charts = (function () {
 
     /**
      * Shared defaults for all charts — minimal, editorial style.
+     * Returns a config object that Chart.js uses for appearance settings.
      */
     function getDefaults() {
         return {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true,               // Chart resizes with its container
+            maintainAspectRatio: false,      // Let CSS control the height
             plugins: {
-                legend: { display: false },
+                legend: { display: false },  // Hide the legend (not needed for single-dataset charts)
                 tooltip: {
-                    backgroundColor: "#1a1a1a",
-                    titleFont: { family: MONO_FONT, size: 12 },
-                    bodyFont: { family: MONO_FONT, size: 12 },
-                    padding: 10,
-                    cornerRadius: 0,
+                    backgroundColor: "#1a1a1a",                     // Dark tooltip background
+                    titleFont: { family: MONO_FONT, size: 12 },     // Monospace font for tooltip title
+                    bodyFont: { family: MONO_FONT, size: 12 },      // Monospace font for tooltip body
+                    padding: 10,                                     // Space inside the tooltip
+                    cornerRadius: 0,                                 // Sharp corners (editorial style)
                 },
             },
         };
@@ -64,74 +67,84 @@ const Charts = (function () {
      * @param {Object} stats — The parsed site-data.json object
      */
     function buildHourlyChart(stats) {
+        // Find the <canvas> element where Chart.js will draw
         const canvas = document.getElementById("hourly-chart");
+        // If the canvas or data doesn't exist, exit early
         if (!canvas || !stats.temporal || !stats.temporal.hourly_distribution) return;
 
+        // Get the hourly data object (keys are hour numbers "0" through "23")
         const hourly = stats.temporal.hourly_distribution;
 
         // Build arrays for hours 0–23
-        const labels = [];
-        const values = [];
+        const labels = [];  // X-axis labels
+        const values = [];  // Bar heights (crash counts)
         for (let h = 0; h < 24; h++) {
-            // Show labels at every 3 hours for readability
+            // Show labels at every 3 hours for readability (skip the rest)
             if (h % 3 === 0) {
                 labels.push(formatHourLabel(h));
             } else {
-                labels.push("");
+                labels.push("");  // Empty string = no label shown
             }
+            // Look up the crash count for this hour; default to 0 if missing
             values.push(hourly[String(h)] || 0);
         }
 
-        // Find the peak hour to highlight it
+        // Find the highest value to highlight that bar
+        // Math.max(...values) spreads the array into individual arguments
         const maxVal = Math.max(...values);
+        // .map() creates a new array: accent color for the peak, grey for the rest
         const colors = values.map(v => v === maxVal ? ACCENT : GREY);
 
+        // Create a new Chart.js bar chart on the canvas element
         new Chart(canvas, {
-            type: "bar",
+            type: "bar",           // Vertical bar chart
             data: {
-                labels: labels,
+                labels: labels,    // X-axis labels (hours)
                 datasets: [{
-                    data: values,
-                    backgroundColor: colors,
-                    borderWidth: 0,
-                    borderRadius: 0,
+                    data: values,              // The crash count values
+                    backgroundColor: colors,   // Bar colors (grey + accent for peak)
+                    borderWidth: 0,            // No border on bars
+                    borderRadius: 0,           // Sharp corners on bars
                 }],
             },
             options: {
+                // ...getDefaults() spreads in all the shared defaults (responsive, tooltip style, etc.)
                 ...getDefaults(),
                 scales: {
                     x: {
-                        grid: { display: false },
+                        grid: { display: false },  // Hide vertical grid lines
                         ticks: {
-                            font: { family: MONO_FONT, size: 11 },
+                            font: { family: MONO_FONT, size: 11 },  // Monospace tick labels
                             color: TEXT_COLOR,
                         },
-                        border: { color: BORDER_COLOR },
+                        border: { color: BORDER_COLOR },  // X-axis line color
                     },
                     y: {
                         grid: {
-                            color: BORDER_COLOR,
-                            drawTicks: false,
+                            color: BORDER_COLOR,    // Horizontal grid line color
+                            drawTicks: false,       // Don't draw small tick marks
                         },
                         ticks: {
                             font: { family: MONO_FONT, size: 11 },
                             color: TEXT_COLOR,
-                            padding: 8,
+                            padding: 8,             // Space between tick label and axis
                         },
-                        border: { display: false },
+                        border: { display: false }, // Hide the Y-axis line
                     },
                 },
                 plugins: {
-                    ...getDefaults().plugins,
+                    ...getDefaults().plugins,  // Spread in shared plugin defaults
                     tooltip: {
-                        ...getDefaults().plugins.tooltip,
+                        ...getDefaults().plugins.tooltip,  // Spread in shared tooltip defaults
                         callbacks: {
+                            // Custom tooltip title: show the formatted hour label
                             title: function(items) {
-                                const hour = items[0].dataIndex;
+                                const hour = items[0].dataIndex;  // Which bar was hovered
                                 return formatHourLabel(hour);
                             },
+                            // Custom tooltip body: show "X crashes"
                             label: function(item) {
-                                return item.raw + " crashes";
+                                return item.raw + " crashes";  // item.raw = the actual value
                             },
                         },
                     },
@@ -150,17 +163,23 @@ const Charts = (function () {
      * @param {Object} stats — The parsed site-data.json object
      */
     function buildDayOfWeekChart(stats) {
+        // Find the <canvas> element for this chart
         const canvas = document.getElementById("day-chart");
+        // Exit early if the canvas or data doesn't exist
         if (!canvas || !stats.day_of_week) return;
 
+        // Define the order we want days displayed (Monday first)
         const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        // Short labels for the Y-axis
         const shortLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        // .map() pulls the crash count for each day in order
         const values = dayOrder.map(d => stats.day_of_week[d] || 0);
 
-        // Highlight the peak day
+        // Highlight the peak day — same pattern as buildHourlyChart
         const maxVal = Math.max(...values);
         const colors = values.map(v => v === maxVal ? ACCENT : GREY);
 
+        // Create a new Chart.js chart — similar to buildHourlyChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -174,7 +193,7 @@ const Charts = (function () {
             },
             options: {
                 ...getDefaults(),
-                indexAxis: "y",
+                indexAxis: "y",    // "y" makes it a HORIZONTAL bar chart (bars go left to right)
                 scales: {
                     x: {
                         grid: {
@@ -192,7 +211,7 @@ const Charts = (function () {
                         grid: { display: false },
                         ticks: {
                             font: { family: MONO_FONT, size: 11 },
-                            color: TEXT_DARK,
+                            color: TEXT_DARK,  // Darker text for day labels
                         },
                         border: { color: BORDER_COLOR },
                     },
@@ -202,9 +221,11 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
+                            // Show full day name in tooltip (e.g., "Wednesday" instead of "Wed")
                             title: function(items) {
                                 return dayOrder[items[0].dataIndex];
                             },
+                            // Similar to buildHourlyChart tooltip
                             label: function(item) {
                                 return item.raw + " crashes";
                             },
@@ -228,18 +249,21 @@ const Charts = (function () {
         const canvas = document.getElementById("location-chart");
         if (!canvas || !stats.location_types) return;
 
-        // Sort by count descending
+        // Sort location types by count, highest first
+        // Object.entries() converts {key: value} into [[key, value], ...] array
         const sorted = Object.entries(stats.location_types)
             .sort((a, b) => b[1].count - a[1].count);
 
+        // Destructuring: [name] grabs the first element (key), [, info] skips the first and grabs the second
         const labels = sorted.map(([name]) => name);
         const values = sorted.map(([, info]) => info.count);
         const pcts = sorted.map(([, info]) => info.percentage);
 
-        // Highlight the top category
+        // Highlight the top category — same pattern as above
         const maxVal = Math.max(...values);
         const colors = values.map(v => v === maxVal ? ACCENT : GREY);
 
+        // Same pattern as buildDayOfWeekChart (horizontal bar)
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -253,7 +277,7 @@ const Charts = (function () {
             },
             options: {
                 ...getDefaults(),
-                indexAxis: "y",
+                indexAxis: "y",  // Horizontal bar chart
                 scales: {
                     x: {
                         grid: {
@@ -281,6 +305,7 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
+                            // Show count AND percentage in tooltip
                             label: function(item) {
                                 return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
                             },
@@ -304,18 +329,24 @@ const Charts = (function () {
      */
     function buildSpeedChart(stats) {
         const canvas = document.getElementById("speed-chart");
+        // Exit early if canvas or nested data path doesn't exist
         if (!canvas || !stats.crash_circumstances || !stats.crash_circumstances.speed_distribution) return;
 
+        // Get the speed distribution data
         const dist = stats.crash_circumstances.speed_distribution;
+        // Keys in the JSON data (matching the pipeline output)
         const bucketOrder = ["0_mph", "1_5_mph", "6_15_mph", "16_25_mph", "26_35_mph", "36_plus_mph"];
+        // Human-readable labels for the Y-axis
         const bucketLabels = ["0 mph", "1–5 mph", "6–15 mph", "16–25 mph", "26–35 mph", "36+ mph"];
 
+        // Pull count and percentage for each speed bucket
         const values = bucketOrder.map(k => dist[k] ? dist[k].count : 0);
         const pcts = bucketOrder.map(k => dist[k] ? dist[k].percentage : 0);
 
-        // Highlight the 0 mph bar — the key finding
+        // Highlight the 0 mph bar specifically — it's the key finding
         const colors = bucketOrder.map(k => k === "0_mph" ? ACCENT : GREY);
 
+        // Same horizontal bar pattern as buildLocationTypeChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -329,7 +360,7 @@ const Charts = (function () {
             },
             options: {
                 ...getDefaults(),
-                indexAxis: "y",
+                indexAxis: "y",  // Horizontal bar chart
                 scales: {
                     x: {
                         grid: {
@@ -357,6 +388,7 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
+                            // Similar to buildLocationTypeChart tooltip
                             label: function(item) {
                                 return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
                             },
@@ -381,7 +413,7 @@ const Charts = (function () {
         const canvas = document.getElementById("crash-type-chart");
         if (!canvas || !stats.crash_circumstances || !stats.crash_circumstances.crash_type_plain) return;
 
-        // Sort by count descending
+        // Sort by count descending — same pattern as buildLocationTypeChart
         const sorted = Object.entries(stats.crash_circumstances.crash_type_plain)
             .sort((a, b) => b[1].count - a[1].count);
 
@@ -393,6 +425,7 @@ const Charts = (function () {
         const maxVal = Math.max(...values);
         const colors = values.map(v => v === maxVal ? ACCENT : GREY);
 
+        // Same horizontal bar pattern as buildLocationTypeChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -406,7 +439,7 @@ const Charts = (function () {
             },
             options: {
                 ...getDefaults(),
-                indexAxis: "y",
+                indexAxis: "y",  // Horizontal bar chart
                 scales: {
                     x: {
                         grid: {
@@ -434,6 +467,7 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
+                            // Similar to buildLocationTypeChart tooltip
                             label: function(item) {
                                 return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
                             },
@@ -450,13 +484,13 @@ const Charts = (function () {
 
     /** Convert hour number to label: 0 → "12am", 13 → "1pm", etc. */
     function formatHourLabel(hour) {
-        if (hour === 0) return "12am";
-        if (hour === 12) return "12pm";
-        if (hour < 12) return hour + "am";
-        return (hour - 12) + "pm";
+        if (hour === 0) return "12am";   // Midnight special case
+        if (hour === 12) return "12pm";  // Noon special case
+        if (hour < 12) return hour + "am";       // Morning hours
+        return (hour - 12) + "pm";               // Afternoon/evening hours
     }
 
-    // Public API
+    // Public API — these 5 functions are the only things accessible from outside the module
     return {
         buildHourlyChart,
         buildDayOfWeekChart,
@@ -464,4 +498,6 @@ const Charts = (function () {
         buildSpeedChart,
         buildCrashTypeChart,
     };
+
+// The closing })() immediately runs the function and stores the returned object in Charts
 })();

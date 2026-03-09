@@ -17,6 +17,11 @@
 name: Deploy to GitHub Pages
 
 on:
+  # For this part we consulted Claude who recommended workflow chaining — making this
+  # deploy workflow trigger automatically after the data-update workflow finishes.
+  # Instead of manually deploying after every data update, GitHub Actions watches for
+  # the "Update Crash Data" workflow to complete and then kicks off this deployment.
+  # This creates a two-stage automated pipeline: (1) update data → (2) deploy site.
   # Run after the data-update workflow completes
   workflow_run:
     workflows: ["Update Crash Data"]
@@ -38,7 +43,7 @@ permissions:
   pages: write
   id-token: write
 
-# Only allow one deployment at a time
+# Only allow one deployment at a time (cancel any in-progress deployment)
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -47,6 +52,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # uses: actions/checkout@v4 downloads your repo (same as in update-data.yml)
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -68,9 +74,12 @@ jobs:
           mkdir -p _site/data/web
           cp data/web/*.json _site/data/web/
 
+      # uses: actions/configure-pages@v4 tells GitHub Pages about our site settings
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # uses: actions/upload-pages-artifact@v3 packages the _site/ folder
+      # and uploads it so the deploy step can publish it
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -83,6 +92,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # uses: actions/deploy-pages@v4 takes the uploaded artifact and
+      # publishes it to your GitHub Pages URL
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

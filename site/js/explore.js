@@ -19,26 +19,38 @@
 // ============================================
 // Explore Module
 // ============================================
+
+// IIFE module pattern — same as the other modules. See scrollytelling.js for full explanation.
 const Explore = (function () {
 
     // --- Module State ---
+    // These variables are private to this module (hidden inside the IIFE)
     let exploreMap = null;          // Separate Leaflet map for the explore section
-    let exploreCluster = null;      // MarkerCluster for filtered results
-    let allCrashes = [];            // Full crash dataset (from crash_data.json)
-    let allMarkers = [];            // Parallel array of Leaflet markers
+    let exploreCluster = null;      // MarkerCluster group for filtered crash markers
+    let allCrashes = [];            // Full crash dataset (every record from crash_data.json)
+    let allMarkers = [];            // Parallel array: allMarkers[i] is the Leaflet marker for allCrashes[i]
 
-    // Active filters (null = show all for that dimension)
+    // For this part we consulted Claude who recommended JavaScript Set objects for tracking
+    // active filters. A Set is like an array but with two key differences: (1) it
+    // automatically prevents duplicates — adding "Phoenix" twice still results in just one
+    // "Phoenix", and (2) checking if a value exists with .has() is instant (O(1) time)
+    // regardless of how many items are in the Set, while array.includes() gets slower as
+    // the array grows. The .add(), .delete(), and .clear() methods make it easy to toggle
+    // filters on and off. When we need to convert back to an array (e.g., for filtering),
+    // the spread operator [...set] does that.
+
+    // Active filters — tracks what the user has selected
     let filters = {
-        cities: new Set(),          // Selected city codes
-        severity: null,             // null | "injury" | "serious"
-        roadUser: null,             // null | "Pedestrian" | "Cyclist" | "Motorcycle"
-        timeOfDay: null,            // null | "daytime" | "night" | "rush"
+        cities: new Set(),          // Selected city codes (e.g., "SAN_FRANCISCO", "PHOENIX")
+        severity: null,             // null = "All" | "injury" | "serious" | "none" | "fatal"
+        roadUser: null,             // null = "All" | "Pedestrian" | "Cyclist" | "Motorcycle"
+        timeOfDay: null,            // null = "All" | "daytime" | "night" | "rush"
     };
 
-    // Muted color palette — severity drives the color (earth tones)
-    const MARKER_GREY = "#b0a696";
-    const MARKER_AMBER = "#c4841d";
-    const MARKER_RED = "#8b2020";
+    // Muted color palette — severity drives the marker color (earth tones)
+    const MARKER_GREY = "#b0a696";   // No injury: warm grey
+    const MARKER_AMBER = "#c4841d";  // Any injury: amber/orange
+    const MARKER_RED = "#8b2020";    // Serious: deep red
 
     // ============================================
     // Initialize
@@ -51,27 +63,29 @@ const Explore = (function () {
      * @param {Object} stats  — site-data.json (for filter options)
      */
     function init(crashes, stats) {
+        // Store the full crash dataset for filtering later
         allCrashes = crashes;
 
-        // Create the explore map
+        // Create the explore map (separate from the scrollytelling map)
         initExploreMap();
 
-        // Build all markers (one per crash)
+        // Build one Leaflet marker per crash (stored in allMarkers array)
         buildMarkers();
 
-        // Populate filter controls
+        // Create the filter toggle buttons in the sidebar
         buildSeverityFilter();
         buildRoadUserFilter();
         buildCityFilter(stats);
         buildTimeFilter();
 
-        // Set up the reset button
+        // Set up the "Reset all filters" button
         const resetBtn = document.getElementById("reset-filters");
         if (resetBtn) {
+            // When clicked, call the resetFilters function
             resetBtn.addEventListener("click", resetFilters);
         }
 
-        // Show all markers initially
+        // Show all markers on the map initially (no filters active)
         applyFilters();
 
         console.log("[Explore] Initialized with", crashes.length, "crashes");
@@ -82,15 +96,16 @@ const Explore = (function () {
     // ============================================
 
     function initExploreMap() {
+        // L.map() creates a new Leaflet map — similar to MapController but for the explore section
         exploreMap = L.map("explore-map", {
-            center: [37.0902, -95.7129],  // US center
-            zoom: 4,
-            zoomControl: true,
-            scrollWheelZoom: true,
-            attributionControl: true,
+            center: [37.0902, -95.7129],  // US center [latitude, longitude]
+            zoom: 4,                       // Zoomed out to show all of the US
+            zoomControl: true,             // Show the +/- zoom buttons
+            scrollWheelZoom: true,         // Allow scroll wheel to zoom (unlike the scrollytelling map)
+            attributionControl: true,      // Show map credits
         });
 
-        // Base tiles: CARTO light without labels
+        // Base tiles: CARTO light without labels — same as the scrollytelling map
         L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
             {
@@ -100,22 +115,25 @@ const Explore = (function () {
                 subdomains: "abcd",
                 maxZoom: 19,
             }
-        ).addTo(exploreMap);
+        ).addTo(exploreMap);  // .addTo() adds this tile layer to the explore map
 
-        // Label layer on top
+        // Label layer on top — same pattern as MapController
         L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
             { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }
         ).addTo(exploreMap);
 
+        // L.markerClusterGroup() groups nearby markers into clusters — same setup as MapController
         exploreCluster = L.markerClusterGroup({
-            maxClusterRadius: 50,
-            showCoverageOnHover: false,
+            maxClusterRadius: 50,          // Cluster markers within 50 pixels
+            showCoverageOnHover: false,    // Don't show cluster boundary on hover
+            // Custom cluster icon styling — same pattern as MapController
             iconCreateFunction: function (cluster) {
                 const count = cluster.getChildCount();
                 let size = "small";
                 if (count > 50) size = "large";
                 else if (count > 20) size = "medium";
+                // L.divIcon() creates a marker from HTML — see MapController for details
                 return L.divIcon({
                     html: "<div><span>" + count + "</span></div>",
                     className: "marker-cluster marker-cluster-" + size,
@@ -124,6 +142,7 @@ const Explore = (function () {
             },
         });
 
+        // .addLayer() puts the cluster group on the map so markers will be visible
         exploreMap.addLayer(exploreCluster);
     }
 
@@ -132,12 +151,14 @@ const Explore = (function () {
     // ============================================
 
     function buildMarkers() {
+        // Loop through every crash record and create a Leaflet marker for it
         allCrashes.forEach((crash) => {
-            // Color by severity: serious=red, injury=amber, else grey
+            // Color by severity — same pattern as MapController.buildCrashMarkers
             let color = MARKER_GREY;
             if (crash.is_serious) color = MARKER_RED;
             else if (crash.has_injury) color = MARKER_AMBER;
 
+            // L.circleMarker() — same as MapController.buildCrashMarkers
             const marker = L.circleMarker([crash.lat, crash.lon], {
                 radius: 5,
                 fillColor: color,
@@ -147,11 +168,14 @@ const Explore = (function () {
                 fillOpacity: 0.7,
             });
 
+            // Build the popup content (shown when user clicks a marker)
             const dateStr = crash.date || "Unknown date";
             const hourStr = crash.hour !== null
-                ? MapController.formatHour(crash.hour)
+                ? MapController.formatHour(crash.hour)    // Use the shared format function from MapController
                 : "Unknown";
 
+            // .bindPopup() attaches a popup — same pattern as MapController.buildCrashMarkers
+            // Template literals (`...${variable}...`) embed variables directly in the string
             marker.bindPopup(
                 `<div class="crash-popup">` +
                 `<strong>${MapController.formatCrashType(crash.crash_type)}</strong><br>` +
@@ -168,6 +192,7 @@ const Explore = (function () {
                 { maxWidth: 250 }
             );
 
+            // Store the marker in the allMarkers array (same index as allCrashes)
             allMarkers.push(marker);
         });
     }
@@ -182,63 +207,81 @@ const Explore = (function () {
      *
      * @param {HTMLElement} container — DOM element to append toggles to
      * @param {Array} options — [{label: "All", value: null}, {label: "Any injury", value: "injury"}, ...]
-     * @param {string} filterKey — key in the `filters` object to update
+     * @param {string} filterKey — key in the `filters` object to update (e.g., "severity", "cities")
      */
     function buildToggleGroup(container, options, filterKey) {
+        // Exit early if the container doesn't exist on this page
         if (!container) return;
 
+        // Loop through each option and create a button for it
+        // Destructuring: { label, value } pulls those properties out of each option object
         options.forEach(({ label, value }) => {
+            // Create a new <button> element
             const btn = document.createElement("button");
+            // Set the CSS class for styling
             btn.className = "filter-toggle";
+            // Set the button's visible text
             btn.textContent = label;
+            // Store the value in a data attribute (data-value="all" or data-value="injury", etc.)
             btn.dataset.value = value === null ? "all" : value;
 
-            // "All" starts active
+            // "All" starts as the active (highlighted) option
             if (value === null) btn.classList.add("active");
 
+            // Add a click handler for this button
             btn.addEventListener("click", () => {
                 if (filterKey === "cities") {
-                    // City uses Set-based toggling (multi-select)
+                    // City filter uses Set-based toggling (can select multiple cities)
                     handleCityToggle(container, btn, value);
                 } else {
-                    // Single-select: click to select, click again to deselect
+                    // Single-select: click to select, click same again to deselect (go back to "All")
                     if (filters[filterKey] === value) {
-                        // Already selected — deselect (go back to "All")
+                        // Already selected — deselect it (set back to null = "All")
                         filters[filterKey] = null;
                     } else {
+                        // Select this option
                         filters[filterKey] = value;
                     }
-                    // Update UI: highlight active toggle
+                    // Update the UI: remove "active" from all buttons in this group
                     container.querySelectorAll(".filter-toggle").forEach(t => t.classList.remove("active"));
                     if (filters[filterKey] === null) {
+                        // No filter active — highlight the "All" button
                         container.querySelector('[data-value="all"]').classList.add("active");
                     } else {
+                        // Highlight the clicked button
                         btn.classList.add("active");
                     }
+                    // Re-filter and update the map
                     applyFilters();
                 }
             });
 
+            // Add the button to the container element in the HTML
             container.appendChild(btn);
         });
     }
 
     /**
-     * Severity filter: All / Any injury / Serious only
+     * Severity filter: All / No injury / Any injury / Serious & moderate / Fatality
      */
     function buildSeverityFilter() {
+        // Find the container element by its ID
         const container = document.getElementById("severity-filter");
+        // Use the shared buildToggleGroup helper to create toggle buttons
         buildToggleGroup(container, [
             { label: "All", value: null },
+            { label: "No injury", value: "none" },
             { label: "Any injury", value: "injury" },
             { label: "Serious", value: "serious" },
-        ], "severity");
+            { label: "Fatality", value: "fatal" },
+        ], "severity");  // "severity" = which key in the filters object to update
     }
 
     /**
      * Road user filter: All / Pedestrian / Cyclist / Motorcycle
      */
     function buildRoadUserFilter() {
+        // Same pattern as buildSeverityFilter
         const container = document.getElementById("road-user-filter");
         buildToggleGroup(container, [
             { label: "All crashes", value: null },
@@ -254,41 +297,54 @@ const Explore = (function () {
      */
     function buildCityFilter(stats) {
         const container = document.getElementById("city-filter");
+        // Exit early if the container or data doesn't exist
         if (!container || !stats.city_breakdown) return;
 
-        // Build options array from data
+        // Build the options array: "All cities" first, then one per city from the data
         const options = [{ label: "All cities", value: null }];
+        // Object.entries() converts {key: value} into [[key, value], ...] pairs
         Object.entries(stats.city_breakdown).forEach(([cityName, info]) => {
+            // Template literal shows the city name with its crash count
             options.push({ label: `${cityName} (${info.count})`, value: info.code });
         });
 
+        // Use the shared toggle builder (it detects "cities" filterKey for multi-select)
         buildToggleGroup(container, options, "cities");
     }
 
     /**
-     * Handle city toggle (multi-select with Set)
+     * Handle city toggle (multi-select with Set).
+     * Unlike severity/roadUser, you can select MULTIPLE cities at once.
      */
     function handleCityToggle(container, btn, value) {
+        // Find the "All" button in this container
         const allBtn = container.querySelector('[data-value="all"]');
 
         if (value === null) {
-            // Clicked "All" — clear everything
+            // Clicked "All" — clear the Set (deselect all individual cities)
+            // .clear() removes everything from the Set
             filters.cities.clear();
+            // Remove "active" from all buttons, then highlight just "All"
             container.querySelectorAll(".filter-toggle").forEach(t => t.classList.remove("active"));
             allBtn.classList.add("active");
         } else {
-            // Toggle specific city
+            // Toggle a specific city on/off
+            // .has() checks if the Set contains this value
             if (filters.cities.has(value)) {
+                // Already selected — .delete() removes it from the Set
                 filters.cities.delete(value);
                 btn.classList.remove("active");
             } else {
+                // Not selected — .add() puts it in the Set
                 filters.cities.add(value);
                 btn.classList.add("active");
             }
-            // Update "All" button
+            // .classList.toggle(class, condition) adds the class if condition is true, removes if false
+            // If no cities are selected (Set is empty), "All" should be highlighted
             allBtn.classList.toggle("active", filters.cities.size === 0);
         }
 
+        // Re-filter and update the map
         applyFilters();
     }
 
@@ -296,6 +352,7 @@ const Explore = (function () {
      * Time of day filter: All / Daytime / Night / Rush hour
      */
     function buildTimeFilter() {
+        // Same pattern as buildSeverityFilter
         const container = document.getElementById("time-filter");
         buildToggleGroup(container, [
             { label: "All", value: null },
@@ -311,66 +368,88 @@ const Explore = (function () {
 
     /**
      * Filter markers based on current filter state and update the map.
+     * This runs every time any filter changes.
      */
     function applyFilters() {
+        // .clearLayers() removes ALL markers from the cluster group (start fresh)
         exploreCluster.clearLayers();
+        // Counter for how many crashes pass all filters
         let shownCount = 0;
 
+        // Loop through every crash and check if it passes all active filters
         allCrashes.forEach((crash, i) => {
-            let show = true;
+            let show = true;  // Assume it passes until a filter rejects it
 
-            // City filter
+            // City filter: if any cities are selected, only show crashes in those cities
+            // .size = how many items are in the Set; .has() checks membership
             if (filters.cities.size > 0 && !filters.cities.has(crash.city)) {
                 show = false;
             }
 
-            // Severity filter
-            if (filters.severity === "injury" && !crash.has_injury) {
+            // Severity filter — checks the severity_level field from the pipeline
+            // Possible values: "none", "minor", "moderate", "serious", "fatal"
+            if (filters.severity === "none" && crash.severity_level !== "none") {
+                show = false;
+            }
+            if (filters.severity === "injury" && crash.severity_level === "none") {
                 show = false;
             }
             if (filters.severity === "serious" && !crash.is_serious) {
                 show = false;
             }
+            if (filters.severity === "fatal" && crash.severity_level !== "fatal") {
+                show = false;
+            }
 
-            // Road user filter
+            // Road user filter: only show crashes involving the selected road user type
             if (filters.roadUser && crash.crash_type !== filters.roadUser) {
                 show = false;
             }
 
-            // Time of day filter (derived from hour)
+            // Time of day filter (derived from the crash hour)
             if (filters.timeOfDay && crash.hour !== null) {
-                const h = crash.hour;
+                const h = crash.hour;  // Hour in 24-hour format (0–23)
+                // Daytime = 6am to 8pm
                 if (filters.timeOfDay === "daytime" && (h < 6 || h >= 20)) {
                     show = false;
                 }
+                // Night = 8pm to 6am
                 if (filters.timeOfDay === "night" && (h >= 6 && h < 20)) {
                     show = false;
                 }
+                // Rush hour = 7-10am or 5-7pm
                 if (filters.timeOfDay === "rush" && !((h >= 7 && h < 10) || (h >= 17 && h < 19))) {
                     show = false;
                 }
             }
 
+            // If the crash passed all filters, add its marker to the map
             if (show) {
+                // allMarkers[i] is the Leaflet marker for allCrashes[i]
                 exploreCluster.addLayer(allMarkers[i]);
                 shownCount++;
             }
         });
 
-        // Update the count display
+        // Update the "showing X crashes" count display
         const countEl = document.getElementById("filtered-count");
         if (countEl) {
+            // .toLocaleString() adds commas for readability (e.g., 1,123 instead of 1123)
             countEl.textContent = shownCount.toLocaleString("en-US");
         }
 
-        // Zoom to city if a single city is selected
+        // If exactly one city is selected, zoom the map to that city
         if (filters.cities.size === 1) {
+            // [...filters.cities] converts the Set to an array so we can grab the first element
             const cityCode = [...filters.cities][0];
+            // Look up the city's coordinates from MapController
             const coords = MapController.CITY_COORDS[cityCode];
             if (coords) {
+                // .flyTo() animates the map to the city's location at zoom level 11
                 exploreMap.flyTo([coords.lat, coords.lon], 11, { duration: 1 });
             }
         } else if (filters.cities.size === 0) {
+            // No city filter — zoom back out to show the full US
             exploreMap.flyTo([37.0902, -95.7129], 4, { duration: 1 });
         }
     }
@@ -379,20 +458,27 @@ const Explore = (function () {
      * Reset all filters to their default state (show everything).
      */
     function resetFilters() {
+        // .clear() empties the Set of selected cities
         filters.cities.clear();
+        // Set all single-select filters back to null (= "All")
         filters.severity = null;
         filters.roadUser = null;
         filters.timeOfDay = null;
 
-        // Reset all toggle UIs
+        // Reset all toggle button UIs: only "All" buttons should be highlighted
         document.querySelectorAll(".filter-toggle").forEach(btn => {
+            // .classList.toggle(class, condition) — adds class if condition is true
             btn.classList.toggle("active", btn.dataset.value === "all");
         });
 
+        // Re-filter the map (will show all crashes since no filters are active)
         applyFilters();
+        // Zoom back out to show the full US
         exploreMap.flyTo([37.0902, -95.7129], 4, { duration: 1 });
     }
 
-    // Public API
+    // Public API — only init() is exposed; everything else stays private inside the module
     return { init };
+
+// The closing })() immediately runs the function and stores the returned object in Explore
 })();

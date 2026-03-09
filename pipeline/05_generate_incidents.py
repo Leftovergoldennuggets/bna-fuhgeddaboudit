@@ -56,7 +56,7 @@ def is_serious_injury(severity_value):
     if pd.isna(severity_value):
         return False
     val_lower = str(severity_value).lower().strip()
-    return "fatal" in val_lower or "serious" in val_lower or "moderate" in val_lower
+    return "fatal" in val_lower or "serious" in val_lower or "moderate" in val_lower  # Matches "Suspected Moderate Injury" etc.
 
 
 def clean_narrative(narrative):
@@ -68,11 +68,9 @@ def clean_narrative(narrative):
     if pd.isna(narrative) or str(narrative) == "nan":
         return "Narrative not available for this incident."
     narrative = str(narrative).strip()
-    narrative = re.sub(r"\[XXX\]", "[REDACTED]", narrative)
-    narrative = re.sub(r"\[MAY CONTAIN.*?\]", "", narrative)
+    narrative = re.sub(r"\[XXX\]", "[REDACTED]", narrative)  # NHTSA uses [XXX] to redact names
+    narrative = re.sub(r"\[MAY CONTAIN.*?\]", "", narrative)  # Remove NHTSA data quality disclaimers
     narrative = narrative.strip()
-    if len(narrative) > 600:
-        narrative = narrative[:600] + "..."
     return narrative
 
 
@@ -123,8 +121,8 @@ def main():
 
     # Filter for serious injuries only
     severity_col = "Highest Injury Severity Alleged"
-    df["_is_serious"] = df[severity_col].apply(is_serious_injury)
-    serious_df = df[df["_is_serious"]].copy()
+    df["_is_serious"] = df[severity_col].apply(is_serious_injury)  # Boolean column: True for moderate/serious/fatal
+    serious_df = df[df["_is_serious"]].copy()  # Filter to only the serious rows (~15 of 1,123)
 
     print(f"  Moderate/serious/fatal injuries: {len(serious_df)}")
     if severity_col in serious_df.columns:
@@ -141,7 +139,7 @@ def main():
     else:
         print("  WARNING: No geocode cache found. Run step 04 first for accurate locations.")
 
-    # Use fixed seed for reproducible fallback coordinate approximation
+    # Use fixed seed so estimated positions are consistent across pipeline runs
     random.seed(42)
 
     # Build incident records
@@ -154,7 +152,7 @@ def main():
         lat = clean_coordinate(row.get("Latitude"))
         lon = clean_coordinate(row.get("Longitude"))
 
-        city_code = str(row.get("Location", "")).upper().replace(" ", "_")
+        city_code = str(row.get("Location", "")).upper().replace(" ", "_")  # Normalize to match CITIES dict keys (e.g., "SAN_FRANCISCO")
         is_estimated = False
 
         if lat is None or lon is None:
@@ -170,8 +168,8 @@ def main():
             elif city_code in CITIES:
                 # Fall back to city center with random jitter
                 city_info = CITIES[city_code]
-                lat = city_info["lat"] + (random.random() - 0.5) * 0.04
-                lon = city_info["lon"] + (random.random() - 0.5) * 0.04
+                lat = city_info["lat"] + (random.random() - 0.5) * 0.04  # random() is 0-1, so (r - 0.5) is -0.5 to +0.5
+                lon = city_info["lon"] + (random.random() - 0.5) * 0.04  # * 0.04 gives ~1.4 mile spread from center
                 is_estimated = True
                 estimated_count += 1
             else:
@@ -182,7 +180,7 @@ def main():
         if pd.isna(row.get("Crash With")) or crash_with in ("", "nan"):
             crash_party = "Unknown"
         else:
-            crash_party = CRASH_PARTY_MAP.get(crash_with, crash_with)
+            crash_party = CRASH_PARTY_MAP.get(crash_with, crash_with)  # .get(key, default) returns the key itself if not in map
 
         # Get date and time
         date = str(row.get("Incident Date", ""))
@@ -220,7 +218,22 @@ def main():
     print(f"    Geocoded (accurate): {geocoded_count}")
     print(f"    Estimated (city center): {estimated_count}")
 
-    # Group by city
+    # Jitter overlapping markers — if two incidents share the exact same lat/lon,
+    # offset them slightly so both are visible and clickable on the map.
+    # Without this, stacked markers would be impossible to click individually.
+    seen_coords = {}
+    for inc in incidents:
+        key = (inc["lat"], inc["lon"])
+        if key in seen_coords:
+            # Offset by ~15 meters per duplicate (0.00012 degrees ~ 13m at these latitudes)
+            offset_idx = seen_coords[key]
+            inc["lat"] = round(inc["lat"] + 0.00012 * offset_idx, 6)
+            inc["lon"] = round(inc["lon"] + 0.00012 * offset_idx, 6)
+            seen_coords[key] += 1
+        else:
+            seen_coords[key] = 1
+
+    # Group by city — SF gets its own list for the scrollytelling SF-focused section
     sf_incidents = [i for i in incidents if "san francisco" in i["city"].lower()]
     print(f"  San Francisco incidents: {len(sf_incidents)}")
 

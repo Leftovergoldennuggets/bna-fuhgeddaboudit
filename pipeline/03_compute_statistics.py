@@ -40,7 +40,12 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use("Agg")  # Non-interactive backend (no display needed)
+# For this part we consulted Claude who recommended the "Agg" (Anti-Grain Geometry)
+# backend for matplotlib. By default, matplotlib tries to open a GUI window to display
+# charts, which crashes on servers and in automated pipelines that have no screen.
+# The Agg backend renders charts directly to image files (PNG) without needing a
+# display. This line MUST come before any other matplotlib imports to take effect.
+matplotlib.use("Agg")  # Non-interactive backend — renders to files, not a GUI window
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -74,10 +79,10 @@ def parse_time(time_str):
     try:
         time_str = str(time_str).strip()
         if ":" in time_str:
-            parts = time_str.split(":")
+            parts = time_str.split(":")  # "14:30" → ["14", "30"]
             hour, minute = int(parts[0]), int(parts[1]) if len(parts) > 1 else 0
         elif len(time_str) == 4 and time_str.isdigit():
-            hour, minute = int(time_str[:2]), int(time_str[2:])
+            hour, minute = int(time_str[:2]), int(time_str[2:])  # "1430" → hour=14, minute=30
         else:
             return None, None
 
@@ -204,6 +209,7 @@ def compute_all_statistics(df):
     total_crashes = len(df)
 
     # Only list recognized operating cities (from config.py) in the display
+    # This filters out Mountain View (2 crashes) — too small for its own city card
     recognized_cities = sorted([c for c in df["Location"].dropna().unique() if c in CITIES])
     city_display_names = [CITIES[c]["name"] for c in recognized_cities]
 
@@ -247,6 +253,7 @@ def compute_all_statistics(df):
     for col, key in bool_cols.items():
         if col in df.columns:
             # Convert to boolean (handles string "True"/"False" and actual booleans)
+            # .map() replaces each value using the dictionary lookup
             bool_series = df[col].map({"True": True, "False": False, True: True, False: False})
             count = int(bool_series.sum())
             severity[key] = {
@@ -299,9 +306,10 @@ def compute_all_statistics(df):
     # TEMPORAL ANALYSIS: Time-of-day patterns
     # -------------------------------------------------------------------
     # Parse time data from the NHTSA "Incident Time (24:00)" column
+    # zip(*...) unpacks a list of (hour, minute) tuples into two separate lists
     df["_hour"], df["_minute"] = zip(*df["Incident Time (24:00)"].apply(parse_time))
-    df_time = df[df["_hour"].notna()].copy()
-    df_time["_hour"] = df_time["_hour"].astype(int)
+    df_time = df[df["_hour"].notna()].copy()  # Drop rows where time parsing failed
+    df_time["_hour"] = df_time["_hour"].astype(int)  # Convert from float (pandas default) to int
 
     total_with_time = len(df_time)
     stats["overview"]["total_with_time_data"] = total_with_time
@@ -322,7 +330,7 @@ def compute_all_statistics(df):
     stats["time_periods"] = time_period_stats
 
     # Rush hour stats (Morning Rush 7-9 AM + Evening Rush 5-7 PM)
-    # Note: Using explicit parentheses to avoid operator precedence issues
+    # Note: In pandas, & = AND, | = OR. Parentheses are required (operator precedence).
     rush_hour = df_time[
         ((df_time["_hour"] >= 7) & (df_time["_hour"] <= 9))
         | ((df_time["_hour"] >= 17) & (df_time["_hour"] <= 19))
@@ -363,13 +371,13 @@ def compute_all_statistics(df):
     # Convert to proper datetime (parse_date returns mixed types that need conversion)
     df_time_dated["_date"] = pd.to_datetime(df_time_dated["_date"])
     df_time_dated["_day_of_week"] = df_time_dated["_date"].dt.day_name()
-    df_time_dated["_is_weekend"] = df_time_dated["_date"].dt.dayofweek.isin([5, 6])
+    df_time_dated["_is_weekend"] = df_time_dated["_date"].dt.dayofweek.isin([5, 6])  # 5=Saturday, 6=Sunday
 
     city_peaks = {}
     for city_code in df_time["Location"].dropna().unique():
         city_df = df_time[df_time["Location"] == city_code]
-        if len(city_df) >= 10:
-            peak_hour = city_df["_hour"].mode()
+        if len(city_df) >= 10:  # Only compute peak hour for cities with enough data
+            peak_hour = city_df["_hour"].mode()  # mode() = most frequently occurring value
             if len(peak_hour) > 0:
                 peak_h = int(peak_hour.iloc[0])
                 # Format hour for display (e.g., 17 → "5:00 PM")
@@ -393,7 +401,7 @@ def compute_all_statistics(df):
     # -------------------------------------------------------------------
     # LOCATION TYPES: Where crashes happen
     # -------------------------------------------------------------------
-    df_time["_location_type"] = df_time.apply(extract_location_type, axis=1)
+    df_time["_location_type"] = df_time.apply(extract_location_type, axis=1)  # axis=1 means apply row-by-row
     loc_counts = df_time["_location_type"].value_counts()
     stats["location_types"] = {
         lt: {
@@ -442,7 +450,7 @@ def compute_all_statistics(df):
     # Speed distribution — bucket SV Precrash Speed into ranges
     speed_col = "SV Precrash Speed (MPH)"
     if speed_col in df.columns:
-        speeds = pd.to_numeric(df[speed_col], errors="coerce").dropna()
+        speeds = pd.to_numeric(df[speed_col], errors="coerce").dropna()  # "coerce" turns non-numeric strings to NaN
         total_with_speed = len(speeds)
 
         # Define speed buckets
@@ -506,7 +514,7 @@ def compute_all_statistics(df):
         crash_circumstances["vulnerable_road_users"] = {
             "total": vru_total,
             "percentage": round(vru_total / total_crashes * 100, 1),
-            **vru_counts,
+            **vru_counts,  # ** unpacks the dict, adding each key-value pair to the outer dict
         }
 
     stats["crash_circumstances"] = crash_circumstances
@@ -527,7 +535,7 @@ def compute_all_statistics(df):
             miles_millions = miles_entry.get("miles_millions")
 
             if miles_millions is not None and miles_millions > 0:
-                rate = round(city_crash_count / miles_millions, 1)
+                rate = round(city_crash_count / miles_millions, 1)  # Crashes per million miles driven
             else:
                 rate = None
 
@@ -563,8 +571,8 @@ def generate_figures(df_time, df_time_dated):
     """
     os.makedirs(SITE_IMAGES_DIR, exist_ok=True)
 
-    plt.style.use("seaborn-v0_8-whitegrid")
-    sns.set_palette("husl")
+    plt.style.use("seaborn-v0_8-whitegrid")  # Clean grid background for charts
+    sns.set_palette("husl")  # Evenly-spaced color palette that looks good for categories
 
     # --- Figure 1: Time-of-day analysis (4-panel) ---
     fig, axes = plt.subplots(2, 2, figsize=(16, 14))
@@ -572,10 +580,10 @@ def generate_figures(df_time, df_time_dated):
     # Panel 1: Hourly distribution
     ax1 = axes[0, 0]
     hourly_total = df_time["_hour"].value_counts().sort_index()
-    colors = ["#ff6b6b" if (7 <= h <= 9 or 17 <= h <= 19) else "#4dabf7" for h in range(24)]
+    colors = ["#ff6b6b" if (7 <= h <= 9 or 17 <= h <= 19) else "#4dabf7" for h in range(24)]  # Red for rush hours, blue for others
     ax1.bar(range(24), [hourly_total.get(h, 0) for h in range(24)], color=colors, alpha=0.8, edgecolor="black")
-    ax1.axvspan(7, 10, alpha=0.15, color="red", label="Morning Rush (7-10)")
-    ax1.axvspan(17, 20, alpha=0.15, color="orange", label="Evening Rush (5-8)")
+    ax1.axvspan(7, 10, alpha=0.15, color="red", label="Morning Rush (7-10)")    # Shaded background band
+    ax1.axvspan(17, 20, alpha=0.15, color="orange", label="Evening Rush (5-8)")  # alpha=0.15 makes it semi-transparent
     ax1.set_xlabel("Hour of Day", fontsize=12)
     ax1.set_ylabel("Number of Crashes", fontsize=12)
     ax1.set_title("Overall Hourly Crash Distribution", fontsize=14, fontweight="bold")
@@ -624,8 +632,8 @@ def generate_figures(df_time, df_time_dated):
 
     plt.tight_layout()
     path = os.path.join(SITE_IMAGES_DIR, "time_of_day_analysis.png")
-    plt.savefig(path, dpi=200, bbox_inches="tight")
-    plt.close()
+    plt.savefig(path, dpi=200, bbox_inches="tight")  # dpi=200 for crisp images; bbox_inches trims whitespace
+    plt.close()  # Free memory — important when generating multiple figures
     print(f"  Saved: {path}")
 
     # --- Figure 2: Location type analysis (2-panel) ---
@@ -683,7 +691,7 @@ def main():
     print("Saving site-data.json...")
     os.makedirs(os.path.dirname(WEB_SITE_DATA), exist_ok=True)
     with open(WEB_SITE_DATA, "w") as f:
-        json.dump(stats, f, indent=2)
+        json.dump(stats, f, indent=2)  # indent=2 makes the JSON human-readable
     print(f"  Saved: {WEB_SITE_DATA}")
 
     # Print summary of key stats

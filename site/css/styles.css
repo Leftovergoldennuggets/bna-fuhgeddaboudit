@@ -4,6 +4,17 @@
    serif headings, monospace data, warm palette,
    clean borders, no shadows, generous whitespace.
    ============================================ */
+
+/* For this part we consulted Claude who recommended CSS Custom Properties (variables).
+   The :root selector targets the top-level HTML element, making these variables available
+   everywhere in the stylesheet. Instead of writing the same color code (#1a1a1a) in 50
+   places, we define it once as --color-primary and reference it with var(--color-primary).
+   If we later want to change the color scheme, we only update it here — every element
+   using that variable updates automatically. This is similar to variables in Python. */
+/* CSS variables (also called "custom properties") let you define a value once
+   and reuse it everywhere. If you want to change a color, you change it in ONE
+   place here instead of hunting through the whole file. They always start with --.
+   :root means "the whole page" — these variables are available everywhere. */
 :root {
     /* -- Colors (earth tone palette) -- */
     --color-primary: #1a1a1a;
@@ -37,6 +48,8 @@
     --step-width: 420px;
 
     /* -- Transitions -- */
+    /* transition: makes CSS changes happen smoothly over time instead of instantly.
+       "all 0.2s ease" means: animate all properties, take 0.2 seconds, ease in/out. */
     --transition: all 0.2s ease;
     --transition-slow: all 0.5s ease;
 }
@@ -44,6 +57,12 @@
 /* ============================================
    Reset & Base
    ============================================ */
+
+/* box-sizing: border-box makes width/height include padding and border.
+   Without it, a 100px-wide box with 10px padding would actually be 120px wide.
+   With it, the box stays 100px total. This is way more intuitive.
+   ::before and ::after are pseudo-elements — invisible extras CSS can add
+   before/after any element (used for decorative things like the FAQ +/- icons). */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -73,6 +92,7 @@ img {
 a {
     color: var(--color-accent);
     text-decoration: none;
+    /* transition makes the color change smooth on hover instead of instant */
     transition: var(--transition);
 }
 
@@ -84,12 +104,16 @@ a:hover {
    Progress Bar (top of page)
    ============================================ */
 .progress-bar {
+    /* position: fixed means this element stays in the same spot on screen
+       even when you scroll. It's "fixed" to the browser window, not the page. */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 3px;
     background: rgba(0, 0, 0, 0.06);
+    /* z-index controls stacking order — higher numbers appear on top of lower ones.
+       1001 means this bar sits above almost everything else on the page. */
     z-index: 1001;
 }
 
@@ -104,6 +128,7 @@ a:hover {
    Navigation (sticky header)
    ============================================ */
 .navbar {
+    /* position: fixed keeps the nav bar visible at the top as you scroll */
     position: fixed;
     top: 3px;
     left: 0;
@@ -122,8 +147,12 @@ a:hover {
     max-width: var(--max-width);
     margin: 0 auto;
     padding: var(--spacing-sm) var(--spacing-md);
+    /* display: flex arranges child elements in a row (or column).
+       It's the modern way to lay out elements side-by-side. */
     display: flex;
+    /* justify-content: space-between pushes items to opposite ends */
     justify-content: space-between;
+    /* align-items: center vertically centers items in the row */
     align-items: center;
 }
 
@@ -182,8 +211,17 @@ a:hover {
     padding: 0 var(--spacing-md);
 }
 
+/* For this part we consulted Claude who recommended clamp() for responsive font sizes.
+   clamp(minimum, preferred, maximum) sets a value that scales with the viewport but
+   stays within bounds. For example, clamp(2rem, 5vw, 3.5rem) means: "use 5% of the
+   viewport width as the font size, but never go below 2rem or above 3.5rem." This
+   single line replaces what used to require multiple @media breakpoints to achieve.
+   vw = viewport width units (1vw = 1% of the browser window width). */
 .section-title {
     font-family: var(--font-display);
+    /* clamp(min, preferred, max) picks a responsive font size:
+       at least 1.75rem, ideally 4% of viewport width, but never more than 2.5rem.
+       This makes text scale smoothly between phone and desktop. */
     font-size: clamp(1.75rem, 4vw, 2.5rem);
     font-weight: 700;
     color: var(--color-primary);
@@ -230,6 +268,8 @@ a:hover {
    SCROLLYTELLING — Map Section
    ============================================ */
 .scrolly-section {
+    /* position: relative makes this element the reference point for any
+       position: absolute or position: sticky children inside it. */
     position: relative;
 }
 
@@ -239,6 +279,9 @@ a:hover {
 
 /* Sticky map that stays fixed while text scrolls over it */
 .sticky-map-container {
+    /* position: sticky is a hybrid: the element scrolls normally until it hits
+       the top of the screen, then it "sticks" there while its parent is visible.
+       This is how the map stays on screen while the text cards scroll past. */
     position: sticky;
     top: 0;
     left: 0;
@@ -254,11 +297,15 @@ a:hover {
 
 /* Dark overlay on the left side to improve text readability */
 .map-overlay {
+    /* position: absolute positions this relative to its nearest positioned parent
+       (the sticky-map-container). Unlike fixed, it scrolls with its parent. */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    /* pointer-events: none means clicks pass through this overlay to the map below.
+       Without this, the overlay would block all map interactions. */
     pointer-events: none;
     background: linear-gradient(
         to right,
@@ -266,6 +313,7 @@ a:hover {
         rgba(0, 0, 0, 0.08) 40%,
         transparent 60%
     );
+    /* opacity controls transparency: 0 = invisible, 1 = fully visible */
     opacity: 0;
     transition: opacity 0.5s ease;
 }
@@ -279,6 +327,8 @@ a:hover {
     position: absolute;
     bottom: 40px;
     left: 50%;
+    /* transform moves/rotates/scales an element. translateX(-50%) shifts it
+       left by half its own width, which perfectly centers it. */
     transform: translateX(-50%);
     text-align: center;
     color: white;
@@ -302,9 +352,19 @@ a:hover {
     border-bottom: 1.5px solid white;
     transform: rotate(45deg);
     margin: var(--spacing-sm) auto 0;
+    /* animation plays a @keyframes sequence on loop (see "bounce" below) */
     animation: bounce 2s infinite;
 }
 
+/* For this part we consulted Claude who recommended @keyframes for defining reusable
+   animations. A @keyframes rule defines the stages of an animation by specifying CSS
+   properties at different points (0% = start, 100% = end, or use "from"/"to"). Elements
+   then reference the animation by name using the `animation` property, which also controls
+   duration, timing function (ease, linear, etc.), and how many times it plays. The browser
+   automatically calculates all the in-between frames (interpolation). */
+/* @keyframes defines a named animation sequence.
+   The browser smoothly transitions between each percentage step.
+   This one makes the arrow bounce up and down to draw attention. */
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
     40% { transform: translateY(-10px) rotate(45deg); }
@@ -317,6 +377,7 @@ a:hover {
 .scrolly-steps {
     position: relative;
     z-index: 5;
+    /* pointer-events: none lets clicks pass through to the map behind */
     pointer-events: none;
     margin-top: -100vh;
 }
@@ -336,17 +397,22 @@ a:hover {
 
 .step-content {
     background: rgba(250, 248, 245, 0.95);
+    /* backdrop-filter: blur() blurs whatever is behind this element (the map).
+       This gives the text cards a frosted-glass effect for readability. */
     backdrop-filter: blur(8px);
     padding: var(--spacing-lg);
     border: 1px solid var(--color-border);
     max-width: var(--step-width);
     pointer-events: auto;
     opacity: 0;
+    /* transform: translateY(20px) starts the card 20px below its final position */
     transform: translateY(20px);
+    /* transition animates the change — so when opacity and transform change,
+       it happens smoothly over 0.5s instead of instantly */
     transition: var(--transition-slow);
 }
 
-/* When the step is in view, fade it in */
+/* When the step is in view, fade it in and slide it up to its final position */
 .scrolly-step.is-active .step-content {
     opacity: 1;
     transform: translateY(0);
@@ -430,6 +496,7 @@ a:hover {
     position: fixed;
     top: 50%;
     right: 40px;
+    /* Two transforms combined: center vertically AND slide offscreen to the right */
     transform: translateY(-50%) translateX(100%);
     width: 380px;
     max-height: 80vh;
@@ -442,6 +509,7 @@ a:hover {
     overflow: hidden;
 }
 
+/* When active, slide back into view */
 .crash-detail-panel.active {
     transform: translateY(-50%) translateX(0);
     opacity: 1;
@@ -556,6 +624,9 @@ a:hover {
 }
 
 .stats-grid {
+    /* display: grid creates a grid layout (like a spreadsheet).
+       grid-template-columns defines how many columns and how wide each is.
+       repeat(4, 1fr) = 4 equal-width columns. "1fr" means "1 fraction of available space". */
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0;
@@ -603,6 +674,8 @@ a:hover {
 
 .context-stats {
     display: grid;
+    /* repeat(auto-fit, minmax(200px, 1fr)) = as many columns as will fit,
+       each at least 200px wide. Columns wrap to new rows automatically. */
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--spacing-md);
     margin: var(--spacing-md) 0;
@@ -698,6 +771,8 @@ a:hover {
 /* Interactive chart containers */
 .chart-row {
     display: grid;
+    /* auto-fit with minmax: charts sit side-by-side on wide screens,
+       stack vertically when the screen is too narrow for 320px columns */
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--spacing-md);
     margin: var(--spacing-lg) 0;
@@ -799,6 +874,7 @@ a:hover {
 
 .explore-layout {
     display: grid;
+    /* 260px sidebar + the rest goes to the map (1fr = remaining space) */
     grid-template-columns: 260px 1fr;
     gap: var(--spacing-md);
     min-height: 600px;
@@ -1288,6 +1364,8 @@ a:hover {
     padding: var(--spacing-xs) 0;
 }
 
+/* ::after adds a "+" icon after each FAQ question using pure CSS (no image needed).
+   This is a pseudo-element — it doesn't exist in the HTML, CSS creates it. */
 .faq-question::after {
     content: "+";
     font-family: var(--font-mono);
@@ -1296,13 +1374,15 @@ a:hover {
     transition: var(--transition);
 }
 
+/* When the FAQ item is open, switch the "+" to a minus sign */
 .faq-item.open .faq-question::after {
-    content: "−";
+    content: "\2212";
 }
 
 .faq-answer {
     max-height: 0;
     overflow: hidden;
+    /* transition animates max-height so the answer slides open/closed smoothly */
     transition: max-height 0.3s ease;
 }
 
@@ -1318,9 +1398,14 @@ a:hover {
    Responsive Breakpoints
    ============================================ */
 
+/* @media (max-width: 1024px) means: "apply these styles ONLY when the browser
+   window is 1024px wide or less (tablets)." This is called a responsive breakpoint.
+   It lets us change the layout for different screen sizes. */
+
 /* Tablet */
 @media (max-width: 1024px) {
     .explore-layout {
+        /* Switch from sidebar+map side-by-side to stacked vertically */
         grid-template-columns: 1fr;
     }
 
@@ -1333,7 +1418,7 @@ a:hover {
     }
 }
 
-/* Mobile */
+/* Mobile — same idea as above but for screens 768px or narrower (phones) */
 @media (max-width: 768px) {
     /* Show hamburger menu */
     .nav-toggle {
@@ -1356,7 +1441,7 @@ a:hover {
         display: flex;
     }
 
-    /* Hamburger animation */
+    /* Hamburger animation — transform rotates the 3 lines into an X shape */
     .nav-toggle.active span:nth-child(1) {
         transform: rotate(45deg) translate(5px, 5px);
     }

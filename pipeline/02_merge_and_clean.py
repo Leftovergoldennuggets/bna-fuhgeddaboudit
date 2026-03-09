@@ -113,11 +113,21 @@ def combine_and_deduplicate(waymo_prior, waymo_post):
     print(f"  Combined: {len(waymo_prior)} + {len(waymo_post)} = {len(combined)} rows")
 
     # Count duplicates before removing them
+    # nunique() counts distinct Report IDs; total minus unique = number of duplicates
     unique_before = combined["Report ID"].nunique()
     dupes = len(combined) - unique_before
     print(f"  Duplicate report versions to remove: {dupes}")
 
+    # For this part we consulted Claude who recommended pandas method chaining — a style where
+    # multiple DataFrame operations are written in a single expression, each one feeding its
+    # result into the next. For example, df.sort_values(...).drop_duplicates(...).reset_index(...)
+    # first sorts the rows, then removes duplicates from the sorted result, then resets the row
+    # numbers on what's left. Each method returns a new DataFrame, so they can be "chained"
+    # together like links. This is equivalent to writing three separate lines with temporary
+    # variables, but is more concise and considered idiomatic (standard style) in pandas.
+
     # Sort by Report ID and version, then keep only the latest version
+    # Sorting puts oldest version first; keep="last" keeps the newest version
     combined = combined.sort_values(["Report ID", "Report Version"])
     combined = combined.drop_duplicates(subset="Report ID", keep="last")
 
@@ -149,20 +159,23 @@ def merge_with_hub(waymo_hub, nhtsa_combined):
             - extras: NHTSA crashes that don't appear in the hub
     """
     # Figure out which NHTSA crashes match the hub
+    # dropna() removes rows where the ID column is empty (no match possible)
     hub_ids = set(waymo_hub["SGO Report ID"].dropna())
     nhtsa_ids = set(nhtsa_combined["Report ID"].dropna())
 
-    in_both = hub_ids & nhtsa_ids
-    nhtsa_only = nhtsa_ids - hub_ids
+    in_both = hub_ids & nhtsa_ids        # Set intersection: IDs present in BOTH datasets
+    nhtsa_only = nhtsa_ids - hub_ids     # Set difference: IDs in NHTSA but NOT in Waymo Hub
 
     print(f"  Crashes in both datasets: {len(in_both)}")
     print(f"  Hub rows with no SGO Report ID: {waymo_hub['SGO Report ID'].isna().sum()}")
     print(f"  NHTSA crashes not in hub: {len(nhtsa_only)} (saved separately)")
 
     # Separate out the NHTSA crashes that aren't in the hub
+    # ~ is the NOT operator: keep rows where Report ID is NOT in the hub
     extras = nhtsa_combined[~nhtsa_combined["Report ID"].isin(hub_ids)].copy()
 
     # Add a reason flag explaining why they're not in the hub
+    # lambda is an inline function: for each row, pick a reason based on its Data Period
     extras["Reason Not In Hub"] = extras["Data Period"].apply(
         lambda x: "Likely newer than hub update cycle (post-June 2025)"
         if x == "After June 16, 2025 (Amendment 3)"
@@ -231,7 +244,7 @@ def main():
     print("Saving output files...")
     os.makedirs(PROCESSED_DIR, exist_ok=True)
 
-    merged.to_csv(PROCESSED_MERGED, index=False)
+    merged.to_csv(PROCESSED_MERGED, index=False)  # index=False prevents pandas from adding a row number column
     print(f"  Merged: {PROCESSED_MERGED} ({len(merged)} rows x {len(merged.columns)} cols)")
 
     extras.to_csv(PROCESSED_EXTRAS, index=False)

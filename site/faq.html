@@ -162,22 +162,25 @@
         </div>
     </footer>
 
-    <!-- FAQ accordion + navigation script -->
+    <!-- Inline script: FAQ accordion behavior + mobile nav toggle.
+         This page needs two things JS handles:
+         1. The FAQ accordion (click a question to expand/collapse the answer)
+         2. The mobile hamburger menu (same as other pages) -->
     <script>
-        // FAQ accordion toggle
+        // FAQ accordion toggle — makes questions expandable/collapsible
         document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
                 const item = question.parentElement;
-                // Close other items
+                // Close all other FAQ items so only one is open at a time
                 document.querySelectorAll('.faq-item').forEach(other => {
                     if (other !== item) other.classList.remove('open');
                 });
-                // Toggle this item
+                // Toggle this item open or closed
                 item.classList.toggle('open');
             });
         });
 
-        // Mobile hamburger toggle
+        // Mobile hamburger toggle (same as about.html and methodology.html)
         const navToggle = document.querySelector('.nav-toggle');
         const navLinks = document.querySelector('.nav-links');
         if (navToggle && navLinks) {

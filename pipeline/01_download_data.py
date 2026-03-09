@@ -46,12 +46,12 @@ def download_file(url, output_path, description):
     # If the download failed (e.g., 404 Not Found), raise an error
     response.raise_for_status()
 
-    # Save the downloaded content to disk
+    # Save the downloaded content to disk ("wb" = write binary, needed for raw bytes)
     with open(output_path, "wb") as f:
         f.write(response.content)
 
     # Show the file size so we can tell if something looks wrong
-    size_mb = len(response.content) / (1024 * 1024)
+    size_mb = len(response.content) / (1024 * 1024)  # Convert bytes → megabytes
     print(f"    Saved: {output_path} ({size_mb:.1f} MB)")
 
 
@@ -77,7 +77,7 @@ def main():
             print(f"\n    ERROR: Download failed for {desc}")
             print(f"    HTTP status: {e.response.status_code}")
             print()
-            if "waymo" in url.lower():
+            if "waymo" in url.lower():  # Waymo URL changes quarterly — most common failure point
                 print("    The Waymo Hub URL may have changed (it updates quarterly).")
                 print("    Go to https://waymo.com/safety/impact/ and find the new CSV2 link.")
                 print("    Then update WAYMO_HUB_URL in pipeline/config.py")
