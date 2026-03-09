@@ -10,8 +10,12 @@ data/raw/
 data/processed/
 
 # Legacy code (all old notebooks, analysis, and website versions)
+# We can revive this if we need to, but for now it's just taking up space and causing confusion to me. 
 legacy/
 
 # OS files
 .DS_Store
 Thumbs.db
+
+#Internal memory transfer to Claude Desktop of what I have been doing. 
+BRIEFING.md
