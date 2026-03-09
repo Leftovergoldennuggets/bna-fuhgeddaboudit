@@ -27,7 +27,7 @@
     <!-- ================================================================ -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="nav-logo">Tracking Waymo's Crashes</a>
+            <a href="index.html" class="nav-logo">The Waymo Crash Record</a>
             <ul class="nav-links">
                 <li><a href="#intro">Home</a></li>
                 <li><a href="about.html">About Us</a></li>
@@ -73,9 +73,10 @@
             <!-- Step 1: Hero introduction (visible immediately) -->
             <div class="scrolly-step is-active" data-step="intro">
                 <div class="step-content step-hero">
-                    <span class="step-tag">Data Journalism</span>
+                    <span class="step-tag">Autonomous Vehicles</span>
                     <h1>Every Waymo Crash, Mapped</h1>
-                    <p>An independent analysis of every reported crash involving a Waymo self-driving car — drawn from federal data and updated automatically.</p>
+                    <p>The federal government requires companies operating self-driving cars to report crashes that result in injury, airbag deployment, or significant property damage. This is every reported Waymo crash on record.</p>
+                    <p class="step-byline">By Anders Eidesvik and Kate Li</p>
                     <div class="step-meta">
                         <span>Covering <span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></span>
                         <span>Updated <span data-stat="meta.generated_at" data-format="date">--</span></span>
@@ -88,8 +89,8 @@
                 <div class="step-content">
                     <h2>The National Picture</h2>
                     <p>Waymo operates autonomous vehicles in <strong><span data-stat="overview.cities_count">--</span> major metropolitan areas</strong> across the United States.</p>
-                    <p>Through the NHTSA Standing General Order, every crash — no matter how minor — must be reported publicly.</p>
-                    <p>Our analysis covers <strong><span data-stat="overview.total_crashes">--</span> reported crashes</strong> from the Waymo Safety Impact Data Hub.</p>
+                    <p>Through the NHTSA Standing General Order, <strong><span data-stat="overview.total_crashes">--</span> crashes</strong> have been reported across these cities — everything from freeway collisions to parking lot fender-benders.</p>
+                    <p>Over the same period, Waymo has driven more than <strong><span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span></strong> rider-only miles.</p>
                 </div>
             </div>
 
@@ -97,17 +98,17 @@
             <div class="scrolly-step" data-step="zoom-california">
                 <div class="step-content">
                     <h2>California: The Testing Ground</h2>
-                    <p>San Francisco is where Waymo's robotaxi service first launched at scale. It has the highest concentration of autonomous vehicle miles — and the most crash data.</p>
-                    <p><strong><span data-stat="city_breakdown.San Francisco.percentage">--</span>%</strong> of all reported Waymo crashes occur in the San Francisco area.</p>
+                    <p>Nearly half of all reported crashes — <strong><span data-stat="city_breakdown.San Francisco.percentage">--</span>%</strong> — have occurred in the San Francisco area. Waymo began commercial operations in San Francisco in 2023, later than Phoenix but in a denser and more complex traffic environment.</p>
+                    <p>Within each city, the number of reported crashes reflects how many miles Waymo has driven there. More miles means more incidents reported.</p>
                 </div>
             </div>
 
             <!-- Step 4: SF Heatmap -->
             <div class="scrolly-step" data-step="sf-heatmap">
                 <div class="step-content">
-                    <h2>San Francisco Crash Density</h2>
-                    <p><strong><span data-stat="city_breakdown.San Francisco.count">--</span> crashes</strong> have been reported in the San Francisco area.</p>
-                    <p>The cluster markers show where crashes concentrate. Click any cluster to zoom in and see individual incidents.</p>
+                    <h2>Where Crashes Cluster</h2>
+                    <p><strong><span data-stat="city_breakdown.San Francisco.count">--</span> crashes</strong> have been reported in the San Francisco area. The cluster markers show where they concentrate — intersections, busy corridors, and commercial areas.</p>
+                    <p>Click any cluster to zoom in and see individual incidents. Most of these dots represent low-speed events: a tap at a stoplight, a parking lot bump, another vehicle backing into the Waymo.</p>
                 </div>
             </div>
 
@@ -115,9 +116,8 @@
             <div class="scrolly-step" data-step="sf-serious">
                 <div class="step-content">
                     <h2>The Most Serious Incidents</h2>
-                    <p>The vast majority of crashes are minor — property damage only, with no injuries.</p>
-                    <p>But <strong><span data-stat="severity.moderate_plus.count">--</span> crashes</strong> involved moderate, serious, or fatal injuries, and <strong><span data-stat="severity.injury_reported.count">--</span></strong> had any injury reported at all.</p>
-                    <p class="step-note">Click the red markers to read the full incident narratives.</p>
+                    <p>Of <span data-stat="overview.total_crashes">--</span> reported crashes nationwide, the vast majority resulted in no injuries at all. Only <strong><span data-stat="severity.moderate_plus.count">--</span></strong> involved moderate, serious, or fatal injuries — and <strong><span data-stat="severity.sf_moderate_plus.count">--</span></strong> of those occurred here in San Francisco.</p>
+                    <p class="step-note">The red markers show where those incidents occurred. Click any one to read the full federal crash narrative.</p>
                 </div>
             </div>
         </div>
@@ -154,7 +154,7 @@
             <!-- Waymo safety context from published research -->
             <div class="safety-context">
                 <h3>How Does This Compare?</h3>
-                <p>According to Waymo's <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed research</a> covering 56.7 million rider-only miles:</p>
+                <p>Waymo publishes crash rate comparisons on its <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>, applying a <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed methodology</a> (Kusano et al., 2025) to data covering <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> rider-only miles. These figures come from Waymo's own analysis. While the methodology has been peer-reviewed and adheres to industry best practices (the RAVE checklist), the comparisons are made against human driver benchmarks that may not perfectly match Waymo's specific operating conditions.</p>
                 <div class="context-stats">
                     <div class="context-stat">
                         <span class="context-number" data-stat="waymo_context.serious_crash_reduction_pct" data-suffix="%">--</span>
@@ -175,12 +175,47 @@
     </section>
 
     <!-- ================================================================ -->
+    <!-- SECTION 2B: CRASH CIRCUMSTANCES                                 -->
+    <!-- What happens in these crashes? Speed, type, vulnerable users.   -->
+    <!-- ================================================================ -->
+    <section id="crash-circumstances" class="analysis-section alt-bg">
+        <div class="section-container">
+            <h2 class="section-title">What Happens in These Crashes?</h2>
+            <p class="section-subtitle">Understanding the circumstances behind <span data-stat="overview.total_crashes">--</span> reported incidents</p>
+
+            <p class="section-intro">The word "crash" conjures images of high-speed collisions. The reality in this dataset is very different.</p>
+
+            <p class="section-intro"><strong>In nearly two-thirds of reported crashes, the Waymo vehicle was traveling at 0 mph at the time of contact.</strong></p>
+
+            <div class="chart-row">
+                <div class="chart-container">
+                    <h3 class="chart-title">Waymo Vehicle Speed at Time of Crash</h3>
+                    <canvas id="speed-chart"></canvas>
+                    <p class="chart-note">Based on <span data-stat="crash_circumstances.speed_stats.total_with_speed_data">--</span> crashes with speed data. Median speed: <span data-stat="crash_circumstances.speed_stats.median_speed_mph">--</span> mph. Mean: <span data-stat="crash_circumstances.speed_stats.mean_speed_mph">--</span> mph.</p>
+                </div>
+            </div>
+
+            <p class="section-intro">The most common scenario: the Waymo vehicle is stopped at a light or waiting in traffic, and another vehicle makes contact — often while backing up, changing lanes, or proceeding through an intersection.</p>
+
+            <div class="chart-row">
+                <div class="chart-container">
+                    <h3 class="chart-title">Crashes by Type</h3>
+                    <canvas id="crash-type-chart"></canvas>
+                </div>
+            </div>
+
+            <p class="section-intro">Crashes involving vulnerable road users — pedestrians, cyclists, and motorcyclists — account for <span data-stat="crash_circumstances.vulnerable_road_users.total">--</span> of <span data-stat="overview.total_crashes">--</span> total incidents (<span data-stat="crash_circumstances.vulnerable_road_users.percentage">--</span>%).</p>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
     <!-- SECTION 3: TEMPORAL ANALYSIS                                    -->
     <!-- When do crashes happen? Rush hour patterns, day/night, etc.     -->
     <!-- ================================================================ -->
     <section id="temporal" class="analysis-section">
         <div class="section-container">
             <h2 class="section-title">When Do Crashes Happen?</h2>
+            <p class="section-intro">Crash timing reveals a familiar pattern: Waymo incidents peak during the hours and days when roads are busiest. This mirrors what traffic safety researchers see in human-driver crash data nationally — more vehicles on the road means more opportunities for collisions.</p>
             <p class="section-subtitle">Temporal patterns from <span data-stat="overview.total_with_time_data">--</span> crashes with time data</p>
 
             <div class="analysis-grid">
@@ -246,7 +281,15 @@
     <section id="explore" class="explore-section">
         <div class="section-container">
             <h2 class="section-title">Explore the Data</h2>
-            <p class="section-subtitle">Filter and explore all <span data-stat="overview.total_crashes">--</span> crashes interactively</p>
+            <p class="section-intro">Every reported crash is mapped below. Use the filters to find patterns — or look up what's happened near you.</p>
+            <div class="explore-prompts">
+                <p><strong>Things to try:</strong></p>
+                <ul>
+                    <li>Filter by <strong>"Serious"</strong> to see only the 15 crashes that resulted in moderate-to-fatal injuries.</li>
+                    <li>Select <strong>"Pedestrian"</strong> or <strong>"Cyclist"</strong> to find incidents involving vulnerable road users.</li>
+                    <li>Switch to <strong>"Night"</strong> to see how crash patterns shift after dark.</li>
+                </ul>
+            </div>
 
             <div class="explore-layout">
                 <!-- Filter sidebar -->
@@ -311,7 +354,7 @@
         <div class="section-container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <h3>Waymo Crash Data Analysis</h3>
+                    <h3>The Waymo Crash Record</h3>
                     <p>A Stanford COMM277T data journalism project by Anders Eidesvik and Kate Li.</p>
                     <p>Last updated: <span data-stat="meta.generated_at" data-format="date">--</span></p>
                 </div>

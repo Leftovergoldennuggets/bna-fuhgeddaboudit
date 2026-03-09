@@ -1,0 +1,55 @@
+{
+  "description": "Waymo rider-only mileage milestones compiled from press releases, public statements, and archived web pages by Anders Eidesvik. Manually updated when new milestones are announced.",
+  "methodology": "Waymo does not publish a historical time series of cumulative miles driven. These data points were assembled from official Waymo press releases, news articles, and snapshots of the Waymo Safety Impact Data Hub captured via the Wayback Machine. Each entry includes the original source URL for verification.",
+  "last_updated": "2026-03-08",
+  "milestones": [
+    {
+      "date": "2023-01-31",
+      "miles_millions": 1,
+      "source": "Waymo press release",
+      "url": "https://waymo.com/blog/2023/02/first-million-rider-only-miles-how"
+    },
+    {
+      "date": "2023-12-20",
+      "miles_millions": 7.13,
+      "source": "The Verge",
+      "url": "https://www.theverge.com/2023/12/20/24006712/waymo-driverless-million-mile-safety-compare-human"
+    },
+    {
+      "date": "2024-06-05",
+      "miles_millions": 22,
+      "source": "Waymo press release (Safety Data Hub launch)",
+      "url": "https://waymo.com/blog/2024/09/safety-data-hub"
+    },
+    {
+      "date": "2024-09-30",
+      "miles_millions": 33,
+      "source": "Waymo Safety Impact Data Hub (Wayback Machine, captured Jan 29, 2025)",
+      "url": "https://web.archive.org/web/20250129002252/https://waymo.com/safety/impact/"
+    },
+    {
+      "date": "2024-12-31",
+      "miles_millions": 50,
+      "source": "Waymo Safety Impact Data Hub (Wayback Machine, captured Mar 31, 2025)",
+      "url": "https://web.archive.org/web/20250331214423/https://waymo.com/safety/impact/"
+    },
+    {
+      "date": "2025-03-31",
+      "miles_millions": 71.43,
+      "source": "Waymo Safety Impact Data Hub (Wayback Machine, captured Jun 30, 2025)",
+      "url": "https://web.archive.org/web/20250630083232/https://waymo.com/safety/impact/"
+    },
+    {
+      "date": "2025-07-15",
+      "miles_millions": 100,
+      "source": "Waymo (X/Twitter post)",
+      "url": "https://x.com/Waymo/status/1945106097741664630"
+    },
+    {
+      "date": "2026-02-02",
+      "miles_millions": 127,
+      "source": "Waymo press release ($16B investment round)",
+      "url": "https://waymo.com/blog/2026/02/waymo-raises-usd16-billion-investment-round/"
+    }
+  ]
+}

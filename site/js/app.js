@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         Scrollytelling.init();
 
         // Step 6: Build interactive charts (replaces static PNG images)
+        Charts.buildSpeedChart(data.stats);
+        Charts.buildCrashTypeChart(data.stats);
         Charts.buildHourlyChart(data.stats);
         Charts.buildDayOfWeekChart(data.stats);
         Charts.buildLocationTypeChart(data.stats);
@@ -59,7 +61,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 /**
  * Build city breakdown cards in the #city-cards-container.
- * Each card shows a city name, crash count, percentage, and peak hour.
+ * Each card shows a city name, crash count, percentage, miles driven,
+ * crash rate per million miles, and peak hour.
  *
  * @param {Object} stats — site-data.json
  */
@@ -77,13 +80,28 @@ function buildCityCards(stats) {
         const peak = stats.city_peaks ? stats.city_peaks[cityName] : null;
         const peakLabel = peak ? peak.peak_label : "N/A";
 
+        // Look up mileage data for this city (if available)
+        const mileage = stats.city_mileage ? stats.city_mileage[cityName] : null;
+
         const card = document.createElement("div");
         card.className = "city-card";
+
+        // Build mileage lines — only show if we have miles data
+        let mileageHTML = "";
+        if (mileage && mileage.miles_millions !== null) {
+            // Format miles: 56.535 → "56.5M", 6.337 → "6.3M"
+            const milesFormatted = mileage.miles_millions.toFixed(1) + "M";
+            mileageHTML += `<div class="city-card-miles">${milesFormatted} miles driven</div>`;
+            if (mileage.crashes_per_million_miles !== null) {
+                mileageHTML += `<div class="city-card-rate">${mileage.crashes_per_million_miles} crashes per M miles</div>`;
+            }
+        }
 
         card.innerHTML = `
             <h3 class="city-card-name">${cityName}</h3>
             <div class="city-card-count">${info.count.toLocaleString("en-US")}</div>
             <div class="city-card-label">crashes (${info.percentage}%)</div>
+            ${mileageHTML}
             <div class="city-card-peak">Peak: ${peakLabel}</div>
         `;
 

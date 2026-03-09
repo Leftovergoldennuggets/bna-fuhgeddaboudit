@@ -61,6 +61,7 @@ WAYMO_HUB_URL = (
 RAW_DIR = os.path.join(PROJECT_ROOT, "data", "raw")
 PROCESSED_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
 WEB_DIR = os.path.join(PROJECT_ROOT, "data", "web")
+STATIC_DIR = os.path.join(PROJECT_ROOT, "data", "static")
 
 # Raw data file paths (where downloads get saved)
 RAW_NHTSA_POST = os.path.join(RAW_DIR, "nhtsa_ads_post_june16.csv")
@@ -79,6 +80,11 @@ WEB_SERIOUS_INCIDENTS = os.path.join(WEB_DIR, "serious_incidents.json")
 # Geocode cache — stores address → lat/lon lookups so we don't re-geocode
 # the same address every time the pipeline runs. Committed to git.
 GEOCODE_CACHE = os.path.join(WEB_DIR, "geocode_cache.json")
+
+# Static data files — manually maintained, not auto-downloaded
+# These provide mileage context that Waymo doesn't publish as a time series.
+STATIC_MILES_BY_CITY = os.path.join(STATIC_DIR, "miles_by_city.json")
+STATIC_MILEAGE_MILESTONES = os.path.join(STATIC_DIR, "mileage_milestones.json")
 
 # Generated figure PNGs for scrollytelling sections
 SITE_IMAGES_DIR = os.path.join(PROJECT_ROOT, "site", "assets", "images")

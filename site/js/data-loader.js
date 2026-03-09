@@ -21,21 +21,26 @@
 // ============================================
 const DataLoader = (function () {
 
-    // Base path to the JSON data files.
-    // Locally: site is served from project root, HTML is in site/, data is in data/web/
+    // Base paths to the JSON data files.
+    // Locally: site is served from project root, HTML is in site/, data is in data/
     //   → path from site/ to data/web/ is "../data/web/"
+    //   → path from site/ to data/static/ is "../data/static/"
     // GitHub Pages: the deploy workflow copies data into the site folder
-    //   → path is just "data/web/"
+    //   → paths are just "data/web/" and "data/static/"
     // We detect which environment we're in by checking the hostname.
     const isGitHubPages = window.location.hostname.includes("github.io");
     const DATA_BASE = isGitHubPages ? "data/web/" : "../data/web/";
+    const STATIC_BASE = isGitHubPages ? "data/static/" : "../data/static/";
 
     /**
      * Fetch a single JSON file and return its parsed contents.
      * Throws a clear error message if the fetch fails.
+     *
+     * @param {string} filename — The JSON filename to load
+     * @param {string} [base] — Base path override (defaults to DATA_BASE)
      */
-    async function fetchJSON(filename) {
-        const url = DATA_BASE + filename;
+    async function fetchJSON(filename, base) {
+        const url = (base || DATA_BASE) + filename;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -52,25 +57,30 @@ const DataLoader = (function () {
     }
 
     /**
-     * Load all three data files in parallel.
-     * Returns an object with stats, crashes, and incidents.
+     * Load all data files in parallel.
+     * Returns an object with stats, crashes, incidents, and static mileage data.
      */
     async function loadAll() {
         console.log("[DataLoader] Loading data files...");
 
-        // Fetch all three files at the same time (faster than one-by-one)
-        const [stats, crashes, incidents] = await Promise.all([
+        // Fetch all files at the same time (faster than one-by-one)
+        // Static files (mileage) are optional — site works without them
+        const [stats, crashes, incidents, mileageMilestones, milesByCity] = await Promise.all([
             fetchJSON("site-data.json"),
             fetchJSON("crash_data.json"),
             fetchJSON("serious_incidents.json"),
+            fetchJSON("mileage_milestones.json", STATIC_BASE).catch(() => null),
+            fetchJSON("miles_by_city.json", STATIC_BASE).catch(() => null),
         ]);
 
         console.log("[DataLoader] All data loaded successfully");
         console.log(`  Stats: ${Object.keys(stats).length} top-level keys`);
         console.log(`  Crashes: ${crashes.length} records`);
         console.log(`  Incidents: ${incidents.total_serious} serious incidents`);
+        if (mileageMilestones) console.log(`  Mileage milestones: ${mileageMilestones.milestones.length} entries`);
+        if (milesByCity) console.log(`  Miles by city: ${Object.keys(milesByCity.cities).length} cities`);
 
-        return { stats, crashes, incidents };
+        return { stats, crashes, incidents, mileageMilestones, milesByCity };
     }
 
     /**

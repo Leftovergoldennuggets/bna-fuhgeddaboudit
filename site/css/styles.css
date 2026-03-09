@@ -197,6 +197,31 @@ a:hover {
     margin-bottom: var(--spacing-lg);
 }
 
+.section-intro {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    max-width: var(--content-width);
+    margin-bottom: var(--spacing-md);
+}
+
+.explore-prompts {
+    max-width: var(--content-width);
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+.explore-prompts ul {
+    margin-top: var(--spacing-xs);
+    padding-left: 1.5rem;
+}
+
+.explore-prompts li {
+    margin-bottom: var(--spacing-xs);
+    line-height: 1.6;
+}
+
 .alt-bg {
     background-color: var(--color-background-alt);
 }
@@ -372,6 +397,13 @@ a:hover {
 
 .step-content p:last-child {
     margin-bottom: 0;
+}
+
+.step-byline {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xs);
 }
 
 .step-meta {
@@ -690,6 +722,14 @@ a:hover {
     margin-bottom: var(--spacing-sm);
 }
 
+.chart-note {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin-top: var(--spacing-sm);
+    line-height: 1.5;
+}
+
 /* City Cards (spatial section) */
 .city-cards {
     display: grid;
@@ -733,6 +773,19 @@ a:hover {
 
 .city-card-peak {
     font-size: 0.8rem;
+    color: var(--color-text-light);
+}
+
+.city-card-miles {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    margin-top: 0.25rem;
+}
+
+.city-card-rate {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     color: var(--color-text-light);
 }
 
@@ -945,11 +998,11 @@ a:hover {
 }
 
 .marker-cluster-medium div {
-    background: rgba(160, 100, 45, 0.85);
+    background: rgba(139, 111, 71, 0.85);
 }
 
 .marker-cluster-large div {
-    background: rgba(139, 32, 32, 0.85);
+    background: rgba(139, 111, 71, 0.85);
 }
 
 .marker-cluster {
@@ -962,12 +1015,12 @@ a:hover {
 }
 
 .marker-cluster-medium {
-    background: rgba(160, 100, 45, 0.2);
+    background: rgba(139, 111, 71, 0.2);
     border-radius: 50%;
 }
 
 .marker-cluster-large {
-    background: rgba(139, 32, 32, 0.2);
+    background: rgba(139, 111, 71, 0.2);
     border-radius: 50%;
 }
 

@@ -239,7 +239,9 @@ const MapController = (function () {
     function buildSeriousMarkers() {
         if (!incidentData || !incidentData.all_incidents) return;
 
-        incidentData.all_incidents.forEach((incident) => {
+        // Use SF-only incidents for the scrollytelling step (zoomed into SF)
+        const incidents = incidentData.sf_incidents || incidentData.all_incidents;
+        incidents.forEach((incident) => {
             const icon = L.divIcon({
                 className: "serious-marker",
                 html: '<div style="width:14px;height:14px;background:#8b2020;border:2px solid white;border-radius:50%;cursor:pointer;"></div>',
@@ -321,9 +323,9 @@ const MapController = (function () {
                 break;
 
             case "sf-serious":
-                // Show both clusters and serious markers
+                // Show only serious markers — clean map with just the red dots
                 if (map.hasLayer(cityMarkersLayer)) map.removeLayer(cityMarkersLayer);
-                if (!map.hasLayer(clusterGroup)) map.addLayer(clusterGroup);
+                if (map.hasLayer(clusterGroup)) map.removeLayer(clusterGroup);
                 if (!map.hasLayer(seriousMarkersLayer)) map.addLayer(seriousMarkersLayer);
                 break;
         }

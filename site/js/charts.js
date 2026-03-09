@@ -292,6 +292,159 @@ const Charts = (function () {
     }
 
     // ============================================
+    // Chart 4: Speed Distribution (horizontal bar)
+    // ============================================
+
+    /**
+     * Build a horizontal bar chart showing Waymo vehicle speed
+     * at the time of crash. The 0 mph bar is highlighted to
+     * emphasize that most crashes happen while stationary.
+     *
+     * @param {Object} stats — The parsed site-data.json object
+     */
+    function buildSpeedChart(stats) {
+        const canvas = document.getElementById("speed-chart");
+        if (!canvas || !stats.crash_circumstances || !stats.crash_circumstances.speed_distribution) return;
+
+        const dist = stats.crash_circumstances.speed_distribution;
+        const bucketOrder = ["0_mph", "1_5_mph", "6_15_mph", "16_25_mph", "26_35_mph", "36_plus_mph"];
+        const bucketLabels = ["0 mph", "1–5 mph", "6–15 mph", "16–25 mph", "26–35 mph", "36+ mph"];
+
+        const values = bucketOrder.map(k => dist[k] ? dist[k].count : 0);
+        const pcts = bucketOrder.map(k => dist[k] ? dist[k].percentage : 0);
+
+        // Highlight the 0 mph bar — the key finding
+        const colors = bucketOrder.map(k => k === "0_mph" ? ACCENT : GREY);
+
+        new Chart(canvas, {
+            type: "bar",
+            data: {
+                labels: bucketLabels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                }],
+            },
+            options: {
+                ...getDefaults(),
+                indexAxis: "y",
+                scales: {
+                    x: {
+                        grid: {
+                            color: BORDER_COLOR,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_COLOR,
+                            padding: 8,
+                        },
+                        border: { display: false },
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_DARK,
+                        },
+                        border: { color: BORDER_COLOR },
+                    },
+                },
+                plugins: {
+                    ...getDefaults().plugins,
+                    tooltip: {
+                        ...getDefaults().plugins.tooltip,
+                        callbacks: {
+                            label: function(item) {
+                                return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    // ============================================
+    // Chart 5: Crash Type (horizontal bar)
+    // ============================================
+
+    /**
+     * Build a horizontal bar chart showing crash types in plain
+     * English, sorted by count descending.
+     *
+     * @param {Object} stats — The parsed site-data.json object
+     */
+    function buildCrashTypeChart(stats) {
+        const canvas = document.getElementById("crash-type-chart");
+        if (!canvas || !stats.crash_circumstances || !stats.crash_circumstances.crash_type_plain) return;
+
+        // Sort by count descending
+        const sorted = Object.entries(stats.crash_circumstances.crash_type_plain)
+            .sort((a, b) => b[1].count - a[1].count);
+
+        const labels = sorted.map(([name]) => name);
+        const values = sorted.map(([, info]) => info.count);
+        const pcts = sorted.map(([, info]) => info.percentage);
+
+        // Highlight the top category
+        const maxVal = Math.max(...values);
+        const colors = values.map(v => v === maxVal ? ACCENT : GREY);
+
+        new Chart(canvas, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                }],
+            },
+            options: {
+                ...getDefaults(),
+                indexAxis: "y",
+                scales: {
+                    x: {
+                        grid: {
+                            color: BORDER_COLOR,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_COLOR,
+                            padding: 8,
+                        },
+                        border: { display: false },
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_DARK,
+                        },
+                        border: { color: BORDER_COLOR },
+                    },
+                },
+                plugins: {
+                    ...getDefaults().plugins,
+                    tooltip: {
+                        ...getDefaults().plugins.tooltip,
+                        callbacks: {
+                            label: function(item) {
+                                return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    // ============================================
     // Utility
     // ============================================
 
@@ -308,5 +461,7 @@ const Charts = (function () {
         buildHourlyChart,
         buildDayOfWeekChart,
         buildLocationTypeChart,
+        buildSpeedChart,
+        buildCrashTypeChart,
     };
 })();

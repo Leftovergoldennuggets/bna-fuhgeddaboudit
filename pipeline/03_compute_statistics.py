@@ -49,6 +49,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline.config import (
     PROCESSED_MERGED, WEB_SITE_DATA, SITE_IMAGES_DIR,
     TIME_PERIODS, CITIES, WAYMO_PUBLISHED_STATS, LOCATION_PATTERNS,
+    STATIC_MILES_BY_CITY,
 )
 
 
@@ -273,6 +274,15 @@ def compute_all_statistics(df):
 
     stats["severity"] = severity
 
+    # SF-specific severity (for the scrollytelling step focused on San Francisco)
+    if severity_col in df.columns:
+        sf_mask = df["Location"] == "SAN_FRANCISCO"
+        sf_moderate_plus = df.loc[sf_mask, severity_col].apply(_is_moderate_plus)
+        severity["sf_moderate_plus"] = {
+            "count": int(sf_moderate_plus.sum()),
+            "percentage": round(sf_moderate_plus.sum() / int(sf_mask.sum()) * 100, 1) if sf_mask.sum() > 0 else 0,
+        }
+
     # -------------------------------------------------------------------
     # CRASH TYPES: Distribution of crash classifications
     # -------------------------------------------------------------------
@@ -422,6 +432,117 @@ def compute_all_statistics(df):
                         "total": int(len(day_df)),
                     }
         stats["temporal"]["peak_by_day"] = peak_by_day
+
+    # -------------------------------------------------------------------
+    # CRASH CIRCUMSTANCES: Speed, crash type, vulnerable road users
+    # Used by the "What Happens in These Crashes?" section
+    # -------------------------------------------------------------------
+    crash_circumstances = {}
+
+    # Speed distribution — bucket SV Precrash Speed into ranges
+    speed_col = "SV Precrash Speed (MPH)"
+    if speed_col in df.columns:
+        speeds = pd.to_numeric(df[speed_col], errors="coerce").dropna()
+        total_with_speed = len(speeds)
+
+        # Define speed buckets
+        buckets = [
+            ("0_mph", speeds == 0),
+            ("1_5_mph", (speeds >= 1) & (speeds <= 5)),
+            ("6_15_mph", (speeds >= 6) & (speeds <= 15)),
+            ("16_25_mph", (speeds >= 16) & (speeds <= 25)),
+            ("26_35_mph", (speeds >= 26) & (speeds <= 35)),
+            ("36_plus_mph", speeds >= 36),
+        ]
+        speed_dist = {}
+        for bucket_name, mask in buckets:
+            count = int(mask.sum())
+            speed_dist[bucket_name] = {
+                "count": count,
+                "percentage": round(count / total_with_speed * 100, 1) if total_with_speed > 0 else 0,
+            }
+        crash_circumstances["speed_distribution"] = speed_dist
+
+        crash_circumstances["speed_stats"] = {
+            "total_with_speed_data": total_with_speed,
+            "median_speed_mph": round(float(speeds.median()), 1),
+            "mean_speed_mph": round(float(speeds.mean()), 1),
+        }
+
+    # Crash type with plain English labels
+    crash_type_labels = {
+        "V2V F2R": "Rear-end collision",
+        "V2V Lateral": "Side-impact collision",
+        "V2V Backing": "Backing collision",
+        "Single Vehicle": "Single vehicle",
+        "V2V Head-on": "Head-on collision",
+        "V2V Intersection": "Intersection collision",
+        "All Others": "Other",
+        "Secondary Crash": "Secondary crash",
+        "Motorcycle": "Motorcycle",
+        "Cyclist": "Cyclist",
+        "Pedestrian": "Pedestrian",
+    }
+    if "Crash Type" in df.columns:
+        ct_counts = df["Crash Type"].value_counts()
+        crash_type_plain = {}
+        for code, count in ct_counts.items():
+            label = crash_type_labels.get(code, code)
+            crash_type_plain[label] = {
+                "count": int(count),
+                "percentage": round(count / total_crashes * 100, 1),
+            }
+        crash_circumstances["crash_type_plain"] = crash_type_plain
+
+    # Vulnerable road users (pedestrians, cyclists, motorcyclists)
+    if "Crash Type" in df.columns:
+        vru_types = {"Pedestrian": "pedestrian", "Cyclist": "cyclist", "Motorcycle": "motorcycle"}
+        vru_counts = {}
+        vru_total = 0
+        for crash_code, key in vru_types.items():
+            count = int((df["Crash Type"] == crash_code).sum())
+            vru_counts[key] = count
+            vru_total += count
+        crash_circumstances["vulnerable_road_users"] = {
+            "total": vru_total,
+            "percentage": round(vru_total / total_crashes * 100, 1),
+            **vru_counts,
+        }
+
+    stats["crash_circumstances"] = crash_circumstances
+
+    # -------------------------------------------------------------------
+    # CITY MILEAGE: Crash rates per million miles by city
+    # Uses manually maintained miles_by_city.json from Waymo's Safety Hub.
+    # -------------------------------------------------------------------
+    if os.path.exists(STATIC_MILES_BY_CITY):
+        with open(STATIC_MILES_BY_CITY, "r") as f:
+            miles_data = json.load(f)
+
+        city_mileage = {}
+        for city_code, city_info in CITIES.items():
+            display_name = city_info["name"]
+            city_crash_count = int(city_counts.get(city_code, 0))
+            miles_entry = miles_data.get("cities", {}).get(display_name, {})
+            miles_millions = miles_entry.get("miles_millions")
+
+            if miles_millions is not None and miles_millions > 0:
+                rate = round(city_crash_count / miles_millions, 1)
+            else:
+                rate = None
+
+            city_mileage[display_name] = {
+                "miles_millions": miles_millions,
+                "crashes_per_million_miles": rate,
+            }
+
+        stats["city_mileage"] = city_mileage
+        stats["city_mileage_meta"] = {
+            "data_through": miles_data.get("data_through"),
+            "source_url": miles_data.get("source_url"),
+        }
+    else:
+        print(f"  WARNING: {STATIC_MILES_BY_CITY} not found — skipping city mileage stats")
 
     # -------------------------------------------------------------------
     # WAYMO PUBLISHED SAFETY CONTEXT
