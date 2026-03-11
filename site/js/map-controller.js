@@ -240,24 +240,9 @@ const MapController = (function () {
                 fillOpacity: 0.7,
             });
 
-            // Popup with crash details — shown when the user clicks the marker
-            const dateStr = crash.date || "Unknown date";
-            const hourStr = crash.hour !== null ? formatHour(crash.hour) : "Unknown";
-            // .bindPopup() attaches a popup that appears on click
-            // Template literals (`...${variable}...`) let us embed variables directly in strings
-            marker.bindPopup(
-                `<div class="crash-popup">` +
-                `<strong>${formatCrashType(crash.crash_type)}</strong><br>` +
-                `<span class="popup-city">${formatCityName(crash.city)}</span><br>` +
-                `<span class="popup-date">${dateStr} at ${hourStr}</span><br>` +
-                `<span class="popup-type">Location: ${crash.location_type}</span>` +
-                // Ternary operator: condition ? valueIfTrue : valueIfFalse
-                (crash.is_estimated_location
-                    ? `<br><em class="popup-estimated">Approximate location</em>`
-                    : "") +
-                `</div>`,
-                { maxWidth: 250 }  // Limit popup width to 250 pixels
-            );
+            // Popup with enriched crash details — shown when the user clicks the marker
+            // buildPopupContent() generates the full HTML with speed, movements, narrative, etc.
+            marker.bindPopup(buildPopupContent(crash), { maxWidth: 320 });
 
             // Add this marker to the cluster group (not directly to the map)
             clusterGroup.addLayer(marker);
@@ -488,6 +473,90 @@ const MapController = (function () {
         return city ? city.name : code;        // Return the name, or the raw code if not found
     }
 
+    /**
+     * Build enriched popup HTML for a crash marker.
+     * Shows crash type, date/time, what each party was doing, speed,
+     * injury severity, and a truncated narrative with "Read more" toggle.
+     * Used by both the scrollytelling map and the explore map.
+     *
+     * @param {Object} crash — a single crash record from crash_data.json
+     * @returns {string} HTML string for the Leaflet popup
+     */
+    function buildPopupContent(crash) {
+        const dateStr = crash.date || "Unknown date";
+        const hourStr = crash.hour !== null ? formatHour(crash.hour) : "Unknown";
+
+        // Start building the popup HTML
+        let html = `<div class="crash-popup crash-popup-enriched">`;
+
+        // Header: crash type + severity badge
+        html += `<div class="popup-header">`;
+        html += `<strong>${formatCrashType(crash.crash_type)}</strong>`;
+        if (crash.is_serious) {
+            html += ` <span class="popup-badge popup-badge-serious">Serious</span>`;
+        } else if (crash.has_injury) {
+            html += ` <span class="popup-badge popup-badge-injury">Injury</span>`;
+        }
+        html += `</div>`;
+
+        // City, date, time
+        html += `<span class="popup-city">${formatCityName(crash.city)}</span>`;
+        html += ` &mdash; <span class="popup-date">${dateStr} at ${hourStr}</span><br>`;
+
+        // Circumstances table: what each party was doing, speed, other party type
+        if (crash.sv_movement || crash.cp_movement || crash.speed_mph !== null || crash.crash_with) {
+            html += `<div class="popup-circumstances">`;
+            if (crash.speed_mph !== null) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Waymo speed:</span> ${crash.speed_mph} mph</div>`;
+            }
+            if (crash.sv_movement) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Waymo action:</span> ${crash.sv_movement}</div>`;
+            }
+            if (crash.cp_movement) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Other party:</span> ${crash.cp_movement}</div>`;
+            }
+            if (crash.crash_with) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Crash with:</span> ${crash.crash_with}</div>`;
+            }
+            html += `</div>`;
+        }
+
+        // Injury severity (if any)
+        if (crash.injury_severity && crash.injury_severity !== "No Apparent Injury") {
+            const sevColor = crash.is_serious ? "#8b2020" : "#c4841d";
+            html += `<div class="popup-severity" style="color:${sevColor}">${crash.injury_severity}</div>`;
+        }
+
+        // Location type
+        html += `<span class="popup-type">Location: ${crash.location_type}</span>`;
+
+        // Narrative — show first 200 chars with "Read more" toggle
+        // Each popup gets a unique ID based on lat/lon to avoid collisions.
+        if (crash.narrative) {
+            const truncLen = 200;
+            const needsTruncation = crash.narrative.length > truncLen;
+            const uid = "narr-" + String(crash.lat).replace(".", "") + String(crash.lon).replace(".", "");
+
+            if (needsTruncation) {
+                const preview = crash.narrative.substring(0, truncLen) + "...";
+                html += `<div class="popup-narrative">`;
+                html += `<span id="${uid}-short">${preview} <a href="#" onclick="document.getElementById('${uid}-short').style.display='none';document.getElementById('${uid}-full').style.display='inline';return false;" class="popup-readmore">Read more</a></span>`;
+                html += `<span id="${uid}-full" style="display:none">${crash.narrative} <a href="#" onclick="document.getElementById('${uid}-full').style.display='none';document.getElementById('${uid}-short').style.display='inline';return false;" class="popup-readmore">Show less</a></span>`;
+                html += `</div>`;
+            } else {
+                html += `<div class="popup-narrative">${crash.narrative}</div>`;
+            }
+        }
+
+        // Estimated location flag
+        if (crash.is_estimated_location) {
+            html += `<br><em class="popup-estimated">Approximate location</em>`;
+        }
+
+        html += `</div>`;
+        return html;
+    }
+
     /** Get the Leaflet map instance (used by explore.js) */
     function getMap() {
         return map;
@@ -508,6 +577,7 @@ const MapController = (function () {
         formatHour,
         formatCityName,
         formatCrashType,
+        buildPopupContent,
         CRASH_TYPE_LABELS,
         VIEWS,
         CITY_COORDS,
