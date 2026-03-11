@@ -147,6 +147,109 @@ const Explore = (function () {
     }
 
     // ============================================
+    // Popup Content Builder
+    // ============================================
+
+    /**
+     * Build enriched popup HTML for a crash marker.
+     * Shows crash type, date/time, what each party was doing, speed,
+     * injury severity, and a truncated narrative with "Read more" toggle.
+     *
+     * @param {Object} crash — a single crash record from crash_data.json
+     * @returns {string} HTML string for the Leaflet popup
+     */
+    function buildPopupContent(crash) {
+        const dateStr = crash.date || "Unknown date";
+        const hourStr = crash.hour !== null
+            ? MapController.formatHour(crash.hour)
+            : "Unknown";
+
+        // Start building the popup HTML
+        let html = `<div class="crash-popup crash-popup-enriched">`;
+
+        // Header: crash type + severity badge
+        html += `<div class="popup-header">`;
+        html += `<strong>${MapController.formatCrashType(crash.crash_type)}</strong>`;
+        if (crash.is_serious) {
+            html += ` <span class="popup-badge popup-badge-serious">Serious</span>`;
+        } else if (crash.has_injury) {
+            html += ` <span class="popup-badge popup-badge-injury">Injury</span>`;
+        }
+        html += `</div>`;
+
+        // City, date, time
+        html += `<span class="popup-city">${MapController.formatCityName(crash.city)}</span>`;
+        html += ` &mdash; <span class="popup-date">${dateStr} at ${hourStr}</span><br>`;
+
+        // Circumstances table: what each party was doing, speed, other party type
+        // Only show if we have at least one enriched field
+        if (crash.sv_movement || crash.cp_movement || crash.speed_mph !== null || crash.crash_with) {
+            html += `<div class="popup-circumstances">`;
+
+            // Speed at time of crash
+            if (crash.speed_mph !== null) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Waymo speed:</span> ${crash.speed_mph} mph</div>`;
+            }
+
+            // What Waymo was doing
+            if (crash.sv_movement) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Waymo action:</span> ${crash.sv_movement}</div>`;
+            }
+
+            // What the other party was doing
+            if (crash.cp_movement) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Other party:</span> ${crash.cp_movement}</div>`;
+            }
+
+            // What type of vehicle/person Waymo crashed with
+            if (crash.crash_with) {
+                html += `<div class="popup-detail"><span class="popup-detail-label">Crash with:</span> ${crash.crash_with}</div>`;
+            }
+
+            html += `</div>`;
+        }
+
+        // Injury severity (if any)
+        if (crash.injury_severity && crash.injury_severity !== "No Apparent Injury") {
+            const sevColor = crash.is_serious ? "#8b2020" : "#c4841d";
+            html += `<div class="popup-severity" style="color:${sevColor}">${crash.injury_severity}</div>`;
+        }
+
+        // Location type
+        html += `<span class="popup-type">Location: ${crash.location_type}</span>`;
+
+        // Narrative — show first 200 chars with "Read more" toggle
+        // For this part we consulted Claude who recommended using a unique ID per popup
+        // to toggle the narrative expansion. Each popup gets an ID based on the crash's
+        // lat/lon/date combination, which is unique enough to avoid collisions. The onclick
+        // handler toggles the display between the truncated preview and the full narrative.
+        if (crash.narrative) {
+            const truncLen = 200;
+            const needsTruncation = crash.narrative.length > truncLen;
+            // Create a unique ID using lat + lon (remove dots to make a valid HTML id)
+            const uid = "narr-" + String(crash.lat).replace(".", "") + String(crash.lon).replace(".", "");
+
+            if (needsTruncation) {
+                const preview = crash.narrative.substring(0, truncLen) + "...";
+                html += `<div class="popup-narrative">`;
+                html += `<span id="${uid}-short">${preview} <a href="#" onclick="document.getElementById('${uid}-short').style.display='none';document.getElementById('${uid}-full').style.display='inline';return false;" class="popup-readmore">Read more</a></span>`;
+                html += `<span id="${uid}-full" style="display:none">${crash.narrative} <a href="#" onclick="document.getElementById('${uid}-full').style.display='none';document.getElementById('${uid}-short').style.display='inline';return false;" class="popup-readmore">Show less</a></span>`;
+                html += `</div>`;
+            } else {
+                html += `<div class="popup-narrative">${crash.narrative}</div>`;
+            }
+        }
+
+        // Estimated location flag
+        if (crash.is_estimated_location) {
+            html += `<br><em class="popup-estimated">Approximate location</em>`;
+        }
+
+        html += `</div>`;
+        return html;
+    }
+
+    // ============================================
     // Build Markers
     // ============================================
 
@@ -169,28 +272,12 @@ const Explore = (function () {
             });
 
             // Build the popup content (shown when user clicks a marker)
-            const dateStr = crash.date || "Unknown date";
-            const hourStr = crash.hour !== null
-                ? MapController.formatHour(crash.hour)    // Use the shared format function from MapController
-                : "Unknown";
+            // The popup shows enriched crash details including what each party
+            // was doing, speed, injury severity, and a truncated NHTSA narrative.
+            const popupHTML = buildPopupContent(crash);
 
             // .bindPopup() attaches a popup — same pattern as MapController.buildCrashMarkers
-            // Template literals (`...${variable}...`) embed variables directly in the string
-            marker.bindPopup(
-                `<div class="crash-popup">` +
-                `<strong>${MapController.formatCrashType(crash.crash_type)}</strong><br>` +
-                `<span class="popup-city">${MapController.formatCityName(crash.city)}</span><br>` +
-                `<span class="popup-date">${dateStr} at ${hourStr}</span><br>` +
-                `<span class="popup-type">Location: ${crash.location_type}</span>` +
-                (crash.has_injury
-                    ? `<br><em style="color:#c4841d">Injury reported</em>`
-                    : "") +
-                (crash.is_estimated_location
-                    ? `<br><em class="popup-estimated">Approximate location</em>`
-                    : "") +
-                `</div>`,
-                { maxWidth: 250 }
-            );
+            marker.bindPopup(popupHTML, { maxWidth: 320 });
 
             // Store the marker in the allMarkers array (same index as allCrashes)
             allMarkers.push(marker);

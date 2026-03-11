@@ -354,10 +354,11 @@ def geocode_addresses(df, cache):
             continue
         seen_keys.add(cache_key)
 
-        # Skip only SUCCESSFUL cache hits — retry previously failed ones (null/None)
-        # A None value in the cache means "we tried and failed" — worth retrying with new strategies
-        cached = cache.get(cache_key)
-        if cached is not None:
+        # Skip if already in cache (successful OR failed).
+        # A None value means "we tried and failed" — no point retrying the same address,
+        # since the Nominatim results won't change. To force a retry, delete the entry
+        # from geocode_cache.json manually.
+        if cache_key in cache:
             continue
 
         queries = build_geocode_queries(address, city_code)
@@ -370,7 +371,7 @@ def geocode_addresses(df, cache):
 
     # Estimate time: each address tries up to 3 queries (1 sec each)
     # but most will succeed or fail on the first 1-2 tries
-    print(f"  Need to geocode {len(to_geocode)} addresses (retrying failures with new strategies)...")
+    print(f"  Need to geocode {len(to_geocode)} NEW addresses...")
     print(f"  Estimated time: {len(to_geocode) * 2 // 60}-{len(to_geocode) * 3 // 60} min")
     print(f"  (each address tries up to 3 query formats)")
     print()
@@ -536,6 +537,38 @@ def main():
         # is_serious = moderate, serious, or fatal (the "moderate_plus" group)
         is_serious = severity_level in ("moderate", "serious", "fatal")
 
+        # --- Enriched fields for explore section popups (Part F of spec) ---
+        # SV = Subject Vehicle (Waymo), CP = Contact Party (the other vehicle/person)
+        sv_movement = row.get("SV Pre-Crash Movement", "")
+        sv_movement = str(sv_movement).strip() if pd.notna(sv_movement) else None
+
+        cp_movement = row.get("CP Pre-Crash Movement", "")
+        cp_movement = str(cp_movement).strip() if pd.notna(cp_movement) else None
+
+        crash_with = row.get("Crash With", "")
+        crash_with = str(crash_with).strip() if pd.notna(crash_with) else None
+
+        # Speed in MPH — store as number (float) for display
+        speed_raw = row.get("SV Precrash Speed (MPH)", None)
+        speed_mph = None
+        if pd.notna(speed_raw):
+            try:
+                speed_mph = round(float(speed_raw), 1)
+            except (ValueError, TypeError):
+                pass
+
+        # Injury severity description from NHTSA
+        injury_severity = str(row.get("Highest Injury Severity Alleged", "")).strip()
+        if not injury_severity or injury_severity.lower() == "nan":
+            injury_severity = None
+
+        # Full NHTSA narrative — included for all crashes so explore popups
+        # can show a truncated version with "read more" expansion
+        narrative = row.get("Narrative", "")
+        narrative = str(narrative).strip() if pd.notna(narrative) else None
+        if narrative and narrative.lower() == "nan":
+            narrative = None
+
         record = {
             "lat": round(float(lat), 6),
             "lon": round(float(lon), 6),
@@ -553,6 +586,13 @@ def main():
             "is_serious": is_serious,
             "severity_level": severity_level,
             "is_vulnerable_road_user": is_vulnerable,
+            # Enriched fields for explore popups
+            "sv_movement": sv_movement,
+            "cp_movement": cp_movement,
+            "crash_with": crash_with,
+            "speed_mph": speed_mph,
+            "injury_severity": injury_severity,
+            "narrative": narrative,
         }
         map_data.append(record)
 

@@ -1144,6 +1144,77 @@ a:hover {
     color: var(--color-warning);
 }
 
+/* Enriched popup styles — Part F: detailed crash info in explore section */
+.crash-popup-enriched {
+    line-height: 1.5;
+    max-width: 320px;
+}
+
+.popup-header {
+    margin-bottom: 4px;
+}
+
+/* Severity badges next to crash type */
+.popup-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.popup-badge-serious {
+    background: #8b2020;
+    color: #fff;
+}
+
+.popup-badge-injury {
+    background: #c4841d;
+    color: #fff;
+}
+
+/* Crash circumstances: speed, movements, other party */
+.popup-circumstances {
+    margin: 6px 0;
+    padding: 6px 8px;
+    background: var(--color-bg-alt, #f0ece6);
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.popup-detail {
+    line-height: 1.5;
+}
+
+.popup-detail-label {
+    color: var(--color-text-light, #6b6b6b);
+    font-size: 0.75rem;
+}
+
+.popup-severity {
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin: 4px 0;
+}
+
+/* Narrative text with read more/less toggle */
+.popup-narrative {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--color-border, #e0dcd4);
+    font-size: 0.78rem;
+    color: var(--color-text, #2c2c2c);
+    line-height: 1.5;
+}
+
+.popup-readmore {
+    color: var(--color-accent, #8b6f47);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
 .city-tooltip {
     font-family: var(--font-mono);
     font-size: 0.8rem;
