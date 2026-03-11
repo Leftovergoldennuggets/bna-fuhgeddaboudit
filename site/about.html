@@ -84,8 +84,23 @@
 
             <p>We merge these two sources in an automated pipeline that runs quarterly. The full technical details are on our <a href="methodology.html">methodology page</a>.</p>
 
-            <h2>And of course thanks to</h2>
-            <img src="assets/images/supreme_leader.png" alt="The Supreme Leader" style="max-width: 500px; width: 100%; display: block; margin: 1rem auto;">
+            <h2>And of course none of this could be possible without out...</h2>
+            <button id="reveal-btn" style="display:inline-block; padding:10px 24px; background:var(--color-accent, #8b6f47); color:#fff; border:none; border-radius:4px; cursor:pointer; font-family:inherit; font-size:1rem; margin:0.5rem 0;">Click to reveal</button>
+
+            <!-- Overlay that appears when button is clicked -->
+            <div id="reveal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:10000; justify-content:center; align-items:center; cursor:pointer;">
+                <img src="assets/images/supreme_leader.png" alt="The Supreme Leader" style="max-width:600px; width:90%; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+            </div>
+
+            <script>
+                // Reveal overlay on button click, close on clicking anywhere on the overlay
+                document.getElementById('reveal-btn').addEventListener('click', function() {
+                    document.getElementById('reveal-overlay').style.display = 'flex';
+                });
+                document.getElementById('reveal-overlay').addEventListener('click', function() {
+                    this.style.display = 'none';
+                });
+            </script>
 
             <h2>Contact</h2>
 
