@@ -88,6 +88,12 @@ const Explore = (function () {
         // Show all markers on the map initially (no filters active)
         applyFilters();
 
+        // Fullscreen toggle button
+        const fsBtn = document.getElementById("explore-fullscreen-btn");
+        if (fsBtn) {
+            fsBtn.addEventListener("click", toggleFullscreen);
+        }
+
         console.log("[Explore] Initialized with", crashes.length, "crashes");
     }
 
@@ -460,6 +466,50 @@ const Explore = (function () {
         applyFilters();
         // Zoom back out to show the full US
         exploreMap.flyTo([37.0902, -95.7129], 4, { duration: 1 });
+    }
+
+    // ============================================
+    // Fullscreen Toggle
+    // ============================================
+
+    /**
+     * Toggle the explore section between normal and fullscreen mode.
+     * Adds/removes a CSS class on the explore layout container, then tells
+     * Leaflet to recalculate the map size (since the container dimensions changed).
+     */
+    function toggleFullscreen() {
+        const layout = document.querySelector(".explore-layout");
+        const btn = document.getElementById("explore-fullscreen-btn");
+        if (!layout) return;
+
+        layout.classList.toggle("explore-fullscreen");
+        const isFullscreen = layout.classList.contains("explore-fullscreen");
+
+        // Update button icon: ⛶ = expand, ✕ = close
+        if (btn) btn.textContent = isFullscreen ? "✕" : "⛶";
+
+        // Leaflet needs to recalculate tile positions after container resize.
+        // setTimeout gives the browser a frame to apply the CSS change first.
+        setTimeout(() => {
+            exploreMap.invalidateSize();
+        }, 100);
+
+        // Allow Escape key to exit fullscreen
+        if (isFullscreen) {
+            document.addEventListener("keydown", escapeFullscreen);
+        } else {
+            document.removeEventListener("keydown", escapeFullscreen);
+        }
+    }
+
+    /** Close fullscreen when the user presses Escape */
+    function escapeFullscreen(e) {
+        if (e.key === "Escape") {
+            const layout = document.querySelector(".explore-layout");
+            if (layout && layout.classList.contains("explore-fullscreen")) {
+                toggleFullscreen();
+            }
+        }
     }
 
     // Public API — only init() is exposed; everything else stays private inside the module
