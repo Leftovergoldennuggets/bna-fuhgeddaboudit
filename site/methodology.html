@@ -98,6 +98,41 @@
             <h3>Step 5: Extract Serious Incidents</h3>
             <p>Crashes involving moderate, serious, or fatal injuries are extracted into a separate file with their full NHTSA narratives, enabling the detailed incident view on the map.</p>
 
+            <!-- ========== CRASH CIRCUMSTANCES ========== -->
+            <h2>Crash Circumstances Analysis</h2>
+
+            <p>In addition to the core statistics (counts, severity, timing, geography), we analyze the circumstances of each crash using fields from the NHTSA Standing General Order reports.</p>
+
+            <h3>Speed at Time of Crash</h3>
+
+            <p>The NHTSA report includes a "SV Precrash Speed (MPH)" field recording the subject vehicle's speed at the time of the crash. We use this field to compute the speed distribution displayed on the website. Of 1,123 total crashes, 1,119 have valid speed data.</p>
+
+            <p>We bucket speeds into six ranges: 0 mph, 1–5 mph, 6–15 mph, 16–25 mph, 26–35 mph, and 36+ mph. The median and mean are computed from the raw values. The finding that 65.6% of crashes occur at 0 mph is derived directly from this field with no adjustment or interpretation.</p>
+
+            <h3>Pre-Crash Movement</h3>
+
+            <p>The "SV Pre-Crash Movement" field describes what the Waymo vehicle was doing immediately before the crash (e.g., stopped, proceeding straight, making a turn). The "CP Pre-Crash Movement" field describes the other party's movement. We report both for context.</p>
+
+            <p>These fields describe the physical movements of the vehicles, not legal fault or responsibility. A vehicle classified as "stopped" at the time of contact may or may not bear any responsibility for the circumstances that led to the crash.</p>
+
+            <h3>Crash Type Classification</h3>
+
+            <p>Crash types (e.g., "V2V F2R", "Pedestrian") come from Waymo's Safety Impact Data Hub, not from NHTSA. Waymo classifies each crash into one of 11 categories. We translate these codes into plain English for readability:</p>
+
+            <ul>
+                <li><strong>V2V F2R</strong> → Rear-end collision</li>
+                <li><strong>V2V Lateral</strong> → Side-impact collision</li>
+                <li><strong>V2V Backing</strong> → Backing collision</li>
+                <li><strong>V2V Head-on</strong> → Head-on collision</li>
+                <li><strong>V2V Intersection</strong> → Intersection collision</li>
+                <li><strong>Single Vehicle</strong> → Single vehicle</li>
+                <li><strong>Secondary Crash</strong> → Secondary crash</li>
+                <li><strong>Motorcycle</strong> → Motorcycle</li>
+                <li><strong>Cyclist</strong> → Cyclist</li>
+                <li><strong>Pedestrian</strong> → Pedestrian</li>
+                <li><strong>All Others</strong> → Other</li>
+            </ul>
+
             <!-- ========== LIMITATIONS ========== -->
             <h2>Limitations and Caveats</h2>
 
@@ -111,7 +146,18 @@
             <p>Geocode results are cached in <code>geocode_cache.json</code> to ensure reproducibility and avoid repeated API calls.</p>
 
             <h3>Reporting Thresholds</h3>
-            <p>The NHTSA SGO requires reporting of crashes that meet specific thresholds (injury, airbag deployment, or property damage exceeding $1,000 under current rules). Companies may interpret these thresholds slightly differently. See the "Reporting threshold change" section below for details on how the threshold changed in June 2025.</p>
+
+            <p>The NHTSA Standing General Order has been amended three times since its original 2021 release. The most significant change for this dataset occurred on June 16, 2025, when the <strong>Third Amended SGO</strong> took effect. Key changes include:</p>
+
+            <ul>
+                <li><strong>Property damage threshold:</strong> The amended order added a threshold for property-damage-only crashes involving ADS vehicles, meaning very minor incidents that would have been reported under the previous rules may no longer be reported</li>
+                <li><strong>Reporting timeline:</strong> The deadline for reporting the most serious crashes was extended from one calendar day to five calendar days</li>
+                <li><strong>Duplicate reporting:</strong> When multiple companies are involved in the same crash, only one entity now needs to report (unless they have materially different information)</li>
+            </ul>
+
+            <p>This means the dataset is not perfectly uniform across time. Crashes reported before June 2025 were filed under a lower reporting threshold than those reported after. When interpreting trends over time, this difference in reporting requirements should be considered.</p>
+
+            <p>For our analysis, we include all crashes from both periods. Where relevant, we note the reporting period distinction.</p>
 
             <h3>Severity Assessment</h3>
             <p>We report severity using four independent boolean indicators rather than a composite score:</p>
@@ -135,15 +181,27 @@
                 <li>Autonomous vehicles currently operate in a limited set of conditions that may be systematically different from the average human driving environment</li>
             </ul>
 
+            <h3>Crash Circumstances and Fault</h3>
+
+            <p>This website reports the circumstances of each crash — vehicle speeds, pre-crash movements, crash types, and involved parties — as recorded in the federal crash reports. <strong>We do not make fault determinations.</strong></p>
+
+            <p>A Waymo vehicle recorded as "stopped" at the time of contact was physically stationary, but this does not necessarily mean the other party was at fault. Similarly, a crash classified as a "rear-end collision" describes the physical configuration of impact, not the cause. Fault determination requires investigation beyond what is available in the NHTSA dataset.</p>
+
+            <p>Readers should interpret crash circumstances as descriptive — what happened — rather than prescriptive — who was responsible.</p>
+
             <h3>Dataset Coverage</h3>
             <p>The Waymo Hub dataset does not include every NHTSA-reported crash. Some NHTSA crashes are excluded by Waymo's own methodology (e.g., incidents that don't meet their definition of a reportable crash). Our merge process preserves all Hub crashes and flags NHTSA-only crashes separately.</p>
 
+            <h3>Mileage Data</h3>
+
+            <p>Miles-driven data by city comes from Waymo's Safety Impact Data Hub, which publishes cumulative rider-only miles for each operating city. We use this data to compute crash rates per million miles. These rates allow for more meaningful comparisons across cities than raw crash counts, since cities with more miles driven will naturally report more crashes.</p>
+
+            <p>The mileage growth timeline displayed on this website was compiled by Anders Eidesvik from Waymo press releases, public statements, news articles, and archived snapshots of the Waymo Safety Impact Data Hub captured via the Wayback Machine. Waymo does not publish a historical time series of cumulative miles, so each data point was individually sourced and verified. Full source URLs are documented in our data files.</p>
+
+            <p>Mileage data for Atlanta is not yet published by Waymo on the Safety Impact Data Hub, so we cannot compute a crash rate for that city.</p>
+
             <h3>Temporal Limitations</h3>
             <p>Crash time data comes from the "Incident Time" field in the NHTSA reports. A small number of records have missing or unparseable times, which are excluded from time-of-day analyses. The overall coverage is high (typically &gt;99% of records have valid time data).</p>
-
-            <h3>Reporting Threshold Change (June 2025)</h3>
-            <p>Effective June 16, 2025, NHTSA's Amendment 3 to Standing General Order 2021-01 changed the reporting requirements for ADS manufacturers. Under Amendment 2, manufacturers were required to report crashes resulting in "any property damage, injury, or fatality." Under Amendment 3, property-damage-only crashes must meet a $1,000 threshold to be reportable. Crashes resulting in injury, fatality, or airbag deployment continue to be reported regardless of damage amount.</p>
-            <p>This means that some very minor property-damage-only incidents that would have appeared in the pre-June 2025 data may not appear in the post-June 2025 data. When comparing crash frequencies over time, this threshold change should be taken into account — an apparent decrease in minor crashes after June 2025 may reflect the reporting change rather than a change in actual crash frequency.</p>
 
             <!-- ========== AUTOMATION ========== -->
             <h2>Automated Updates</h2>
