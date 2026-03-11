@@ -40,7 +40,7 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 # Add the project root to Python's path so we can import config
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline.config import (
-    PROCESSED_MERGED, WEB_CRASH_DATA, CITIES, TIME_PERIODS,
+    PROCESSED_MERGED, WEB_CRASH_DATA, WEB_SITE_DATA, CITIES, TIME_PERIODS,
     LOCATION_PATTERNS, GEOCODE_CACHE,
 )
 
@@ -570,6 +570,32 @@ def main():
 
     size_kb = os.path.getsize(WEB_CRASH_DATA) / 1024
     print(f"  Saved: {WEB_CRASH_DATA} ({size_kb:.0f} KB)")
+
+    # --- Append geocoding stats to site-data.json ---
+    # These stats let methodology.html and faq.html display accurate geocoding
+    # numbers via data-stat bindings instead of hardcoded values.
+    total_mapped = len(map_data)
+    accurate = total_mapped - coords_estimated
+    accuracy_pct = round(accurate / total_mapped * 100, 1) if total_mapped > 0 else 0
+
+    geocoding_stats = {
+        "total_mapped": total_mapped,
+        "accurate": accurate,
+        "estimated": coords_estimated,
+        "accuracy_pct": accuracy_pct,
+    }
+
+    print()
+    print("Updating site-data.json with geocoding stats...")
+    if os.path.exists(WEB_SITE_DATA):
+        with open(WEB_SITE_DATA, "r") as f:
+            site_data = json.load(f)
+        site_data["geocoding"] = geocoding_stats
+        with open(WEB_SITE_DATA, "w") as f:
+            json.dump(site_data, f, indent=2)
+        print(f"  Geocoding: {accurate}/{total_mapped} accurate ({accuracy_pct}%)")
+    else:
+        print(f"  WARNING: {WEB_SITE_DATA} not found — skipping geocoding stats")
 
 
 if __name__ == "__main__":

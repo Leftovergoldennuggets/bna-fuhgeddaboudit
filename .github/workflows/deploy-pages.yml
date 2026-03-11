@@ -73,6 +73,9 @@ jobs:
           # Copy data files into the site directory
           mkdir -p _site/data/web
           cp data/web/*.json _site/data/web/
+          # Copy static data files (mileage milestones, miles by city)
+          mkdir -p _site/data/static
+          cp data/static/*.json _site/data/static/ 2>/dev/null || true
 
       # uses: actions/configure-pages@v4 tells GitHub Pages about our site settings
       - name: Setup Pages

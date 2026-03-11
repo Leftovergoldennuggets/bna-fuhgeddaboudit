@@ -417,8 +417,8 @@ const Explore = (function () {
                 if (filters.timeOfDay === "night" && (h >= 6 && h < 20)) {
                     show = false;
                 }
-                // Rush hour = 7-10am or 5-7pm
-                if (filters.timeOfDay === "rush" && !((h >= 7 && h < 10) || (h >= 17 && h < 19))) {
+                // Rush hour = 7-10am or 5-8pm (hours 7,8,9,17,18,19 — matches pipeline definition)
+                if (filters.timeOfDay === "rush" && !((h >= 7 && h < 10) || (h >= 17 && h < 20))) {
                     show = false;
                 }
             }

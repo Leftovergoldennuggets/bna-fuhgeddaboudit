@@ -279,6 +279,13 @@ def compute_all_statistics(df):
             "percentage": round(moderate_plus.sum() / total_crashes * 100, 1),
         }
 
+        # Fatality count — crashes where the highest injury severity includes "Fatal"
+        fatality_mask = df[severity_col].str.contains("Fatal", case=False, na=False)
+        severity["fatality"] = {
+            "count": int(fatality_mask.sum()),
+            "percentage": round(fatality_mask.sum() / total_crashes * 100, 1),
+        }
+
     stats["severity"] = severity
 
     # SF-specific severity (for the scrollytelling step focused on San Francisco)

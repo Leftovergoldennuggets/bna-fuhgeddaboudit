@@ -234,6 +234,23 @@ def main():
     print(f"  Waymo Hub rows: {len(waymo_hub)}")
     print(f"  Date range: {waymo_hub['Year Month'].min()} to {waymo_hub['Year Month'].max()}")
 
+    # --- Deduplicate Hub data ---
+    # The Waymo Hub CSV contains duplicate entries for some SGO Report IDs.
+    # We deduplicate on SGO Report ID (non-blank only), keeping the row with
+    # the most True boolean flags (most complete/updated version).
+    # Rows with blank SGO Report IDs are unique pre-SGO crashes — keep them all.
+    hub_before = len(waymo_hub)
+    hub_has_id = waymo_hub[waymo_hub['SGO Report ID'].notna() & (waymo_hub['SGO Report ID'] != '')]
+    hub_no_id = waymo_hub[~waymo_hub.index.isin(hub_has_id.index)]
+
+    bool_cols = ['Is NHTSA Reportable In-Transport', 'Is Police-Reported', 'Is Any-Injury-Reported']
+    hub_has_id = hub_has_id.sort_values(bool_cols, ascending=False)
+    hub_has_id = hub_has_id.drop_duplicates(subset='SGO Report ID', keep='first')
+
+    waymo_hub = pd.concat([hub_has_id, hub_no_id], ignore_index=True)
+    hub_after = len(waymo_hub)
+    print(f"  Hub deduplication: {hub_before} → {hub_after} rows ({hub_before - hub_after} duplicates removed)")
+
     # --- Merge ---
     print()
     print("Merging datasets...")

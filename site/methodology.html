@@ -42,7 +42,7 @@
             <h2>Data Sources</h2>
 
             <h3>NHTSA Standing General Order (SGO) Data</h3>
-            <p>The <a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">National Highway Traffic Safety Administration</a> requires all companies operating Level 3+ autonomous vehicles to report any crash within a set timeframe. This creates the most comprehensive public record of AV incidents in the United States.</p>
+            <p>The <a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">National Highway Traffic Safety Administration</a> requires all companies operating Level 3+ autonomous vehicles to report crashes resulting in injury, airbag deployment, or property damage exceeding $1,000. This creates the most comprehensive public record of AV incidents in the United States.</p>
 
             <p>NHTSA provides two separate files:</p>
             <ul>
@@ -55,7 +55,7 @@
             <h3>Waymo Safety Impact Data Hub</h3>
             <p>Waymo publishes a curated dataset at their <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. This dataset (CSV2) includes crash type classifications, outcome group membership, and links to the corresponding SGO Report IDs.</p>
 
-            <p>The Hub data is updated approximately quarterly and currently covers September 2020 through September 2025.</p>
+            <p>The Hub data is updated approximately quarterly and currently covers <span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span>.</p>
 
             <!-- ========== PIPELINE ========== -->
             <h2>Data Processing Pipeline</h2>
@@ -93,7 +93,7 @@
                 <li><strong>Street address lookup:</strong> Full addresses are geocoded directly.</li>
                 <li><strong>Fallback:</strong> If geocoding fails, the crash is placed at the city center and flagged as an approximate location.</li>
             </ol>
-            <p>Results are cached locally to avoid repeated API calls. The current geocoding success rate is 92% (1,026 of 1,119 mapped crashes placed at their real street location). Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
+            <p>Results are cached locally to avoid repeated API calls. The current geocoding success rate is <span data-stat="geocoding.accuracy_pct">--</span>% (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span> mapped crashes placed at their real street location). Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
 
             <h3>Step 5: Extract Serious Incidents</h3>
             <p>Crashes involving moderate, serious, or fatal injuries are extracted into a separate file with their full NHTSA narratives, enabling the detailed incident view on the map.</p>
@@ -103,7 +103,7 @@
 
             <h3>Crash Locations and Geocoding</h3>
             <p>NHTSA redacts GPS coordinates from public data, but provides street addresses for nearly all crashes in the "Location Address / Description" field. We geocode these addresses using OpenStreetMap's Nominatim service with a multi-strategy approach (intersection parsing, direct address lookup, city-bounded search).</p>
-            <p>Current accuracy: <strong>92% of crashes</strong> (1,026 of 1,119) are placed at their real street location. The remaining 8% fall back to city-center placement and are flagged as approximate. Accuracy varies by city:</p>
+            <p>Current accuracy: <strong><span data-stat="geocoding.accuracy_pct">--</span>% of crashes</strong> (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location. The remaining <span data-stat="geocoding.estimated">--</span> fall back to city-center placement and are flagged as approximate. Accuracy varies by city:</p>
             <ul>
                 <li>San Francisco: 98%, Los Angeles: 98%, Austin: 97%</li>
                 <li>Atlanta: 85%, Phoenix: 77% (some reports have less detailed addresses)</li>
@@ -111,7 +111,7 @@
             <p>Geocode results are cached in <code>geocode_cache.json</code> to ensure reproducibility and avoid repeated API calls.</p>
 
             <h3>Reporting Thresholds</h3>
-            <p>The NHTSA SGO requires reporting of any crash, but companies may interpret "crash" slightly differently. Additionally, some minor incidents (e.g., a parked car being bumped with no damage) might not be consistently reported across all companies.</p>
+            <p>The NHTSA SGO requires reporting of crashes that meet specific thresholds (injury, airbag deployment, or property damage exceeding $1,000 under current rules). Companies may interpret these thresholds slightly differently. See the "Reporting threshold change" section below for details on how the threshold changed in June 2025.</p>
 
             <h3>Severity Assessment</h3>
             <p>We report severity using four independent boolean indicators rather than a composite score:</p>
@@ -122,6 +122,10 @@
                 <li><strong>Serious injury:</strong> Whether a suspected serious injury was reported</li>
             </ul>
             <p>We deliberately avoid creating composite "severity scores" because the weighting of different factors would be arbitrary and potentially misleading.</p>
+
+            <h3>A Note on Crash Types and Fault</h3>
+            <p>The crash type classifications in this dataset (e.g., "rear-end collision," "side-impact collision") describe the physical dynamics of the collision — where and how contact occurred between vehicles. They do not indicate who was at fault. NHTSA Standing General Order reports do not assign legal fault or determine responsibility.</p>
+            <p>In the majority of crashes in this dataset, the Waymo vehicle was stationary or moving at low speed at the time of contact. The crash type describes what happened physically, not why.</p>
 
             <h3>Waymo Safety Comparisons</h3>
             <p>The statistics comparing Waymo to human drivers (e.g., "90% fewer serious crashes") come from Waymo's own <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed research paper</a> published in the journal <em>Traffic Injury Prevention</em>. While the paper has undergone peer review, it is important to note:</p>
@@ -136,6 +140,10 @@
 
             <h3>Temporal Limitations</h3>
             <p>Crash time data comes from the "Incident Time" field in the NHTSA reports. A small number of records have missing or unparseable times, which are excluded from time-of-day analyses. The overall coverage is high (typically &gt;99% of records have valid time data).</p>
+
+            <h3>Reporting Threshold Change (June 2025)</h3>
+            <p>Effective June 16, 2025, NHTSA's Amendment 3 to Standing General Order 2021-01 changed the reporting requirements for ADS manufacturers. Under Amendment 2, manufacturers were required to report crashes resulting in "any property damage, injury, or fatality." Under Amendment 3, property-damage-only crashes must meet a $1,000 threshold to be reportable. Crashes resulting in injury, fatality, or airbag deployment continue to be reported regardless of damage amount.</p>
+            <p>This means that some very minor property-damage-only incidents that would have appeared in the pre-June 2025 data may not appear in the post-June 2025 data. When comparing crash frequencies over time, this threshold change should be taken into account — an apparent decrease in minor crashes after June 2025 may reflect the reporting change rather than a change in actual crash frequency.</p>
 
             <!-- ========== AUTOMATION ========== -->
             <h2>Automated Updates</h2>
@@ -176,8 +184,11 @@
         </div>
     </footer>
 
-    <!-- Inline script: just the mobile nav toggle (this page doesn't need maps or charts).
-         Same code as about.html — see comments there for explanation. -->
+    <!-- Data pipeline scripts: load site-data.json and fill in data-stat placeholders -->
+    <script src="js/data-loader.js"></script>
+    <script src="js/stat-renderer.js"></script>
+
+    <!-- Inline script: mobile nav toggle and dynamic data loading -->
     <script>
         const navToggle = document.querySelector('.nav-toggle');
         const navLinks = document.querySelector('.nav-links');
@@ -187,6 +198,16 @@
                 navLinks.classList.toggle('active');
             });
         }
+
+        // Load site-data.json and render all data-stat placeholders
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { stats } = await DataLoader.loadAll();
+                StatRenderer.renderAll(stats);
+            } catch (e) {
+                console.warn('Methodology: Could not load dynamic stats', e);
+            }
+        });
     </script>
 </body>
 </html>

@@ -1,35 +1,7 @@
 {
   "sf_incidents": [
     {
-      "id": 2,
-      "lat": 37.723247,
-      "lon": -122.452289,
-      "city": "San Francisco",
-      "date": "08/01/2025",
-      "time": "06:06",
-      "crash_party": "Vehicle (SUV)",
-      "severity": "Moderate W/O Hospitalization",
-      "crash_type": "V2V Head-on",
-      "address": "Frida Kahlo Way near Cloud Circle",
-      "narrative": "On August [REDACTED], 2025 at 6:06 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \nThe Waymo AV was parked at the curb facing south on [REDACTED] when an SUV traveling northbound on [REDACTED] crossed into the southbound lane of traffic. The SUV continued towards the Waymo AV at a high rate of speed, and the front left of the SUV made contact with the front left of the stationary Waymo AV. The SUV then continued to proceed northbound in the southbound lane of [REDACTED], coming to a stop after making contact with a sign post at the intersection with [REDACTED]. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage and the driver of the passenger car was transported to a hospital for medical treatment.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment, vehicles involved were towed away, and because of airbag deployment. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false
-    },
-    {
       "id": 3,
-      "lat": 37.791973,
-      "lon": -122.400826,
-      "city": "San Francisco",
-      "date": "06/04/2025",
-      "time": "07:50",
-      "crash_party": "Other Non-Motorist",
-      "severity": "Moderate",
-      "crash_type": "Pedestrian",
-      "address": "Sansome Street at Pine Street",
-      "narrative": "This report includes removal of a reference to the Waymo AV sustaining damage (upon further inspection, the Waymo AV was not damaged) and an update reflecting an alleged injury that Waymo received notice of on June 10, 2025. The remaining content of this report is unchanged from the initial report submitted on June 5, 2025 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn June [REDACTED], 2025 at 7:50 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving a scooterist on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound in the rightmost lane on [REDACTED] and came to a stop in a queue of traffic for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, the passenger in the Waymo AV opened the rear passenger side door. A scooterist traveling northbound on [REDACTED] proceeded to pass to the right of the Waymo AV, and the scooterist made contact with the open rear passenger door of the stationary Waymo AV. The passenger was not belted at the time of the collision, as the passenger was preparing to exit the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. There was an allegation of damage to the scooter.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vulnerable road user was involved. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false
-    },
-    {
-      "id": 5,
       "lat": 37.767764,
       "lon": -122.396629,
       "city": "San Francisco",
@@ -44,20 +16,6 @@
     },
     {
       "id": 6,
-      "lat": 37.767884,
-      "lon": -122.396509,
-      "city": "San Francisco",
-      "date": "02/16/2025",
-      "time": "12:10",
-      "crash_party": "Cyclist",
-      "severity": "Moderate",
-      "crash_type": "Cyclist",
-      "address": "7th Street & Stevenson Street",
-      "narrative": "Other than an update to the highest injury severity alleged from \"minor\" to \"moderate\" and an update to reflect that property damage did result from the collision, the content of this report is unchanged from the initial report submitted on February [REDACTED], 2025 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn February [REDACTED], 2025 at 12:10 PM PT two Waymo Autonomous Vehicles (\"Waymo AVs\") operating in San Francisco, CA were involved in a collision involving a cyclist on [REDACTED].\nThe first Waymo AV was parked at the northwest-bound curb on [REDACTED]for passenger dropoff. A second Waymo AV (2024 Jaguar I-PACE SADHW2S17R1[REDACTED], 38,609 miles) was also parked for a separate passenger dropoff, located adjacent to the first Waymo AV with the bicycle lane of northwest-bound [REDACTED] between the two Waymo AVs. A bicyclist was traveling northwest-bound on [REDACTED] and approaching the two Waymo AVs from the rear. As the cyclist was passing between the two Waymo AVs, the rear driver side passenger of the first Waymo AV opened the door of the first Waymo AV into the cyclist. The cyclist then fell into the passenger side of the second Waymo AV. At the time of the impact, both Waymo AVs' Level 4 ADS were engaged in autonomous mode. Neither Waymo AV sustained damage. The cyclist was able to move out of the roadway independently and was then transported from the scene in an ambulance. \nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false
-    },
-    {
-      "id": 9,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -71,7 +29,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 12,
+      "id": 9,
       "lat": 37.776525,
       "lon": -122.417534,
       "city": "San Francisco",
@@ -85,7 +43,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 13,
+      "id": 10,
       "lat": 37.751079,
       "lon": -122.436222,
       "city": "San Francisco",
@@ -99,7 +57,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 15,
+      "id": 12,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -110,6 +68,34 @@
       "crash_type": "Secondary Crash",
       "address": "Folsom Street at 11th Street",
       "narrative": "Other than correcting the Mileage to 64,204, adding law enforcement investigation details, adding the ADS Software Version, and adding the Waymo AVs Pre-Crash Speed, the content of this report is unchanged from the initial report submitted on November 4, 2023 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn November [REDACTED], 2023 at 10:43 PM PT a Waymo Autonomous Vehicle (Waymo AV) operating in San Francisco, California was in a collision involving a passenger car on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound in the left lane on [REDACTED] and stopped at a red light at the intersection with [REDACTED] alongside a passenger vehicle in the right lane. After the light turned green, both the Waymo AV and the adjacent passenger car proceeded into the intersection. While in the intersection, a passenger car traveling west on [REDACTED] ran the red light and the front left corner and left side of this vehicle made contact with the front right of the Waymo AV and the front of the adjacent passenger car. After impact, the vehicle that ran the red light struck pedestrians that had been standing on the sidewalk on the northwest corner of the intersection. At the time of the impact, the Waymo AVs Level 4 ADS was engaged in autonomous mode. All three vehicles sustained damage and were towed from the scene.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment, and a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": false
+    },
+    {
+      "id": 13,
+      "lat": 37.791973,
+      "lon": -122.400826,
+      "city": "San Francisco",
+      "date": "06/04/2025",
+      "time": "07:50",
+      "crash_party": "Other Non-Motorist",
+      "severity": "Moderate",
+      "crash_type": "Pedestrian",
+      "address": "Sansome Street at Pine Street",
+      "narrative": "This report includes removal of a reference to the Waymo AV sustaining damage (upon further inspection, the Waymo AV was not damaged) and an update reflecting an alleged injury that Waymo received notice of on June 10, 2025. The remaining content of this report is unchanged from the initial report submitted on June 5, 2025 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn June [REDACTED], 2025 at 7:50 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving a scooterist on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound in the rightmost lane on [REDACTED] and came to a stop in a queue of traffic for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, the passenger in the Waymo AV opened the rear passenger side door. A scooterist traveling northbound on [REDACTED] proceeded to pass to the right of the Waymo AV, and the scooterist made contact with the open rear passenger door of the stationary Waymo AV. The passenger was not belted at the time of the collision, as the passenger was preparing to exit the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. There was an allegation of damage to the scooter.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vulnerable road user was involved. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": false
+    },
+    {
+      "id": 14,
+      "lat": 37.723247,
+      "lon": -122.452289,
+      "city": "San Francisco",
+      "date": "08/01/2025",
+      "time": "06:06",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Moderate W/O Hospitalization",
+      "crash_type": "V2V Head-on",
+      "address": "Frida Kahlo Way near Cloud Circle",
+      "narrative": "On August [REDACTED], 2025 at 6:06 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \nThe Waymo AV was parked at the curb facing south on [REDACTED] when an SUV traveling northbound on [REDACTED] crossed into the southbound lane of traffic. The SUV continued towards the Waymo AV at a high rate of speed, and the front left of the SUV made contact with the front left of the stationary Waymo AV. The SUV then continued to proceed northbound in the southbound lane of [REDACTED], coming to a stop after making contact with a sign post at the intersection with [REDACTED]. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage and the driver of the passenger car was transported to a hospital for medical treatment.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment, vehicles involved were towed away, and because of airbag deployment. Waymo may supplement or correct its reporting with additional information as it may become available.",
       "is_estimated_location": false
     }
   ],
@@ -130,34 +116,6 @@
     },
     {
       "id": 2,
-      "lat": 37.723247,
-      "lon": -122.452289,
-      "city": "San Francisco",
-      "date": "08/01/2025",
-      "time": "06:06",
-      "crash_party": "Vehicle (SUV)",
-      "severity": "Moderate W/O Hospitalization",
-      "crash_type": "V2V Head-on",
-      "address": "Frida Kahlo Way near Cloud Circle",
-      "narrative": "On August [REDACTED], 2025 at 6:06 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \nThe Waymo AV was parked at the curb facing south on [REDACTED] when an SUV traveling northbound on [REDACTED] crossed into the southbound lane of traffic. The SUV continued towards the Waymo AV at a high rate of speed, and the front left of the SUV made contact with the front left of the stationary Waymo AV. The SUV then continued to proceed northbound in the southbound lane of [REDACTED], coming to a stop after making contact with a sign post at the intersection with [REDACTED]. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage and the driver of the passenger car was transported to a hospital for medical treatment.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment, vehicles involved were towed away, and because of airbag deployment. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false
-    },
-    {
-      "id": 3,
-      "lat": 37.791973,
-      "lon": -122.400826,
-      "city": "San Francisco",
-      "date": "06/04/2025",
-      "time": "07:50",
-      "crash_party": "Other Non-Motorist",
-      "severity": "Moderate",
-      "crash_type": "Pedestrian",
-      "address": "Sansome Street at Pine Street",
-      "narrative": "This report includes removal of a reference to the Waymo AV sustaining damage (upon further inspection, the Waymo AV was not damaged) and an update reflecting an alleged injury that Waymo received notice of on June 10, 2025. The remaining content of this report is unchanged from the initial report submitted on June 5, 2025 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn June [REDACTED], 2025 at 7:50 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving a scooterist on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound in the rightmost lane on [REDACTED] and came to a stop in a queue of traffic for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, the passenger in the Waymo AV opened the rear passenger side door. A scooterist traveling northbound on [REDACTED] proceeded to pass to the right of the Waymo AV, and the scooterist made contact with the open rear passenger door of the stationary Waymo AV. The passenger was not belted at the time of the collision, as the passenger was preparing to exit the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. There was an allegation of damage to the scooter.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vulnerable road user was involved. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false
-    },
-    {
-      "id": 4,
       "lat": 33.494699,
       "lon": -112.039297,
       "city": "Phoenix",
@@ -171,7 +129,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 5,
+      "id": 3,
       "lat": 37.767764,
       "lon": -122.396629,
       "city": "San Francisco",
@@ -185,21 +143,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 6,
-      "lat": 37.767884,
-      "lon": -122.396509,
-      "city": "San Francisco",
-      "date": "02/16/2025",
-      "time": "12:10",
-      "crash_party": "Cyclist",
-      "severity": "Moderate",
-      "crash_type": "Cyclist",
-      "address": "7th Street & Stevenson Street",
-      "narrative": "Other than an update to the highest injury severity alleged from \"minor\" to \"moderate\" and an update to reflect that property damage did result from the collision, the content of this report is unchanged from the initial report submitted on February [REDACTED], 2025 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn February [REDACTED], 2025 at 12:10 PM PT two Waymo Autonomous Vehicles (\"Waymo AVs\") operating in San Francisco, CA were involved in a collision involving a cyclist on [REDACTED].\nThe first Waymo AV was parked at the northwest-bound curb on [REDACTED]for passenger dropoff. A second Waymo AV (2024 Jaguar I-PACE SADHW2S17R1[REDACTED], 38,609 miles) was also parked for a separate passenger dropoff, located adjacent to the first Waymo AV with the bicycle lane of northwest-bound [REDACTED] between the two Waymo AVs. A bicyclist was traveling northwest-bound on [REDACTED] and approaching the two Waymo AVs from the rear. As the cyclist was passing between the two Waymo AVs, the rear driver side passenger of the first Waymo AV opened the door of the first Waymo AV into the cyclist. The cyclist then fell into the passenger side of the second Waymo AV. At the time of the impact, both Waymo AVs' Level 4 ADS were engaged in autonomous mode. Neither Waymo AV sustained damage. The cyclist was able to move out of the roadway independently and was then transported from the scene in an ambulance. \nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false
-    },
-    {
-      "id": 7,
+      "id": 4,
       "lat": 34.03595,
       "lon": -118.266221,
       "city": "Los Angeles",
@@ -213,7 +157,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 8,
+      "id": 5,
       "lat": 33.439401,
       "lon": -112.085072,
       "city": "Phoenix",
@@ -227,7 +171,7 @@
       "is_estimated_location": true
     },
     {
-      "id": 9,
+      "id": 6,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -241,7 +185,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 10,
+      "id": 7,
       "lat": 33.773677,
       "lon": -111.995528,
       "city": "Phoenix",
@@ -255,7 +199,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 11,
+      "id": 8,
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -269,7 +213,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 12,
+      "id": 9,
       "lat": 37.776525,
       "lon": -122.417534,
       "city": "San Francisco",
@@ -283,7 +227,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 13,
+      "id": 10,
       "lat": 37.751079,
       "lon": -122.436222,
       "city": "San Francisco",
@@ -297,7 +241,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 14,
+      "id": 11,
       "lat": 33.406974,
       "lon": -112.020759,
       "city": "Phoenix",
@@ -311,7 +255,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 15,
+      "id": 12,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -323,13 +267,41 @@
       "address": "Folsom Street at 11th Street",
       "narrative": "Other than correcting the Mileage to 64,204, adding law enforcement investigation details, adding the ADS Software Version, and adding the Waymo AVs Pre-Crash Speed, the content of this report is unchanged from the initial report submitted on November 4, 2023 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn November [REDACTED], 2023 at 10:43 PM PT a Waymo Autonomous Vehicle (Waymo AV) operating in San Francisco, California was in a collision involving a passenger car on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound in the left lane on [REDACTED] and stopped at a red light at the intersection with [REDACTED] alongside a passenger vehicle in the right lane. After the light turned green, both the Waymo AV and the adjacent passenger car proceeded into the intersection. While in the intersection, a passenger car traveling west on [REDACTED] ran the red light and the front left corner and left side of this vehicle made contact with the front right of the Waymo AV and the front of the adjacent passenger car. After impact, the vehicle that ran the red light struck pedestrians that had been standing on the sidewalk on the northwest corner of the intersection. At the time of the impact, the Waymo AVs Level 4 ADS was engaged in autonomous mode. All three vehicles sustained damage and were towed from the scene.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment, and a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
       "is_estimated_location": false
+    },
+    {
+      "id": 13,
+      "lat": 37.791973,
+      "lon": -122.400826,
+      "city": "San Francisco",
+      "date": "06/04/2025",
+      "time": "07:50",
+      "crash_party": "Other Non-Motorist",
+      "severity": "Moderate",
+      "crash_type": "Pedestrian",
+      "address": "Sansome Street at Pine Street",
+      "narrative": "This report includes removal of a reference to the Waymo AV sustaining damage (upon further inspection, the Waymo AV was not damaged) and an update reflecting an alleged injury that Waymo received notice of on June 10, 2025. The remaining content of this report is unchanged from the initial report submitted on June 5, 2025 [REDACTED, MAY CONTAIN CONFIDENTIAL BUSINESS INFORMATION]. \nOn June [REDACTED], 2025 at 7:50 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving a scooterist on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound in the rightmost lane on [REDACTED] and came to a stop in a queue of traffic for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, the passenger in the Waymo AV opened the rear passenger side door. A scooterist traveling northbound on [REDACTED] proceeded to pass to the right of the Waymo AV, and the scooterist made contact with the open rear passenger door of the stationary Waymo AV. The passenger was not belted at the time of the collision, as the passenger was preparing to exit the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. There was an allegation of damage to the scooter.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vulnerable road user was involved. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": false
+    },
+    {
+      "id": 14,
+      "lat": 37.723247,
+      "lon": -122.452289,
+      "city": "San Francisco",
+      "date": "08/01/2025",
+      "time": "06:06",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Moderate W/O Hospitalization",
+      "crash_type": "V2V Head-on",
+      "address": "Frida Kahlo Way near Cloud Circle",
+      "narrative": "On August [REDACTED], 2025 at 6:06 AM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \nThe Waymo AV was parked at the curb facing south on [REDACTED] when an SUV traveling northbound on [REDACTED] crossed into the southbound lane of traffic. The SUV continued towards the Waymo AV at a high rate of speed, and the front left of the SUV made contact with the front left of the stationary Waymo AV. The SUV then continued to proceed northbound in the southbound lane of [REDACTED], coming to a stop after making contact with a sign post at the intersection with [REDACTED]. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage and the driver of the passenger car was transported to a hospital for medical treatment.\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment, vehicles involved were towed away, and because of airbag deployment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": false
     }
   ],
   "city_data": {
     "San Francisco": {
       "lat": 37.7749,
       "lon": -122.4194,
-      "count": 8
+      "count": 7
     },
     "Phoenix": {
       "lat": 33.4484,
@@ -342,5 +314,5 @@
       "count": 1
     }
   },
-  "total_serious": 15
+  "total_serious": 14
 }

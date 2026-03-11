@@ -45,14 +45,14 @@
                     <div class="faq-question">Where does this data come from?</div>
                     <div class="faq-answer">
                         <p>Two sources: <strong>NHTSA</strong> (the National Highway Traffic Safety Administration) and <strong>Waymo's Safety Impact Data Hub</strong>.</p>
-                        <p>NHTSA requires all autonomous vehicle companies to report every crash publicly through their Standing General Order program. Waymo publishes a curated dataset on their own website that adds crash type classifications and other context. We merge both datasets to create the most complete picture available.</p>
+                        <p>NHTSA requires all autonomous vehicle companies to report crashes resulting in injury, airbag deployment, or property damage exceeding $1,000 through their Standing General Order program. Waymo publishes a curated dataset on their own website that adds crash type classifications and other context. We merge both datasets to create the most complete picture available.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">What time period does this cover?</div>
                     <div class="faq-answer">
-                        <p>The dataset covers <strong>September 2020 through September 2025</strong> — five years of Waymo crash reports. It includes 1,123 total reported incidents across five U.S. cities.</p>
+                        <p>The dataset covers <strong><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></strong> — five years of Waymo crash reports. It includes <span data-stat="overview.total_crashes">--</span> total reported incidents across <span data-stat="overview.cities_count">--</span> U.S. cities.</p>
                     </div>
                 </div>
 
@@ -66,19 +66,22 @@
                 <div class="faq-item">
                     <div class="faq-question">What counts as a "crash"?</div>
                     <div class="faq-answer">
-                        <p>Under NHTSA's Standing General Order, companies must report any incident involving an autonomous vehicle that results in property damage, injury, or the deployment of an airbag. This includes very minor incidents — like being bumped by another car in a parking lot — that would normally never make the news.</p>
-                        <p>This low reporting threshold means the crash numbers look high, but the vast majority of reported incidents are minor property-damage-only events with no injuries.</p>
+                        <p>Under NHTSA's Standing General Order, companies must report any incident involving an autonomous vehicle that results in injury, airbag deployment, or property damage exceeding $1,000. Before June 2025, the threshold was even lower — any property damage at all was reportable, which included very minor incidents like parking lot bumps.</p>
+                        <p>This relatively low reporting threshold means the crash numbers look high, but the vast majority of reported incidents are minor property-damage-only events with no injuries.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">How serious are these crashes?</div>
                     <div class="faq-answer">
-                        <p>The vast majority are minor — property damage only, with no injuries. Out of 1,123 reported crashes:</p>
+                        <p>The vast majority are minor — property damage only, with no injuries. Out of <span data-stat="overview.total_crashes">--</span> reported crashes:</p>
                         <ul>
-                            <li><strong>96</strong> had any injury reported at all</li>
-                            <li><strong>15</strong> involved moderate, serious, or fatal injuries</li>
-                            <li><strong>1</strong> involved a fatality (a secondary crash where a human-driven vehicle struck the Waymo)</li>
+                            <li><strong><span data-stat="severity.injury_reported.count">--</span></strong> had any injury reported at all</li>
+                            <li><strong><span data-stat="severity.moderate_plus.count">--</span></strong> involved moderate, serious, or fatal injuries</li>
+                            <!-- NOTE: The fatality description below covers both current fatalities (SF Tesla pileup
+                                 and Phoenix motorcyclist). If a future fatality has different circumstances (e.g.,
+                                 Waymo at fault), this sentence will need editorial review. -->
+                            <li><strong><span data-stat="severity.fatality.count">--</span></strong> involved a fatality. In both cases, the Waymo vehicle was stopped or slowing when another party caused the collision &mdash; the Waymo was not at fault in either incident.</li>
                         </ul>
                         <p>On the map, crashes are color-coded by severity: grey for no injury, amber for any injury, and red for serious incidents. You can click the red markers during the "Most Serious Incidents" section to read the full NHTSA narratives.</p>
                     </div>
@@ -95,7 +98,7 @@
                 <div class="faq-item">
                     <div class="faq-question">Are the crash locations on the map exact?</div>
                     <div class="faq-answer">
-                        <p><strong>Most are accurate to the street level.</strong> NHTSA redacts GPS coordinates but provides street addresses for nearly all crashes. We geocode these addresses using OpenStreetMap's Nominatim service, achieving a 92% success rate (1,026 out of 1,119 mapped crashes placed at their real street location).</p>
+                        <p><strong>Most are accurate to the street level.</strong> NHTSA redacts GPS coordinates but provides street addresses for nearly all crashes. We geocode these addresses using OpenStreetMap's Nominatim service, achieving a <span data-stat="geocoding.accuracy_pct">--</span>% success rate (<span data-stat="geocoding.accurate">--</span> out of <span data-stat="geocoding.total_mapped">--</span> mapped crashes placed at their real street location).</p>
                         <p>The remaining 8% of markers use an approximate city-center location and are flagged as "approximate location" in their popups. Accuracy varies by city — San Francisco (98%) and Los Angeles (98%) have the highest rates, while Phoenix (77%) is lower due to less detailed address descriptions in some reports.</p>
                     </div>
                 </div>
@@ -103,13 +106,13 @@
                 <div class="faq-item">
                     <div class="faq-question">In which cities does Waymo operate?</div>
                     <div class="faq-answer">
-                        <p>Based on the crash data, Waymo has reported incidents in five major cities:</p>
+                        <p>Based on the crash data, Waymo has reported incidents in <span data-stat="overview.cities_count">--</span> major cities:</p>
                         <ul>
-                            <li><strong>San Francisco</strong> — 527 crashes (46.9%)</li>
-                            <li><strong>Phoenix</strong> — 312 crashes (27.8%)</li>
-                            <li><strong>Los Angeles</strong> — 208 crashes (18.5%)</li>
-                            <li><strong>Austin</strong> — 61 crashes (5.4%)</li>
-                            <li><strong>Atlanta</strong> — 13 crashes (1.2%)</li>
+                            <li><strong>San Francisco</strong> — <span data-stat="city_breakdown.San Francisco.count">--</span> crashes (<span data-stat="city_breakdown.San Francisco.percentage">--</span>%)</li>
+                            <li><strong>Phoenix</strong> — <span data-stat="city_breakdown.Phoenix.count">--</span> crashes (<span data-stat="city_breakdown.Phoenix.percentage">--</span>%)</li>
+                            <li><strong>Los Angeles</strong> — <span data-stat="city_breakdown.Los Angeles.count">--</span> crashes (<span data-stat="city_breakdown.Los Angeles.percentage">--</span>%)</li>
+                            <li><strong>Austin</strong> — <span data-stat="city_breakdown.Austin.count">--</span> crashes (<span data-stat="city_breakdown.Austin.percentage">--</span>%)</li>
+                            <li><strong>Atlanta</strong> — <span data-stat="city_breakdown.Atlanta.count">--</span> crashes (<span data-stat="city_breakdown.Atlanta.percentage">--</span>%)</li>
                         </ul>
                         <p>San Francisco has the most crashes because Waymo has operated there the longest and runs the most vehicles. A small number of crashes (2) occurred in Mountain View near Waymo's headquarters.</p>
                     </div>
@@ -124,9 +127,16 @@
                 </div>
 
                 <div class="faq-item">
+                    <div class="faq-question">Does crash type mean Waymo was at fault?</div>
+                    <div class="faq-answer">
+                        <p>No. Crash types (e.g., "rear-end collision") describe the physical dynamics of the collision — where contact occurred between vehicles. They do not indicate legal fault. NHTSA reports do not assign fault or determine responsibility. In most crashes in this dataset, the Waymo vehicle was stationary at the time of contact.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
                     <div class="faq-question">Why do most crashes happen during rush hour?</div>
                     <div class="faq-answer">
-                        <p>About 31% of crashes occur during rush hours (7–9 AM and 5–7 PM). This isn't surprising — these are the times when roads are busiest and the most vehicles (both human-driven and autonomous) are on the road. More traffic means more opportunities for collisions.</p>
+                        <p>About <span data-stat="temporal.rush_hour_percentage">--</span>% of crashes occur during rush hours (7–9 AM and 5–7 PM). This isn't surprising — these are the times when roads are busiest and the most vehicles (both human-driven and autonomous) are on the road. More traffic means more opportunities for collisions.</p>
                     </div>
                 </div>
 
@@ -162,10 +172,11 @@
         </div>
     </footer>
 
-    <!-- Inline script: FAQ accordion behavior + mobile nav toggle.
-         This page needs two things JS handles:
-         1. The FAQ accordion (click a question to expand/collapse the answer)
-         2. The mobile hamburger menu (same as other pages) -->
+    <!-- Data pipeline scripts: load site-data.json and fill in data-stat placeholders -->
+    <script src="js/data-loader.js"></script>
+    <script src="js/stat-renderer.js"></script>
+
+    <!-- Inline script: FAQ accordion, mobile nav toggle, and dynamic data loading -->
     <script>
         // FAQ accordion toggle — makes questions expandable/collapsible
         document.querySelectorAll('.faq-question').forEach(question => {
@@ -189,6 +200,16 @@
                 navLinks.classList.toggle('active');
             });
         }
+
+        // Load site-data.json and render all data-stat placeholders
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { stats } = await DataLoader.loadAll();
+                StatRenderer.renderAll(stats);
+            } catch (e) {
+                console.warn('FAQ: Could not load dynamic stats', e);
+            }
+        });
     </script>
 </body>
 </html>
