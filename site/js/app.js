@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         Charts.buildHourlyChart(data.stats);           // Similar to above
         Charts.buildDayOfWeekChart(data.stats);        // Similar to above
         Charts.buildLocationTypeChart(data.stats);     // Similar to above
+        Charts.buildMileageChart(data.mileageMilestones);  // Line chart: rider-only miles over time
 
         // Step 7: Initialize the interactive explore section
         Explore.init(data.crashes, data.stats);

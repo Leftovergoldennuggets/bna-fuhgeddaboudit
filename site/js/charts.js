@@ -479,6 +479,104 @@ const Charts = (function () {
     }
 
     // ============================================
+    // Chart 6: Mileage Growth (line chart)
+    // ============================================
+
+    /**
+     * Build a line chart showing Waymo's cumulative rider-only miles
+     * over time, from the manually compiled mileage milestones data.
+     *
+     * @param {Object} mileageMilestones — mileage_milestones.json (from data/static/)
+     */
+    function buildMileageChart(mileageMilestones) {
+        const canvas = document.getElementById("mileage-chart");
+        // Exit early if canvas or data doesn't exist
+        if (!canvas || !mileageMilestones || !mileageMilestones.milestones) return;
+
+        const milestones = mileageMilestones.milestones;
+
+        // Build labels (formatted dates) and values (miles in millions)
+        const labels = milestones.map(m => {
+            // Parse the date string and format as "Mon YYYY" (e.g., "Jan 2023")
+            const d = new Date(m.date);
+            return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+        });
+        const values = milestones.map(m => m.miles_millions);
+
+        // Create a line chart showing exponential mileage growth
+        new Chart(canvas, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    borderColor: ACCENT,           // Line color (earth tone brown)
+                    backgroundColor: ACCENT + "20", // Fill under line (same color, very transparent)
+                    fill: true,                     // Fill the area under the line
+                    borderWidth: 2.5,               // Line thickness
+                    pointRadius: 5,                 // Size of the data point dots
+                    pointBackgroundColor: ACCENT,   // Fill color of dots
+                    pointBorderColor: "#fff",       // White border on dots
+                    pointBorderWidth: 2,            // Dot border thickness
+                    pointHoverRadius: 7,            // Larger dot on hover
+                    tension: 0.3,                   // Slight curve smoothing (0 = straight lines)
+                }],
+            },
+            options: {
+                ...getDefaults(),
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_COLOR,
+                            maxRotation: 45,        // Rotate labels if they overlap
+                        },
+                        border: { color: BORDER_COLOR },
+                    },
+                    y: {
+                        grid: {
+                            color: BORDER_COLOR,
+                            drawTicks: false,
+                        },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_COLOR,
+                            padding: 8,
+                            // Format Y-axis as "50M", "100M", etc.
+                            callback: function(value) {
+                                return value + "M";
+                            },
+                        },
+                        border: { display: false },
+                        beginAtZero: true,          // Y-axis starts at 0
+                    },
+                },
+                plugins: {
+                    ...getDefaults().plugins,
+                    tooltip: {
+                        ...getDefaults().plugins.tooltip,
+                        callbacks: {
+                            // Show date and miles in tooltip
+                            title: function(items) {
+                                return labels[items[0].dataIndex];
+                            },
+                            label: function(item) {
+                                return item.raw + " million rider-only miles";
+                            },
+                            // Show the source for this data point
+                            afterLabel: function(item) {
+                                const milestone = milestones[item.dataIndex];
+                                return "Source: " + (milestone.source || "");
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    // ============================================
     // Utility
     // ============================================
 
@@ -490,13 +588,14 @@ const Charts = (function () {
         return (hour - 12) + "pm";               // Afternoon/evening hours
     }
 
-    // Public API — these 5 functions are the only things accessible from outside the module
+    // Public API — these 6 functions are the only things accessible from outside the module
     return {
         buildHourlyChart,
         buildDayOfWeekChart,
         buildLocationTypeChart,
         buildSpeedChart,
         buildCrashTypeChart,
+        buildMileageChart,
     };
 
 // The closing })() immediately runs the function and stores the returned object in Charts
