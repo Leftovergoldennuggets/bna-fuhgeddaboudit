@@ -17,13 +17,4 @@ legacy/
 .DS_Store
 Thumbs.db
 
-#Internal memory transfer to Claude Desktop of what I have been doing. 
-BRIEFING.md
-# phase1_editorial_copy_v2.md
-#claude_code_spec.md
-CODE_REVIEW_REPORT.md
-CODE_REVIEW_SPEC.MD
-IMPLEMENTATION_INSTRUCTIONS.md  
-faq_methodology_updates.md
-claude_code_spec.md
-phase1_editorial_copy_v2.md
+
