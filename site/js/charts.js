@@ -403,6 +403,22 @@ const Charts = (function () {
     // Chart 5: Crash Type (horizontal bar)
     // ============================================
 
+    // Tooltip descriptions for each crash type — shown on hover to help
+    // readers understand what each category means in practice.
+    const CRASH_TYPE_TOOLTIPS = {
+        "Rear-end collision": "Another vehicle struck the back of the Waymo, or vice versa. The most common crash type for all drivers.",
+        "Side-impact collision": "Contact along the side of one or both vehicles, typically during lane changes or merging.",
+        "Backing collision": "One vehicle was reversing when contact occurred — usually another vehicle backing into the Waymo in a parking lot or driveway.",
+        "Single vehicle": "The Waymo was the only vehicle involved. Includes hitting fixed objects (poles, curbs, debris), or being struck by objects like shopping carts.",
+        "Head-on collision": "Front-to-front contact between the Waymo and another vehicle, often at low speed in tight spaces or when a vehicle crosses the center line.",
+        "Intersection collision": "Contact occurring within an intersection, often involving turning movements or signal conflicts.",
+        "Other": "Crashes that don't fit standard categories, including unusual circumstances described in the NHTSA narrative.",
+        "Secondary crash": "The Waymo was not involved in the initial crash but was struck by a vehicle or debris from a nearby collision.",
+        "Motorcycle": "A crash involving a motorcycle and the Waymo vehicle.",
+        "Cyclist": "A crash involving a cyclist and the Waymo vehicle.",
+        "Pedestrian": "A crash involving a pedestrian and the Waymo vehicle.",
+    };
+
     /**
      * Build a horizontal bar chart showing crash types in plain
      * English, sorted by count descending.
@@ -467,11 +483,17 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
-                            // Similar to buildLocationTypeChart tooltip
                             label: function(item) {
                                 return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
                             },
+                            // Show crash type description below the count
+                            afterLabel: function(item) {
+                                const typeName = labels[item.dataIndex];
+                                return CRASH_TYPE_TOOLTIPS[typeName] || "";
+                            },
                         },
+                        // Wider tooltip to fit the description text
+                        maxWidth: 320,
                     },
                 },
             },

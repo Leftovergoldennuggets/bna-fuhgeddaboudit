@@ -21,6 +21,7 @@
             <a href="index.html" class="nav-logo">The Waymo Crash Record</a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#explore">Explore</a></li>
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="methodology.html" class="active">Methodology</a></li>
                 <li><a href="faq.html">FAQ</a></li>
@@ -71,7 +72,8 @@
                 <li><strong>Filter:</strong> From the NHTSA data, we keep only rows where Reporting Entity = "Waymo LLC". The full NHTSA dataset includes many other companies.</li>
                 <li><strong>Harmonize:</strong> The pre- and post-June 2025 files have different column names (due to the Amendment 2 → 3 transition). We rename columns from the older format to match the newer format.</li>
                 <li><strong>Combine:</strong> The two NHTSA files are stacked into a single dataset.</li>
-                <li><strong>Deduplicate:</strong> Some crashes have multiple report versions (updates filed over time). We keep only the latest version of each report, identified by the Report ID and Report Version fields.</li>
+                <li><strong>Deduplicate NHTSA:</strong> Some crashes have multiple report versions (updates filed over time). We keep only the latest version of each report, identified by the Report ID and Report Version fields.</li>
+                <li><strong>Deduplicate Hub:</strong> The Waymo Hub CSV occasionally contains duplicate rows for the same SGO Report ID. We keep the most complete record (prioritizing rows with the most boolean fields populated) and drop duplicates.</li>
                 <li><strong>Merge:</strong> We perform a left join of the Waymo Hub data with the NHTSA data, using the Hub's "SGO Report ID" column and NHTSA's "Report ID" column. The Hub is the base — all Hub rows are preserved, and NHTSA fields are added where a match exists.</li>
             </ol>
 
@@ -81,7 +83,7 @@
                 <li>Total crash counts and city breakdowns</li>
                 <li>Time-of-day analysis (rush hour, late night, daytime/nighttime splits)</li>
                 <li>Crash type distributions</li>
-                <li>Severity indicators (police-reported, injury-reported, airbag deployment, serious injury)</li>
+                <li>Severity indicators (police-reported, injury-reported, airbag deployment, serious injury, fatality count)</li>
                 <li>Location type analysis (intersection, street, parking, highway)</li>
                 <li>Day-of-week patterns</li>
             </ul>
@@ -105,7 +107,7 @@
 
             <h3>Speed at Time of Crash</h3>
 
-            <p>The NHTSA report includes a "SV Precrash Speed (MPH)" field recording the subject vehicle's speed at the time of the crash. We use this field to compute the speed distribution displayed on the website. Of 1,123 total crashes, 1,119 have valid speed data.</p>
+            <p>The NHTSA report includes a "SV Precrash Speed (MPH)" field recording the subject vehicle's speed at the time of the crash. We use this field to compute the speed distribution displayed on the website. Of <span data-stat="overview.total_crashes">--</span> total crashes, nearly all have valid speed data.</p>
 
             <p>We bucket speeds into six ranges: 0 mph, 1–5 mph, 6–15 mph, 16–25 mph, 26–35 mph, and 36+ mph. The median and mean are computed from the raw values. The finding that 65.6% of crashes occur at 0 mph is derived directly from this field with no adjustment or interpretation.</p>
 
@@ -197,6 +199,8 @@
             <p>Miles-driven data by city comes from Waymo's Safety Impact Data Hub, which publishes cumulative rider-only miles for each operating city. We use this data to compute crash rates per million miles. These rates allow for more meaningful comparisons across cities than raw crash counts, since cities with more miles driven will naturally report more crashes.</p>
 
             <p>The mileage growth timeline displayed on this website was compiled by Anders Eidesvik from Waymo press releases, public statements, news articles, and archived snapshots of the Waymo Safety Impact Data Hub captured via the Wayback Machine. Waymo does not publish a historical time series of cumulative miles, so each data point was individually sourced and verified. Full source URLs are documented in our data files.</p>
+
+            <p>The full mileage milestone dataset, including source URLs for each data point, is publicly available as a <a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Google Sheets document</a>.</p>
 
             <p>Mileage data for Atlanta is not yet published by Waymo on the Safety Impact Data Hub, so we cannot compute a crash rate for that city.</p>
 

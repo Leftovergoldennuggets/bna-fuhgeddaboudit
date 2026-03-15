@@ -21,6 +21,7 @@
             <a href="index.html" class="nav-logo">The Waymo Crash Record</a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#explore">Explore</a></li>
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="methodology.html">Methodology</a></li>
                 <li><a href="faq.html" class="active">FAQ</a></li>
@@ -52,7 +53,9 @@
                 <div class="faq-item">
                     <div class="faq-question">What time period does this cover?</div>
                     <div class="faq-answer">
-                        <p>The dataset covers <strong><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></strong> — five years of Waymo crash reports. It includes <span data-stat="overview.total_crashes">--</span> total reported incidents across <span data-stat="overview.cities_count">--</span> U.S. cities.</p>
+                        <p>The dataset covers <strong><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></strong>. However, the data is heavily concentrated in 2023–2025, reflecting Waymo's expansion from early commercial operations to large-scale service.</p>
+                        <p>In the earliest years of the dataset (2020–2022), only 9 crashes were reported total — Waymo's fleet was small and still operating with safety drivers in many cases. The data becomes substantial starting in 2023 when Waymo launched fully public, rider-only service in San Francisco, and accelerates through 2024 and 2025 as the company expanded to Phoenix, Los Angeles, Austin, and Atlanta.</p>
+                        <p>All crashes in this dataset involve <strong>fully autonomous driving</strong> — the Waymo vehicle was operating without a human driver (rider-only mode) at the time of the incident.</p>
                     </div>
                 </div>
 
@@ -127,7 +130,7 @@
                     <div class="faq-question">Are the crash locations on the map exact?</div>
                     <div class="faq-answer">
                         <p><strong>Most are accurate to the street level.</strong> NHTSA redacts GPS coordinates but provides street addresses for nearly all crashes. We geocode these addresses using OpenStreetMap's Nominatim service, achieving a <span data-stat="geocoding.accuracy_pct">--</span>% success rate (<span data-stat="geocoding.accurate">--</span> out of <span data-stat="geocoding.total_mapped">--</span> mapped crashes placed at their real street location).</p>
-                        <p>The remaining 8% of markers use an approximate city-center location and are flagged as "approximate location" in their popups. Accuracy varies by city — San Francisco (98%) and Los Angeles (98%) have the highest rates, while Phoenix (77%) is lower due to less detailed address descriptions in some reports.</p>
+                        <p>The remaining markers (<span data-stat="geocoding.estimated">--</span> total) use an approximate city-center location and are flagged as "approximate location" in their popups. Accuracy varies by city — San Francisco (98%) and Los Angeles (98%) have the highest rates, while Phoenix (77%) is lower due to less detailed address descriptions in some reports.</p>
                     </div>
                 </div>
 
@@ -198,6 +201,7 @@
                         <ul>
                             <li><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order Data</a></li>
                             <li><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></li>
+                            <li><a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Waymo mileage milestones dataset</a> (compiled by Anders Eidesvik from press releases and public data)</li>
                         </ul>
                         <p>Our code and processing pipeline are also open-source, so you can reproduce the entire analysis.</p>
                     </div>

@@ -45,6 +45,7 @@ const Explore = (function () {
         severity: null,             // null = "All" | "injury" | "serious" | "none" | "fatal"
         roadUser: null,             // null = "All" | "Pedestrian" | "Cyclist" | "Motorcycle"
         timeOfDay: null,            // null = "All" | "daytime" | "night" | "rush"
+        zipCode: null,              // null = no zip filter | "94110" = filter by zip
     };
 
     // Muted color palette — severity drives the marker color (earth tones)
@@ -92,6 +93,21 @@ const Explore = (function () {
         const fsBtn = document.getElementById("explore-fullscreen-btn");
         if (fsBtn) {
             fsBtn.addEventListener("click", toggleFullscreen);
+        }
+
+        // Zip code search
+        const zipInput = document.getElementById("zip-input");
+        const zipSearchBtn = document.getElementById("zip-search-btn");
+        const zipClearBtn = document.getElementById("zip-clear-btn");
+        if (zipInput && zipSearchBtn) {
+            zipSearchBtn.addEventListener("click", () => handleZipSearch(zipInput));
+            // Allow pressing Enter to search
+            zipInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") handleZipSearch(zipInput);
+            });
+        }
+        if (zipClearBtn) {
+            zipClearBtn.addEventListener("click", clearZipSearch);
         }
 
         console.log("[Explore] Initialized with", crashes.length, "crashes");
@@ -397,6 +413,11 @@ const Explore = (function () {
                 show = false;
             }
 
+            // Zip code filter
+            if (filters.zipCode && crash.zip_code !== filters.zipCode) {
+                show = false;
+            }
+
             // Time of day filter (derived from the crash hour)
             if (filters.timeOfDay && crash.hour !== null) {
                 const h = crash.hour;  // Hour in 24-hour format (0–23)
@@ -455,6 +476,17 @@ const Explore = (function () {
         filters.severity = null;
         filters.roadUser = null;
         filters.timeOfDay = null;
+        filters.zipCode = null;
+
+        // Reset zip code UI
+        const zipInput = document.getElementById("zip-input");
+        const zipResult = document.getElementById("zip-result");
+        const zipClearBtn = document.getElementById("zip-clear-btn");
+        const zipSearchBtn = document.getElementById("zip-search-btn");
+        if (zipInput) zipInput.value = "";
+        if (zipResult) zipResult.style.display = "none";
+        if (zipClearBtn) zipClearBtn.style.display = "none";
+        if (zipSearchBtn) zipSearchBtn.style.display = "inline-block";
 
         // Reset all toggle button UIs: only "All" buttons should be highlighted
         document.querySelectorAll(".filter-toggle").forEach(btn => {
@@ -466,6 +498,69 @@ const Explore = (function () {
         applyFilters();
         // Zoom back out to show the full US
         exploreMap.flyTo([37.0902, -95.7129], 4, { duration: 1 });
+    }
+
+    // ============================================
+    // Zip Code Search
+    // ============================================
+
+    /**
+     * Handle zip code search: validate input and apply filter.
+     */
+    function handleZipSearch(input) {
+        const zip = input.value.trim();
+        const resultEl = document.getElementById("zip-result");
+        const clearBtn = document.getElementById("zip-clear-btn");
+        const searchBtn = document.getElementById("zip-search-btn");
+
+        // Validate: must be exactly 5 digits
+        if (!/^\d{5}$/.test(zip)) {
+            if (resultEl) {
+                resultEl.textContent = "Please enter a valid 5-digit zip code.";
+                resultEl.style.display = "block";
+            }
+            return;
+        }
+
+        // Apply the filter
+        filters.zipCode = zip;
+        applyFilters();
+
+        // Check how many results
+        const countEl = document.getElementById("filtered-count");
+        const count = countEl ? parseInt(countEl.textContent.replace(/,/g, ""), 10) : 0;
+
+        if (resultEl) {
+            if (count === 0) {
+                resultEl.textContent = "No crashes found for this zip code. Waymo may not operate in this area, or crash records for this location may not include zip code data.";
+            } else {
+                resultEl.textContent = count + " crash" + (count !== 1 ? "es" : "") + " found in " + zip + ".";
+            }
+            resultEl.style.display = "block";
+        }
+
+        // Show clear button, hide search button
+        if (clearBtn) clearBtn.style.display = "inline-block";
+        if (searchBtn) searchBtn.style.display = "none";
+    }
+
+    /**
+     * Clear the zip code filter and reset the UI.
+     */
+    function clearZipSearch() {
+        filters.zipCode = null;
+
+        const input = document.getElementById("zip-input");
+        const resultEl = document.getElementById("zip-result");
+        const clearBtn = document.getElementById("zip-clear-btn");
+        const searchBtn = document.getElementById("zip-search-btn");
+
+        if (input) input.value = "";
+        if (resultEl) resultEl.style.display = "none";
+        if (clearBtn) clearBtn.style.display = "none";
+        if (searchBtn) searchBtn.style.display = "inline-block";
+
+        applyFilters();
     }
 
     // ============================================

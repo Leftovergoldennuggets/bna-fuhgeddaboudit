@@ -35,6 +35,7 @@
             <a href="index.html" class="nav-logo">The Waymo Crash Record</a>
             <ul class="nav-links">
                 <li><a href="#intro">Home</a></li>
+                <li><a href="#explore">Explore</a></li>
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="methodology.html">Methodology</a></li>
                 <li><a href="faq.html">FAQ</a></li>
@@ -87,6 +88,7 @@
                     <h1>Every Waymo Crash, Mapped</h1>
                     <p>The federal government requires companies operating self-driving cars to report crashes that result in injury, airbag deployment, or significant property damage. This is every reported Waymo crash on record.</p>
                     <p class="step-byline">By Anders Eidesvik and Kate Li</p>
+                    <p class="step-purpose">Self-driving cars are rapidly expanding across American cities. This project makes the federal crash data accessible so the public can see for themselves what the safety record looks like.</p>
                     <div class="step-meta">
                         <!-- data-stat="meta.date_range_start" tells JS to look up this value
                              in site-data.json and insert it here. The "--" is a placeholder
@@ -96,6 +98,7 @@
                         <!-- data-format="date" formats as a full date like "Feb 23, 2026" -->
                         <span>Updated <span data-stat="meta.generated_at" data-format="date">--</span></span>
                     </div>
+                    <p class="step-context">Fully autonomous, rider-only driving. The majority of incidents occurred from 2023 onward as Waymo expanded commercial service.</p>
                 </div>
             </div>
 
@@ -108,6 +111,7 @@
                     <p>Through the NHTSA Standing General Order, <strong><span data-stat="overview.total_crashes">--</span> crashes</strong> have been reported across these cities — everything from freeway collisions to parking lot fender-benders.</p>
                     <!-- data-format="millions" formats big numbers like "56.7 million" -->
                     <p>Over the same period, Waymo has driven more than <strong><span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span></strong> rider-only miles.</p>
+                    <p>Waymo's operations have grown rapidly — from 1 million rider-only miles in January 2023 to over 127 million by late 2025. The vast majority of crashes in this dataset occurred during this period of rapid expansion.</p>
                 </div>
             </div>
 
@@ -178,6 +182,7 @@
                     <h3 class="chart-title">Waymo's Rider-Only Miles Over Time</h3>
                     <canvas id="mileage-chart"></canvas>
                     <p class="chart-note">Data compiled from Waymo press releases, Safety Impact Data Hub, and archived web pages. See <a href="methodology.html">Methodology</a> for full sourcing.</p>
+                    <p class="chart-source">Source: <a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Mileage dataset by Anders Eidesvik</a> · Compiled from Waymo press releases and archived web data</p>
                 </div>
             </div>
 
@@ -331,6 +336,18 @@
                 <!-- Filter sidebar -->
                 <div class="explore-filters" id="explore-filters">
                     <h3>Filters</h3>
+
+                    <!-- Zip code search -->
+                    <div class="filter-group">
+                        <label for="zip-input">Search by Zip Code</label>
+                        <div class="zip-input-group">
+                            <input type="text" id="zip-input" placeholder="Enter zip code" maxlength="5" pattern="[0-9]{5}" inputmode="numeric">
+                            <button id="zip-search-btn" class="filter-toggle">Search</button>
+                            <button id="zip-clear-btn" class="filter-toggle" style="display:none;">Clear</button>
+                        </div>
+                        <p class="zip-note">Zip code data available for ~86% of crashes.</p>
+                        <p class="zip-result" id="zip-result" style="display:none;"></p>
+                    </div>
 
                     <!-- Severity filter (most important for regular people) -->
                     <div class="filter-group">

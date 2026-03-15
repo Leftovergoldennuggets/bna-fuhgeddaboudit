@@ -569,6 +569,15 @@ def main():
         if narrative and narrative.lower() == "nan":
             narrative = None
 
+        # Zip code from Waymo Hub data (available for ~86% of crashes)
+        zip_code_raw = row.get("Zip Code", "")
+        zip_code = str(zip_code_raw).strip() if pd.notna(zip_code_raw) else None
+        # Clean: keep only valid 5-digit zip codes
+        if zip_code and (len(zip_code) < 5 or not zip_code[:5].isdigit()):
+            zip_code = None
+        elif zip_code:
+            zip_code = zip_code[:5]  # Take first 5 digits only
+
         record = {
             "lat": round(float(lat), 6),
             "lon": round(float(lon), 6),
@@ -593,6 +602,7 @@ def main():
             "speed_mph": speed_mph,
             "injury_severity": injury_severity,
             "narrative": narrative,
+            "zip_code": zip_code,
         }
         map_data.append(record)
 

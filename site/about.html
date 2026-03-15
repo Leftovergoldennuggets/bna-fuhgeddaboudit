@@ -22,6 +22,7 @@
             <a href="index.html" class="nav-logo">The Waymo Crash Record</a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#explore">Explore</a></li>
                 <li><a href="about.html" class="active">About Us</a></li>
                 <li><a href="methodology.html">Methodology</a></li>
                 <li><a href="faq.html">FAQ</a></li>
@@ -41,6 +42,11 @@
             <p>Self-driving cars are now a daily reality on American streets. Waymo operates a commercial robotaxi service in San Francisco, Phoenix, Los Angeles, Austin, and Atlanta &mdash; the largest autonomous vehicle deployment in the world.</p>
 
             <p>But how safe are these cars, really? This project gathers every publicly reported crash involving a Waymo vehicle and presents the data in a way anyone can understand.</p>
+
+            <div class="photo-break-inline">
+                <img src="assets/images/waymo-kid-bike.jpg" alt="A child on a bicycle rides past a Waymo autonomous vehicle in a California parking lot" loading="lazy">
+                <p class="photo-caption">A child on a bicycle passes a Waymo robotaxi in the San Francisco Bay Area. <span class="photo-credit">Photo: Anders Eidesvik</span></p>
+            </div>
 
             <h2>The Team</h2>
 
@@ -80,31 +86,14 @@
                 <!-- target="_blank" opens link in a new tab; rel="noopener" is a security measure -->
                 <li><strong><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order reports</a></strong> &mdash; The federal government requires all companies testing Level 3+ autonomous vehicles to report crashes meeting specific thresholds (injury, airbag deployment, or significant property damage). This dataset includes incident narratives, severity assessments, and location information.</li>
                 <li><strong><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></strong> &mdash; Waymo publishes its own curated dataset that adds crash type classifications and links each incident to the corresponding federal report.</li>
+                <li><strong><a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Waymo mileage milestones</a></strong> &mdash; A dataset of Waymo's cumulative rider-only miles over time, compiled by Anders Eidesvik from press releases, public statements, and archived web data.</li>
             </ul>
 
             <p>We merge these two sources in an automated pipeline that runs quarterly. The full technical details are on our <a href="methodology.html">methodology page</a>.</p>
 
-            <h2>And of course none of this could be possible without out...</h2>
-            <button id="reveal-btn" style="display:inline-block; padding:10px 24px; background:var(--color-accent, #8b6f47); color:#fff; border:none; border-radius:4px; cursor:pointer; font-family:inherit; font-size:1rem; margin:0.5rem 0;">Click to reveal</button>
-
-            <!-- Overlay that appears when button is clicked -->
-            <div id="reveal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:10000; justify-content:center; align-items:center; cursor:pointer;">
-                <img src="assets/images/supreme_leader.png" alt="The Supreme Leader" style="max-width:600px; width:90%; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.4);">
-            </div>
-
-            <script>
-                // Reveal overlay on button click, close on clicking anywhere on the overlay
-                document.getElementById('reveal-btn').addEventListener('click', function() {
-                    document.getElementById('reveal-overlay').style.display = 'flex';
-                });
-                document.getElementById('reveal-overlay').addEventListener('click', function() {
-                    this.style.display = 'none';
-                });
-            </script>
-
             <h2>Contact</h2>
 
-            <p>This is a Stanford COMM277T data journalism project. For questions about the data, methodology, or to report an issue, please reach out to Anders or Kate. <em>[Contact details coming soon]</em></p>
+            <p>This is a Stanford COMM277T data journalism project. For questions about the data, methodology, or to report an issue, contact Anders Eidesvik (eidesvik@stanford.edu) or Kate Li (kateli@stanford.edu).</p>
         </div>
     </section>
 

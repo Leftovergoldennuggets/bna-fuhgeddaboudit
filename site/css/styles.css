@@ -472,6 +472,25 @@ a:hover {
     margin-bottom: var(--spacing-xs);
 }
 
+.step-context {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    max-width: 380px;
+    margin: var(--spacing-sm) auto 0;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+.step-purpose {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    max-width: 380px;
+    margin: var(--spacing-xs) auto var(--spacing-sm);
+    line-height: 1.6;
+}
+
 .step-meta {
     display: flex;
     flex-direction: column;
@@ -614,6 +633,51 @@ a:hover {
 .severity-high {
     border-color: var(--color-danger);
     color: var(--color-danger);
+}
+
+/* ============================================
+   Photo Break
+   ============================================ */
+.photo-break {
+    margin: 0;
+    padding: 0;
+}
+
+.photo-break-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.photo-break-container img {
+    width: 100%;
+    max-height: 60vh;
+    object-fit: cover;
+}
+
+.photo-caption {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    padding: var(--spacing-xs) var(--spacing-md);
+}
+
+.photo-credit {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: 0.8rem;
+}
+
+/* Inline photo within page content (e.g., About page) */
+.photo-break-inline {
+    margin: var(--spacing-lg) 0;
+}
+
+.photo-break-inline img {
+    width: 100%;
+    max-height: 50vh;
+    object-fit: cover;
+    border-radius: 2px;
 }
 
 /* ============================================
@@ -805,6 +869,14 @@ a:hover {
     line-height: 1.5;
 }
 
+.chart-source {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-light);
+    margin-top: var(--spacing-xs);
+    line-height: 1.4;
+}
+
 /* City Cards (spatial section) */
 .city-cards {
     display: grid;
@@ -966,6 +1038,43 @@ a:hover {
     color: var(--color-primary);
     border-bottom-color: var(--color-primary);
     font-weight: 500;
+}
+
+/* Zip code search */
+.zip-input-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.zip-input-group input {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-background);
+    color: var(--color-text);
+    width: 100px;
+}
+
+.zip-input-group input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.zip-note {
+    font-size: 0.7rem;
+    color: var(--color-text-light);
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+.zip-result {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    margin-top: 4px;
+    line-height: 1.4;
 }
 
 /* Crash type / time period checkboxes (legacy — kept for backwards compat during transition) */
