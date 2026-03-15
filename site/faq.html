@@ -106,8 +106,8 @@
                 <div class="faq-item">
                     <div class="faq-question">What was Waymo doing when these crashes happened?</div>
                     <div class="faq-answer">
-                        <p>In nearly two-thirds of reported crashes (65.6%), the Waymo vehicle was traveling at <strong>0 mph</strong> — completely stopped — at the time of contact. The median pre-crash speed across all incidents is 0 mph, and the mean is just 4.1 mph.</p>
-                        <p>The most common scenario is a stationary Waymo being hit by another vehicle that is backing up, changing lanes, or proceeding through an intersection. The most frequent crash types are rear-end collisions (26%), side-impact collisions (21%), and backing collisions (15%).</p>
+                        <p>In nearly two-thirds of reported crashes (<span data-stat="crash_circumstances.speed_distribution.0_mph.percentage">--</span>%), the Waymo vehicle was traveling at <strong>0 mph</strong> — completely stopped — at the time of contact. The median pre-crash speed across all incidents is <span data-stat="crash_circumstances.speed_stats.median_speed_mph">--</span> mph, and the mean is just <span data-stat="crash_circumstances.speed_stats.mean_speed_mph">--</span> mph.</p>
+                        <p>The most common scenario is a stationary Waymo being hit by another vehicle that is backing up, changing lanes, or proceeding through an intersection. The most frequent crash types are rear-end collisions (<span data-stat="crash_circumstances.crash_type_plain.Rear-end collision.percentage">--</span>%), side-impact collisions (<span data-stat="crash_circumstances.crash_type_plain.Side-impact collision.percentage">--</span>%), and backing collisions (<span data-stat="crash_circumstances.crash_type_plain.Backing collision.percentage">--</span>%).</p>
                         <p>This doesn't mean the other driver is always at fault — crash reports describe circumstances, not legal responsibility. But it does mean that most reported "crashes" look very different from what the word typically implies.</p>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
                 <div class="faq-item">
                     <div class="faq-question">How does Waymo compare to human drivers?</div>
                     <div class="faq-answer">
-                        <p>Waymo publishes crash rate comparisons on its <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. Using a methodology peer-reviewed in the journal <em>Traffic Injury Prevention</em> (Kusano et al., 2025), Waymo reports that over 127 million rider-only miles, its vehicles had 90% fewer serious crashes and 81% fewer injury-causing crashes compared to adjusted human driver benchmarks.</p>
+                        <p>Waymo publishes crash rate comparisons on its <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. Using a methodology peer-reviewed in the journal <em>Traffic Injury Prevention</em> (Kusano et al., 2025), Waymo reports that over <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> rider-only miles, its vehicles had <span data-stat="waymo_context.serious_crash_reduction_pct">--</span>% fewer serious crashes and <span data-stat="waymo_context.injury_crash_reduction_pct">--</span>% fewer injury-causing crashes compared to adjusted human driver benchmarks.</p>
                         <p>Important caveats:</p>
                         <ul>
                             <li>These comparisons were conducted by Waymo researchers, though the methodology has been peer-reviewed by independent academics</li>
@@ -152,15 +152,15 @@
                 <div class="faq-item">
                     <div class="faq-question">How many miles has Waymo driven in each city?</div>
                     <div class="faq-answer">
-                        <p>Through September 2025, Waymo has driven a total of 127 million rider-only miles across its operating cities:</p>
+                        <p>Through <span data-stat="city_mileage_meta.data_through">--</span>, Waymo has driven a total of <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> rider-only miles across its operating cities:</p>
                         <ul>
-                            <li><strong>Phoenix</strong> — 56.5 million miles (Waymo's first and longest-running market)</li>
-                            <li><strong>San Francisco</strong> — 38.8 million miles</li>
-                            <li><strong>Los Angeles</strong> — 25.5 million miles</li>
-                            <li><strong>Austin</strong> — 6.3 million miles</li>
+                            <li><strong>Phoenix</strong> — <span data-stat="city_mileage.Phoenix.miles_millions">--</span> million miles (Waymo's first and longest-running market)</li>
+                            <li><strong>San Francisco</strong> — <span data-stat="city_mileage.San Francisco.miles_millions">--</span> million miles</li>
+                            <li><strong>Los Angeles</strong> — <span data-stat="city_mileage.Los Angeles.miles_millions">--</span> million miles</li>
+                            <li><strong>Austin</strong> — <span data-stat="city_mileage.Austin.miles_millions">--</span> million miles</li>
                             <li><strong>Atlanta</strong> — mileage not yet published by Waymo</li>
                         </ul>
-                        <p>These figures come from <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo's Safety Impact Data Hub</a>. The crash rate per million miles varies across cities — for example, San Francisco has roughly 13.6 crashes per million miles compared to Phoenix's 5.5, likely reflecting differences in traffic density and road complexity.</p>
+                        <p>These figures come from <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo's Safety Impact Data Hub</a>. The crash rate per million miles varies across cities — for example, San Francisco has roughly <span data-stat="city_mileage.San Francisco.crashes_per_million_miles">--</span> crashes per million miles compared to Phoenix's <span data-stat="city_mileage.Phoenix.crashes_per_million_miles">--</span>, likely reflecting differences in traffic density and road complexity.</p>
                     </div>
                 </div>
 
@@ -189,7 +189,7 @@
                 <div class="faq-item">
                     <div class="faq-question">Why are there so many crashes in parking lots?</div>
                     <div class="faq-answer">
-                        <p>About 28% of reported crashes occur in parking areas. This is consistent with industry research showing that parking lots account for a significant share of all vehicle collisions — the tight spaces, frequent reversing, and pedestrian traffic create more opportunities for minor contact.</p>
+                        <p>About <span data-stat="location_types.Parking.percentage">--</span>% of reported crashes occur in parking areas. This is consistent with industry research showing that parking lots account for a significant share of all vehicle collisions — the tight spaces, frequent reversing, and pedestrian traffic create more opportunities for minor contact.</p>
                         <p>Nearly all parking lot crashes in the dataset resulted in property damage only, with no injuries reported.</p>
                     </div>
                 </div>
