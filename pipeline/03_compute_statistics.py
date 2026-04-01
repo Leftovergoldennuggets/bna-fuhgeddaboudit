@@ -562,9 +562,20 @@ def compute_all_statistics(df):
     # -------------------------------------------------------------------
     # WAYMO PUBLISHED SAFETY CONTEXT
     # -------------------------------------------------------------------
-    # These numbers come from Waymo's research, NOT from our data analysis.
-    # They provide important context about overall safety performance.
-    stats["waymo_context"] = WAYMO_PUBLISHED_STATS
+    # Reduction percentages come from Waymo's research (not computed by us).
+    # Total miles and data_through are derived from CSV1 (auto-downloaded).
+    waymo_context = dict(WAYMO_PUBLISHED_STATS)
+
+    # Pull total miles and data_through from miles_by_city.json (updated by CSV1)
+    if os.path.exists(STATIC_MILES_BY_CITY):
+        with open(STATIC_MILES_BY_CITY, "r") as f:
+            miles_data_for_context = json.load(f)
+        total_millions = miles_data_for_context.get("total_miles_millions")
+        if total_millions is not None:
+            waymo_context["total_rider_only_miles"] = int(total_millions * 1_000_000)
+        waymo_context["data_through"] = miles_data_for_context.get("data_through")
+
+    stats["waymo_context"] = waymo_context
 
     return stats, df_time, df_time_dated
 

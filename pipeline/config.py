@@ -39,16 +39,23 @@ NHTSA_PRIOR_URL = (
 # NOTE: Same _ADS.csv distinction applies here.
 
 # Waymo Safety Impact Data Hub — CSV2 (crashes with SGO IDs and outcome groups)
-# IMPORTANT: This filename changes every quarter when Waymo updates their data.
-# The date range in the filename (e.g., "202009-202509") reflects the data period.
-# If this URL stops working, go to https://waymo.com/safety/impact/ and find
-# the updated CSV2 download link under "Download the data".
-WAYMO_HUB_URL = (
+# The filename changes every quarter when Waymo updates their data.
+# The date range in the filename reflects the data period (e.g., "202009-202512").
+# The URL is constructed dynamically based on the current date so the pipeline
+# automatically picks up new quarterly releases without manual config changes.
+# Pattern: data always starts at 202009 and ends at the most recent quarter.
+# Waymo publishes ~Mar 15 (data through Dec), ~Jun 15 (through Mar),
+# ~Sep 15 (through Jun), ~Dec 15 (through Sep).
+WAYMO_STORAGE_BASE = (
     "https://storage.googleapis.com/waymo-uploads/files/documents/"
     "safety/safety-impact-data/"
-    "CSV2%20-%20Crashes%20with%20SGO%20ID%20and%20Group%20Membership%20"
-    "202009-202509-2022benchmark.csv"
 )
+WAYMO_HUB_CSV2_PREFIX = WAYMO_STORAGE_BASE + "CSV2%20-%20Crashes%20with%20SGO%20ID%20and%20Group%20Membership%20"
+WAYMO_HUB_CSV1_PREFIX = WAYMO_STORAGE_BASE + "CSV1%20-%20RO%20Miles%20per%20Location%20"
+# The end-date is built dynamically in 01_download_data.py — see build_waymo_url()
+# Fallback URLs in case auto-detection fails:
+WAYMO_HUB_CSV2_FALLBACK = WAYMO_HUB_CSV2_PREFIX + "202009-202512-2022benchmark.csv"
+WAYMO_HUB_CSV1_FALLBACK = WAYMO_HUB_CSV1_PREFIX + "202009-202512-2022benchmark.csv"
 
 
 # ===========================================================================
@@ -67,6 +74,7 @@ STATIC_DIR = os.path.join(PROJECT_ROOT, "data", "static")     # Hand-maintained 
 RAW_NHTSA_POST = os.path.join(RAW_DIR, "nhtsa_ads_post_june16.csv")
 RAW_NHTSA_PRIOR = os.path.join(RAW_DIR, "nhtsa_ads_prior_june16.csv")
 RAW_WAYMO_HUB = os.path.join(RAW_DIR, "waymo_hub_csv2.csv")
+RAW_WAYMO_CSV1 = os.path.join(RAW_DIR, "waymo_hub_csv1.csv")
 
 # Processed (intermediate) file paths
 PROCESSED_MERGED = os.path.join(PROCESSED_DIR, "waymo_merged.csv")
@@ -149,21 +157,23 @@ CITIES = {
 # ===========================================================================
 # WAYMO PUBLISHED SAFETY CONTEXT
 # ===========================================================================
-# These numbers come from Waymo's peer-reviewed research and Safety Impact page.
+# Crash reduction percentages come from Waymo's peer-reviewed research.
 # Source: https://waymo.com/safety/impact/
 # Source: https://doi.org/10.1080/15389588.2025.2499887 (56.7M miles study)
 #
-# We include these for context on the website — they are NOT computed from our data.
-# Update these when Waymo publishes new figures.
+# NOTE: total_rider_only_miles and data_through are now computed automatically
+# from CSV1 in 01_download_data.py — no manual updates needed for those.
+# The reduction percentages below are from Waymo's published comparisons and
+# cannot be auto-derived (CSV3 is not publicly downloadable). These may need
+# manual updates if Waymo publishes significantly revised figures.
 WAYMO_PUBLISHED_STATS = {
-    "total_rider_only_miles": 127_000_000,     # Through September 2025
     "miles_study_period": "56.7 million",       # From the peer-reviewed study
-    "serious_crash_reduction_pct": 90,          # vs human drivers
-    "injury_crash_reduction_pct": 81,           # vs human drivers
-    "airbag_crash_reduction_pct": 82,           # vs human drivers
+    "serious_crash_reduction_pct": 92,          # vs human drivers
+    "injury_crash_reduction_pct": 82,           # vs human drivers
+    "airbag_crash_reduction_pct": 83,           # vs human drivers
     "pedestrian_injury_reduction_pct": 92,      # vs human drivers
-    "cyclist_injury_reduction_pct": 82,         # vs human drivers
-    "intersection_injury_reduction_pct": 96,    # vs human drivers
+    "cyclist_injury_reduction_pct": 85,         # vs human drivers
+    "motorcycle_injury_reduction_pct": 81,      # vs human drivers
     "source_url": "https://waymo.com/safety/impact/",
     "study_url": "https://doi.org/10.1080/15389588.2025.2499887",
 }
