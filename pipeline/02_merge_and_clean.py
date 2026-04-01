@@ -38,6 +38,21 @@ from pipeline.config import (
     WAYMO_ENTITY_NAME, COLUMN_RENAMES_PRIOR_TO_POST,
 )
 
+# Mapping from County name in Waymo CSV2 to the city code used by the pipeline.
+# Waymo's CSV2 changed from a "Location" column (e.g., "SAN_FRANCISCO") to
+# separate "State" and "County" columns. This mapping restores the Location
+# column so downstream pipeline steps continue to work.
+COUNTY_TO_CITY_CODE = {
+    "San Francisco": "SAN_FRANCISCO",
+    "San Mateo": "SAN_FRANCISCO",       # Part of SF Bay Area operations
+    "Santa Clara": "SAN_FRANCISCO",     # Part of SF Bay Area operations
+    "Maricopa": "PHOENIX",
+    "Los Angeles": "LOS_ANGELES",
+    "Travis": "AUSTIN",
+    "Fulton": "ATLANTA",
+    "DeKalb": "ATLANTA",                # Adjacent Atlanta county
+}
+
 
 def load_and_filter_nhtsa(filepath, label):
     """
@@ -255,6 +270,21 @@ def main():
     print()
     print("Merging datasets...")
     merged, extras = merge_with_hub(waymo_hub, nhtsa_combined)
+
+    # --- Derive Location column from County ---
+    # Waymo's CSV2 used to have a "Location" column (e.g., "SAN_FRANCISCO").
+    # Newer versions use "State" + "County" instead. We derive Location from
+    # County so downstream pipeline steps (statistics, map) continue to work.
+    if "Location" not in merged.columns and "County" in merged.columns:
+        print()
+        print("Deriving Location from County...")
+        merged["Location"] = merged["County"].map(COUNTY_TO_CITY_CODE)
+        unmapped = merged["Location"].isna().sum()
+        if unmapped > 0:
+            unknown_counties = merged.loc[merged["Location"].isna(), "County"].unique()
+            print(f"  WARNING: {unmapped} rows with unmapped counties: {list(unknown_counties)}")
+            print("  Add these counties to COUNTY_TO_CITY_CODE in 02_merge_and_clean.py")
+        print(f"  Mapped {len(merged) - unmapped}/{len(merged)} rows to city codes")
 
     # --- Save outputs ---
     print()
