@@ -1,7 +1,7 @@
 {
   "sf_incidents": [
     {
-      "id": 3,
+      "id": 5,
       "lat": 37.767764,
       "lon": -122.396629,
       "city": "San Francisco",
@@ -15,7 +15,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 6,
+      "id": 8,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -29,7 +29,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 9,
+      "id": 11,
       "lat": 37.776525,
       "lon": -122.417534,
       "city": "San Francisco",
@@ -43,7 +43,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 10,
+      "id": 12,
       "lat": 37.751079,
       "lon": -122.436222,
       "city": "San Francisco",
@@ -57,7 +57,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 12,
+      "id": 14,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -71,7 +71,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 13,
+      "id": 15,
       "lat": 37.791973,
       "lon": -122.400826,
       "city": "San Francisco",
@@ -85,7 +85,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 14,
+      "id": 16,
       "lat": 37.723247,
       "lon": -122.452289,
       "city": "San Francisco",
@@ -102,6 +102,34 @@
   "all_incidents": [
     {
       "id": 1,
+      "lat": 33.579923,
+      "lon": -111.979524,
+      "city": "Phoenix",
+      "date": "11/19/2025",
+      "time": "00:02",
+      "crash_party": "Pedestrian",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pedestrian",
+      "address": "N. 92nd Street near E. Cochise Drive",
+      "narrative": "On November [REDACTED], 2025 at 12:02 AM MT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Scottsdale, Arizona was in a collision involving a passenger of the Waymo AV on [REDACTED] near [REDACTED].\nThe Waymo AV was travelling northbound in the left lane of [REDACTED]. While the AV was in  motion, the two passengers seated in the rear of the Waymo AV removed their seatbelts and opened the right rear passenger side door. The Waymo AV detected the opened door and began to slow in lane. While the Waymo AV was slowing to a stop, the passenger seated in the right rear passenger seat exited the vehicle through the open door, placed their feet on the ground, and the rear right tire of the Waymo AV came to a stop on top of the passenger's right foot. The Waymo AV remained stopped on top of the passenger's foot until emergency services arrived and lifted the right side of the vehicle. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The passenger of the Waymo AV was transported from the scene to a hospital for medical treatment with moderate injuries to the foot.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment and a vulnerable road user was struck by an involved vehicle. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": false
+    },
+    {
+      "id": 2,
+      "lat": 33.752735,
+      "lon": -84.412794,
+      "city": "Atlanta",
+      "date": "10/03/2025",
+      "time": "09:55",
+      "crash_party": "Vehicle (Passenger Car)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "V2V F2R",
+      "address": "James P Brawley Drive at Carter St NW",
+      "narrative": "On October [REDACTED], 2025 at 9:55 AM EDT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Atlanta, Georgia was in a collision involving a passenger car on [REDACTED] at [REDACTED]. \nThe Waymo AV was traveling northbound on [REDACTED] and came to a stop at the stop sign at the intersection with [REDACTED]. A passenger car traveling directly behind the Waymo AV proceeded without stopping, and the front driver side of the passenger car then made contact with the rear side of the stationary Waymo AV. First responders arrived at the scene and assisted the rider out of the Waymo AV. An ambulance was called to the scene and Waymo later learned that the rider was transported to the hospital. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The Waymo AV sustained damage. The passenger in the Waymo AV was not belted at the time of the collision they were in the process of locating the belt fastener for the seat they were occupying.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": false
+    },
+    {
+      "id": 3,
       "lat": 33.453977,
       "lon": -112.093,
       "city": "Phoenix",
@@ -115,7 +143,7 @@
       "is_estimated_location": true
     },
     {
-      "id": 2,
+      "id": 4,
       "lat": 33.494699,
       "lon": -112.039297,
       "city": "Phoenix",
@@ -129,7 +157,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 3,
+      "id": 5,
       "lat": 37.767764,
       "lon": -122.396629,
       "city": "San Francisco",
@@ -143,7 +171,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 4,
+      "id": 6,
       "lat": 34.03595,
       "lon": -118.266221,
       "city": "Los Angeles",
@@ -157,7 +185,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 5,
+      "id": 7,
       "lat": 33.439401,
       "lon": -112.085072,
       "city": "Phoenix",
@@ -171,7 +199,7 @@
       "is_estimated_location": true
     },
     {
-      "id": 6,
+      "id": 8,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -185,7 +213,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 7,
+      "id": 9,
       "lat": 33.773677,
       "lon": -111.995528,
       "city": "Phoenix",
@@ -199,7 +227,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 8,
+      "id": 10,
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -213,7 +241,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 9,
+      "id": 11,
       "lat": 37.776525,
       "lon": -122.417534,
       "city": "San Francisco",
@@ -227,7 +255,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 10,
+      "id": 12,
       "lat": 37.751079,
       "lon": -122.436222,
       "city": "San Francisco",
@@ -241,7 +269,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 11,
+      "id": 13,
       "lat": 33.406974,
       "lon": -112.020759,
       "city": "Phoenix",
@@ -255,7 +283,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 12,
+      "id": 14,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -269,7 +297,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 13,
+      "id": 15,
       "lat": 37.791973,
       "lon": -122.400826,
       "city": "San Francisco",
@@ -283,7 +311,7 @@
       "is_estimated_location": false
     },
     {
-      "id": 14,
+      "id": 16,
       "lat": 37.723247,
       "lon": -122.452289,
       "city": "San Francisco",
@@ -306,13 +334,18 @@
     "Phoenix": {
       "lat": 33.4484,
       "lon": -112.074,
-      "count": 6
+      "count": 7
     },
     "Los Angeles": {
       "lat": 34.0522,
       "lon": -118.2437,
       "count": 1
+    },
+    "Atlanta": {
+      "lat": 33.749,
+      "lon": -84.388,
+      "count": 1
     }
   },
-  "total_serious": 14
+  "total_serious": 16
 }

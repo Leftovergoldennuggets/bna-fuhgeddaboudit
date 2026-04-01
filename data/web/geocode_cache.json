@@ -4004,5 +4004,961 @@
   "W. Chandler Boulevard and S. Chandler Village Drive|PHOENIX": {
     "lat": 33.298552,
     "lon": -112.109375
+  },
+  "Mission Street near 7th Street|SAN_FRANCISCO": {
+    "lat": 37.779426,
+    "lon": -122.410535
+  },
+  "S. Bentley Avenue near Tennessee Avenue|LOS_ANGELES": {
+    "lat": 34.042651,
+    "lon": -118.438738
+  },
+  "S. Los Angeles Street near Toyo Miyatake Way|LOS_ANGELES": {
+    "lat": 34.04728,
+    "lon": -118.246163
+  },
+  "16th Street NW at Fowler Street NW|ATLANTA": {
+    "lat": 33.789924,
+    "lon": -84.388547
+  },
+  "W. Middlefield Road at San Antonio Road|SAN_FRANCISCO": null,
+  "W. Olympic Boulevard near Prosser Avenue|LOS_ANGELES": {
+    "lat": 34.042905,
+    "lon": -118.433366
+  },
+  "Silver Avenue at San Bruno Avenue|SAN_FRANCISCO": {
+    "lat": 37.732328,
+    "lon": -122.405792
+  },
+  "S. Perry Lane at E. University Drive|PHOENIX": {
+    "lat": 33.412778,
+    "lon": -112.010274
+  },
+  "Matteson Avenue at Wade Street|LOS_ANGELES": {
+    "lat": 34.001308,
+    "lon": -118.433964
+  },
+  "N. 92nd Street near E. Cochise Drive|PHOENIX": {
+    "lat": 33.579923,
+    "lon": -111.979524
+  },
+  "S. Van Ness Avenue near 21st Street|SAN_FRANCISCO": {
+    "lat": 37.766119,
+    "lon": -122.417596
+  },
+  "W. Martin Luther King Jr. Boulevard at Arlington Avenue|LOS_ANGELES": {
+    "lat": 34.01081,
+    "lon": -118.319562
+  },
+  "S. I-35 Frontage Road at Manor Road|AUSTIN": {
+    "lat": 30.209104,
+    "lon": -97.754253
+  },
+  "E. Acoma Drive near N. 68th Street|PHOENIX": {
+    "lat": 33.619068,
+    "lon": -112.00279
+  },
+  "38 1/2 Street E. at Red River Street|AUSTIN": {
+    "lat": 30.292584,
+    "lon": -97.734812
+  },
+  "Guerrero Street at 18th Street|SAN_FRANCISCO": {
+    "lat": 37.761535,
+    "lon": -122.423511
+  },
+  "7th Street at E. Missouri Avenue|PHOENIX": {
+    "lat": 33.644557,
+    "lon": -112.065571
+  },
+  "E. Southern Avenue at N. Price Road|PHOENIX": {
+    "lat": 33.392237,
+    "lon": -112.069355
+  },
+  "Barnard Way near Ocean Park Boulevard|LOS_ANGELES": {
+    "lat": 33.999996,
+    "lon": -118.484988
+  },
+  "Franklin Street near Vallejo Street|SAN_FRANCISCO": {
+    "lat": 37.80255,
+    "lon": -122.426493
+  },
+  "James P Brawley Drive at Carter St NW|ATLANTA": {
+    "lat": 33.752735,
+    "lon": -84.412794
+  },
+  "Eddy Street at Taylor Street|SAN_FRANCISCO": {
+    "lat": 37.784116,
+    "lon": -122.410657
+  },
+  "Airport Boulevard near Zach Scott Street|AUSTIN": {
+    "lat": 30.291804,
+    "lon": -97.707709
+  },
+  "Valley Drive at a parking lot entrance at 453 Valley Drive|SAN_FRANCISCO": {
+    "lat": 37.771957,
+    "lon": -122.460149
+  },
+  "Roxboro Road at Lenox Park Boulevard NE|ATLANTA": {
+    "lat": 33.849291,
+    "lon": -84.354891
+  },
+  "Bayshore Boulevard at the intersection with Jerrold Avenue and the off-ramp freeway exit 432 of US-101 North|SAN_FRANCISCO": {
+    "lat": 37.720332,
+    "lon": -122.399346
+  },
+  "Page Mill Road near Deer Creek Road|SAN_FRANCISCO": null,
+  "E. 7th Street at S. I-35 Frontage Road|AUSTIN": {
+    "lat": 30.261917,
+    "lon": -97.719525
+  },
+  "Valley Drive near Bayshore Boulevard|SAN_FRANCISCO": {
+    "lat": 37.771957,
+    "lon": -122.460149
+  },
+  "E. Playa Del Norte Drive at N. Scottsdale Road|PHOENIX": {
+    "lat": 33.598805,
+    "lon": -111.926117
+  },
+  "Burleson Road at Metropolis Drive|AUSTIN": {
+    "lat": 30.201774,
+    "lon": -97.709932
+  },
+  "Airport Boulevard at Tower Place|SAN_FRANCISCO": {
+    "lat": 37.66601,
+    "lon": -122.397489
+  },
+  "Fountain Avenue near N. Sweetzer Avenue|LOS_ANGELES": {
+    "lat": 34.0958,
+    "lon": -118.280421
+  },
+  "N. 44th Street at E. Coulter Street|PHOENIX": {
+    "lat": 33.519112,
+    "lon": -111.986537
+  },
+  "U.S. Route 41 near Channing Drive NW|ATLANTA": {
+    "lat": 33.806042,
+    "lon": -84.409751
+  },
+  "Priest Drive at the U.S. Route 60 East on-ramp|PHOENIX": {
+    "lat": 33.448983,
+    "lon": -111.956264
+  },
+  "Nelson Street SW near Mangum Street SW|ATLANTA": {
+    "lat": 33.750729,
+    "lon": -84.40159
+  },
+  "John Lewis Freedom Parkway NE near Boulevard NE|ATLANTA": {
+    "lat": 33.773527,
+    "lon": -84.359925
+  },
+  "Laguna Street near Turk Street|SAN_FRANCISCO": {
+    "lat": 37.795848,
+    "lon": -122.430197
+  },
+  "Culver Boulevard near Coombs Avenue|LOS_ANGELES": {
+    "lat": 33.999209,
+    "lon": -118.414709
+  },
+  "17th Street at Capp Street|SAN_FRANCISCO": {
+    "lat": 37.763078,
+    "lon": -122.425417
+  },
+  "Lucas Avenue near Wilshire Boulevard|LOS_ANGELES": {
+    "lat": 34.060011,
+    "lon": -118.260564
+  },
+  "Based on the Narrative field in the provided document, the collision occurred at:3400 Sky Harbor Boulevard, Terminal 3|PHOENIX": null,
+  "E. Guadalupe Road at N. Price Road|PHOENIX": {
+    "lat": 33.36396,
+    "lon": -111.97288
+  },
+  "E. Portland Street near N. 3rd Street|PHOENIX": {
+    "lat": 33.459982,
+    "lon": -112.069704
+  },
+  "3400 Sky Harbor Boulevard, Terminal 4 at the Phoenix Sky Harbor International Airport|PHOENIX": {
+    "lat": 33.436848,
+    "lon": -111.996697
+  },
+  "Maple Avenue at 3rd Lane|SAN_FRANCISCO": {
+    "lat": 37.661551,
+    "lon": -122.410437
+  },
+  "Michael Avenue near Washington Boulevard|LOS_ANGELES": {
+    "lat": 33.991797,
+    "lon": -118.438138
+  },
+  "Littlefield Avenue near Lawrence Avenue|SAN_FRANCISCO": {
+    "lat": 37.648831,
+    "lon": -122.394514
+  },
+  "Thomas Road near N. 12th Street|PHOENIX": {
+    "lat": 33.479629,
+    "lon": -112.056277
+  },
+  "alley behind 7325 E. Shoeman Lane|PHOENIX": null,
+  "S. 32nd Street at E. Wood Street|PHOENIX": {
+    "lat": 33.376822,
+    "lon": -112.01297
+  },
+  "W. Middlefield Road at N. Shoreline Boulevard|SAN_FRANCISCO": null,
+  "parking lot at 3402 N. Central Avenue|PHOENIX": {
+    "lat": 33.488051,
+    "lon": -112.074791
+  },
+  "Capuchino Avenue at Broadway|SAN_FRANCISCO": {
+    "lat": 37.796839,
+    "lon": -122.41457
+  },
+  "Ralston Avenue at the entrance and exit ramps of State Route 92 J. Arthur Younger Freeway|SAN_FRANCISCO": {
+    "lat": 37.802618,
+    "lon": -122.473643
+  },
+  "W. Broadway Road near S. 6th Avenue|PHOENIX": {
+    "lat": 33.406844,
+    "lon": -112.137766
+  },
+  "N. 32nd Street at E. Roosevelt Street|PHOENIX": {
+    "lat": 33.458628,
+    "lon": -112.013511
+  },
+  "Baden Avenue near Spruce Avenue|SAN_FRANCISCO": {
+    "lat": 37.655239,
+    "lon": -122.416533
+  },
+  "parking lot at 1455 Madison Avenue|SAN_FRANCISCO": null,
+  "W. Broadway Road at Priest Drive|PHOENIX": {
+    "lat": 33.406844,
+    "lon": -112.137766
+  },
+  "S. 16th Street near E. Hidalgo Avenue|PHOENIX": {
+    "lat": 33.426842,
+    "lon": -112.047732
+  },
+  "Geary Street at Van Ness Avenue|SAN_FRANCISCO": {
+    "lat": 37.785578,
+    "lon": -122.421312
+  },
+  "Lucerne Avenue near Vineyard Avenue|LOS_ANGELES": {
+    "lat": 34.021574,
+    "lon": -118.387283
+  },
+  "E. Broadway Road near S. 30th Street|PHOENIX": {
+    "lat": 33.406992,
+    "lon": -112.018904
+  },
+  "W. 3rd Street near S. Western Avenue|LOS_ANGELES": {
+    "lat": 34.056142,
+    "lon": -118.256032
+  },
+  "E. Ben White Boulevard near S. Congress Avenue|AUSTIN": {
+    "lat": 30.212492,
+    "lon": -97.707788
+  },
+  "Highland Avenue at Melrose Avenue|LOS_ANGELES": {
+    "lat": 34.083353,
+    "lon": -118.338211
+  },
+  "E. Baseline Road at S. McClintock Drive|PHOENIX": {
+    "lat": 33.377934,
+    "lon": -112.011645
+  },
+  "N. Shoreline Boulevard at Montecito Avenue|SAN_FRANCISCO": {
+    "lat": 37.730191,
+    "lon": -122.454778
+  },
+  "parking lot at 3012 Vermont Avenue|LOS_ANGELES": {
+    "lat": 34.027041,
+    "lon": -118.29119
+  },
+  "Polk Street at Pacific Avenue|SAN_FRANCISCO": {
+    "lat": 37.79512,
+    "lon": -122.421442
+  },
+  "Armour Drive NE near Plasters Avenue|ATLANTA": {
+    "lat": 33.813071,
+    "lon": -84.375181
+  },
+  "Airport Boulevard near Grand Avenue|SAN_FRANCISCO": {
+    "lat": 37.654464,
+    "lon": -122.408133
+  },
+  "Montana Avenue at S. Barrington Avenue|LOS_ANGELES": {
+    "lat": 34.055056,
+    "lon": -118.467329
+  },
+  "N. 56th Street at E. Lafayette Boulevard|PHOENIX": {
+    "lat": 33.485803,
+    "lon": -111.960895
+  },
+  "Gough Street near Ivy Street|SAN_FRANCISCO": {
+    "lat": 37.783414,
+    "lon": -122.424313
+  },
+  "parking lot at 388 S. Hill Street|LOS_ANGELES": {
+    "lat": 34.050395,
+    "lon": -118.250142
+  },
+  "Holloway Drive near Santa Monica Boulevard|LOS_ANGELES": {
+    "lat": 34.09062,
+    "lon": -118.383106
+  },
+  "Athens Street near Russia Avenue|SAN_FRANCISCO": {
+    "lat": 37.722434,
+    "lon": -122.427854
+  },
+  "Avocado Street near Hillhurst Avenue|LOS_ANGELES": {
+    "lat": 34.111519,
+    "lon": -118.283861
+  },
+  "Blackburn Avenue near La Cienega Boulevard|LOS_ANGELES": {
+    "lat": 34.071835,
+    "lon": -118.371104
+  },
+  "1st Street near Folsom Street|SAN_FRANCISCO": {
+    "lat": 37.787598,
+    "lon": -122.394063
+  },
+  "23rd Street near Rhode Island Street|SAN_FRANCISCO": {
+    "lat": 37.754508,
+    "lon": -122.401763
+  },
+  "a parking lot at 8701 E. McDowell Road|PHOENIX": {
+    "lat": 33.46795,
+    "lon": -112.097276
+  },
+  "parking lot driveway entrance on West Stassney Lane near Menchaca Road|AUSTIN": {
+    "lat": 30.193062,
+    "lon": -97.811779
+  },
+  "West Hyde Park Boulevard at Glenway Drive|LOS_ANGELES": {
+    "lat": 33.968396,
+    "lon": -118.366833
+  },
+  "parking lot at 1843 E. Southern Avenue|PHOENIX": {
+    "lat": 33.39278,
+    "lon": -112.041396
+  },
+  "Powell Street at California Street|SAN_FRANCISCO": {
+    "lat": 37.792246,
+    "lon": -122.409238
+  },
+  "Hampshire Street and 21st Street|SAN_FRANCISCO": {
+    "lat": 37.748304,
+    "lon": -122.406532
+  },
+  "W. 59th Street near Flores Avenue|LOS_ANGELES": {
+    "lat": 33.987547,
+    "lon": -118.298039
+  },
+  "S. Holt Avenue near Sawyer Street|LOS_ANGELES": {
+    "lat": 34.049217,
+    "lon": -118.379142
+  },
+  "Edgewood Place near S. Rimpau Boulevard|LOS_ANGELES": {
+    "lat": 34.054618,
+    "lon": -118.346794
+  },
+  "Mission Street at Bosworth Street|SAN_FRANCISCO": {
+    "lat": 37.733437,
+    "lon": -122.426808
+  },
+  "Homer Avenue at High Street|SAN_FRANCISCO": {
+    "lat": 37.748376,
+    "lon": -122.443496
+  },
+  "15th Street at Dolores Street|SAN_FRANCISCO": {
+    "lat": 37.745838,
+    "lon": -122.424667
+  },
+  "William Holmes Borders Senior Drive NE near Auburn Avenue|ATLANTA": {
+    "lat": 33.755305,
+    "lon": -84.383911
+  },
+  "W. Chandler Boulevard at N. McClintock Drive|PHOENIX": {
+    "lat": 33.302527,
+    "lon": -112.090121
+  },
+  "E. Lemon Street near Rural Road|PHOENIX": null,
+  "Edgehill Drive near W. 30th Street|LOS_ANGELES": {
+    "lat": 34.017568,
+    "lon": -118.330986
+  },
+  "Harrison Street at 9th Street|SAN_FRANCISCO": {
+    "lat": 37.772402,
+    "lon": -122.41045
+  },
+  "Ocean Park Boulevard at 17th Street|LOS_ANGELES": {
+    "lat": 34.02215,
+    "lon": -118.450288
+  },
+  "9th Street near Market Street|SAN_FRANCISCO": {
+    "lat": 37.777421,
+    "lon": -122.416027
+  },
+  "N. Stanley Avenue near Beverly Boulevard|LOS_ANGELES": {
+    "lat": 34.103963,
+    "lon": -118.356209
+  },
+  "N. 22nd Avenue at W. Adams Street|PHOENIX": {
+    "lat": 33.513214,
+    "lon": -112.106288
+  },
+  "Santa Monica Boulevard at N. Roxbury Drive|LOS_ANGELES": {
+    "lat": 34.090787,
+    "lon": -118.305597
+  },
+  "Lucas Avenue at Beverly Boulevard|LOS_ANGELES": {
+    "lat": 34.060011,
+    "lon": -118.260564
+  },
+  "Geary Street near Hyde Street|SAN_FRANCISCO": {
+    "lat": 37.786364,
+    "lon": -122.416797
+  },
+  "Emerald Forest Drive at W. Stassney Lane|AUSTIN": {
+    "lat": 30.216457,
+    "lon": -97.783953
+  },
+  "S. Bonnie Brae Street at W. Pico Boulevard|LOS_ANGELES": {
+    "lat": 34.050807,
+    "lon": -118.277563
+  },
+  "Mason Street near Turk Street|SAN_FRANCISCO": {
+    "lat": 37.783465,
+    "lon": -122.409356
+  },
+  "18th Street at Capp Street|SAN_FRANCISCO": {
+    "lat": 37.760891,
+    "lon": -122.435025
+  },
+  "Pacific Avenue at 29th Place|LOS_ANGELES": {
+    "lat": 33.772334,
+    "lon": -118.193756
+  },
+  "E. Buckeye Road near S. 2nd Street|PHOENIX": {
+    "lat": 33.436718,
+    "lon": -112.030557
+  },
+  "Coca Cola Place SE near Pratt Street SE|ATLANTA": {
+    "lat": 33.754361,
+    "lon": -84.381958
+  },
+  "Daggett Street at 7th Street|SAN_FRANCISCO": {
+    "lat": 37.766813,
+    "lon": -122.396104
+  },
+  "15th Street at Caledonia Street|SAN_FRANCISCO": {
+    "lat": 37.765764,
+    "lon": -122.421468
+  },
+  "W. 8th Street at Lavaca Street|AUSTIN": {
+    "lat": 30.283944,
+    "lon": -97.775201
+  },
+  "Kent Street at Waterloo Street|LOS_ANGELES": {
+    "lat": 34.076883,
+    "lon": -118.271238
+  },
+  "Duboce Avenue near Elgin Park|SAN_FRANCISCO": {
+    "lat": 37.769835,
+    "lon": -122.423104
+  },
+  "Font Boulevard at Lake Merced Boulevard|SAN_FRANCISCO": {
+    "lat": 37.719084,
+    "lon": -122.479033
+  },
+  "West Avenue near W. 6th Street|AUSTIN": {
+    "lat": 30.263483,
+    "lon": -97.744866
+  },
+  "W. Jefferson Street at S. 4th Avenue|PHOENIX": {
+    "lat": 33.447086,
+    "lon": -112.113741
+  },
+  "N. Fairfax Avenue at Sunset Boulevard|LOS_ANGELES": {
+    "lat": 34.092977,
+    "lon": -118.361554
+  },
+  "N. Hoover Street near Gateway Avenue|LOS_ANGELES": {
+    "lat": 34.086323,
+    "lon": -118.284494
+  },
+  "6th Street at Brannan Street|SAN_FRANCISCO": {
+    "lat": 37.783186,
+    "lon": -122.390389
+  },
+  "E. Dr. MLK Jr. Boulevard near 40th Street|PHOENIX": {
+    "lat": 33.773677,
+    "lon": -111.995528
+  },
+  "S. 3rd Street near E. Buckeye Road|PHOENIX": {
+    "lat": 33.445732,
+    "lon": -112.069946
+  },
+  "Scott Street near Eddy Street|SAN_FRANCISCO": {
+    "lat": 37.780894,
+    "lon": -122.437142
+  },
+  "parking lot at 2215 Town Lake Circle|AUSTIN": {
+    "lat": 30.240005,
+    "lon": -97.72464
+  },
+  "Colby Avenue near Nebraska Avenue|LOS_ANGELES": {
+    "lat": 34.027712,
+    "lon": -118.437325
+  },
+  "Hayes Street near Polk Street|SAN_FRANCISCO": {
+    "lat": 37.777162,
+    "lon": -122.42082
+  },
+  "parking lot at 13463 Washington Boulevard|LOS_ANGELES": {
+    "lat": 33.993139,
+    "lon": -118.447221
+  },
+  "W. Olympic Boulevard near S. Grand Avenue|LOS_ANGELES": {
+    "lat": 34.042905,
+    "lon": -118.433366
+  },
+  "14th Street NW near Howell Mill Road|ATLANTA": {
+    "lat": 33.786564,
+    "lon": -84.391144
+  },
+  "Montgomery Street near Pacific Avenue|SAN_FRANCISCO": {
+    "lat": 37.797373,
+    "lon": -122.403588
+  },
+  "North Interstate 35 Frontage Road at U.S. 290 Frontage Road|AUSTIN": {
+    "lat": 30.308712,
+    "lon": -97.711389
+  },
+  "Terry A Francois Boulevard near Mission Bay Boulevard South|SAN_FRANCISCO": {
+    "lat": 37.770265,
+    "lon": -122.386427
+  },
+  "N. Morningside Drive NE near Yorkshire Road NE|ATLANTA": {
+    "lat": 33.793804,
+    "lon": -84.357882
+  },
+  "Venice Boulevard near Flower Street|LOS_ANGELES": {
+    "lat": 34.044581,
+    "lon": -118.328112
+  },
+  "9th Street at Hayes Street|SAN_FRANCISCO": {
+    "lat": 37.777421,
+    "lon": -122.416027
+  },
+  "Pacific Avenue near Battery Street|SAN_FRANCISCO": {
+    "lat": 37.79557,
+    "lon": -122.41749
+  },
+  "Northside Drive NW near Trabert Avenue NW|ATLANTA": {
+    "lat": 33.838608,
+    "lon": -84.408093
+  },
+  "parking lot at 5900 E. Thomas Road|PHOENIX": {
+    "lat": 33.480231,
+    "lon": -112.067461
+  },
+  "Geary Street near Powell Street|SAN_FRANCISCO": {
+    "lat": 37.787384,
+    "lon": -122.408585
+  },
+  "La Brea Avenue near Obama Boulevard|LOS_ANGELES": {
+    "lat": 34.063666,
+    "lon": -118.344035
+  },
+  "Bryant Street at Mariposa Street|SAN_FRANCISCO": {
+    "lat": 37.76294,
+    "lon": -122.410144
+  },
+  "Florida Street near 20th Street|SAN_FRANCISCO": {
+    "lat": 37.753788,
+    "lon": -122.410186
+  },
+  "Santa Monica Boulevard at Avenue of the Stars|LOS_ANGELES": {
+    "lat": 34.090787,
+    "lon": -118.305597
+  },
+  "Crestlake Drive at Sloat Boulevard|SAN_FRANCISCO": {
+    "lat": 37.735005,
+    "lon": -122.485972
+  },
+  "Toland Street near Toland Place|SAN_FRANCISCO": {
+    "lat": 37.74252,
+    "lon": -122.400141
+  },
+  "Powell Street near Geary Street|SAN_FRANCISCO": {
+    "lat": 37.787463,
+    "lon": -122.408342
+  },
+  "E. 15th Street at S. Alameda Street|LOS_ANGELES": {
+    "lat": 34.020755,
+    "lon": -118.229249
+  },
+  "parking lot at 21001 N. Tatum Boulevard|PHOENIX": {
+    "lat": 33.678626,
+    "lon": -111.974684
+  },
+  "N. San Vicente Boulevard at Santa Monica Boulevard|LOS_ANGELES": {
+    "lat": 34.077701,
+    "lon": -118.37973
+  },
+  "Sunset Boulevard at N. Coronado Street|LOS_ANGELES": {
+    "lat": 34.078865,
+    "lon": -118.267662
+  },
+  "Broadway near Kearny Street|SAN_FRANCISCO": {
+    "lat": 37.796839,
+    "lon": -122.41457
+  },
+  "Castro Street at 16th Street|SAN_FRANCISCO": {
+    "lat": 37.764239,
+    "lon": -122.435433
+  },
+  "N. 16th Street near E. Windsor Avenue|PHOENIX": {
+    "lat": 33.654594,
+    "lon": -112.048484
+  },
+  "parking lot at 120 N. Loop Boulevard East|AUSTIN": {
+    "lat": 30.317999,
+    "lon": -97.721317
+  },
+  "Rural Road near S. Terrace Road|PHOENIX": null,
+  "Potrero Avenue near 18th Street|SAN_FRANCISCO": {
+    "lat": 37.757587,
+    "lon": -122.406727
+  },
+  "parking lot entrance at 2153 S. Lamar Boulevard|AUSTIN": {
+    "lat": 30.417601,
+    "lon": -97.769249
+  },
+  "4th Street near Jessie Street|SAN_FRANCISCO": {
+    "lat": 37.788165,
+    "lon": -122.400694
+  },
+  "Mission Street near Steuart Street|SAN_FRANCISCO": {
+    "lat": 37.793295,
+    "lon": -122.393419
+  },
+  "Peachtree Street NE at 7th Street NE|ATLANTA": {
+    "lat": 33.779109,
+    "lon": -84.386747
+  },
+  "Cesar Chavez Street at Connecticut Street|SAN_FRANCISCO": {
+    "lat": 37.749991,
+    "lon": -122.396207
+  },
+  "S. Alvarado Street at 6th Street|LOS_ANGELES": {
+    "lat": 34.046377,
+    "lon": -118.283255
+  },
+  "Venice Boulevard at Broadway|LOS_ANGELES": {
+    "lat": 34.044581,
+    "lon": -118.328112
+  },
+  "Castro Street near 18th Street|SAN_FRANCISCO": {
+    "lat": 37.760742,
+    "lon": -122.434907
+  },
+  "parking lot at 5835 N. 16th Street|PHOENIX": {
+    "lat": 33.523143,
+    "lon": -112.04696
+  },
+  "Johnny Grant Way near Orchid Avenue|LOS_ANGELES": {
+    "lat": 34.103026,
+    "lon": -118.33897
+  },
+  "6th Street at Vermont Avenue|LOS_ANGELES": {
+    "lat": 34.108586,
+    "lon": -117.867302
+  },
+  "Main Street near W. 37th Place|LOS_ANGELES": {
+    "lat": 33.989095,
+    "lon": -118.471872
+  },
+  "West Gate Boulevard near Luton Cove|AUSTIN": {
+    "lat": 30.195768,
+    "lon": -97.829833
+  },
+  "Rey Street near Sunnydale Avenue|SAN_FRANCISCO": {
+    "lat": 37.712219,
+    "lon": -122.411694
+  },
+  "Summit Pointe Way NE at Summit Pointe Drive|ATLANTA": null,
+  "State Street NW at 14th Street NW|ATLANTA": {
+    "lat": 33.779395,
+    "lon": -84.399097
+  },
+  "Harrison Street near 1st Street|SAN_FRANCISCO": {
+    "lat": 37.78028,
+    "lon": -122.400267
+  },
+  "S. Lamar Boulevard near Collier Street|AUSTIN": {
+    "lat": 30.265408,
+    "lon": -97.756746
+  },
+  "Union Street at Buchanan Street|SAN_FRANCISCO": {
+    "lat": 37.797428,
+    "lon": -122.432353
+  },
+  "Maple Avenue at 7th Street|LOS_ANGELES": {
+    "lat": 34.041697,
+    "lon": -118.250205
+  },
+  "Broadway near W. 11th Street|LOS_ANGELES": {
+    "lat": 34.057215,
+    "lon": -118.242198
+  },
+  "Aneta Street near Inglewood Boulevard|LOS_ANGELES": {
+    "lat": 33.98488,
+    "lon": -118.409876
+  },
+  "Stockton Street near Sutter Street|SAN_FRANCISCO": {
+    "lat": 37.789954,
+    "lon": -122.40716
+  },
+  "Duboce Avenue near Sanchez Street|SAN_FRANCISCO": {
+    "lat": 37.769835,
+    "lon": -122.423104
+  },
+  "17th Street at Corbett Avenue|SAN_FRANCISCO": {
+    "lat": 37.763078,
+    "lon": -122.425417
+  },
+  "parking lot at 4940 E. Ray Road|PHOENIX": {
+    "lat": 33.319934,
+    "lon": -111.978887
+  },
+  "Powell Street at Pacific Avenue|SAN_FRANCISCO": {
+    "lat": 37.796434,
+    "lon": -122.410239
+  },
+  "Masonic Avenue at Geary Boulevard|SAN_FRANCISCO": {
+    "lat": 37.782049,
+    "lon": -122.447347
+  },
+  "8th Street near Howard Street|SAN_FRANCISCO": {
+    "lat": 37.773981,
+    "lon": -122.408813
+  },
+  "Venice Boulevard at S. Pembroke Lane|LOS_ANGELES": {
+    "lat": 34.044581,
+    "lon": -118.328112
+  },
+  "N. Fairfax Avenue near Fountain Avenue|LOS_ANGELES": {
+    "lat": 34.092977,
+    "lon": -118.361554
+  },
+  "W. 3rd Street at Lucas Avenue|LOS_ANGELES": {
+    "lat": 34.056142,
+    "lon": -118.256032
+  },
+  "Irby Avenue NW near Cains Hill Place NW|ATLANTA": {
+    "lat": 33.841237,
+    "lon": -84.379524
+  },
+  "N. Gower Street near Hollywood Boulevard|LOS_ANGELES": {
+    "lat": 34.07819,
+    "lon": -118.322696
+  },
+  "16th Street at Albion Street|SAN_FRANCISCO": {
+    "lat": 37.765658,
+    "lon": -122.4232
+  },
+  "Folsom Street near 13th Street|SAN_FRANCISCO": {
+    "lat": 37.734004,
+    "lon": -122.41376
+  },
+  "Oakwood Avenue near N. Madison Avenue|LOS_ANGELES": {
+    "lat": 33.992979,
+    "lon": -118.4595
+  },
+  "parking lot at 10 Serramonte Center|SAN_FRANCISCO": null,
+  "Roosevelt Way at Museum Way|SAN_FRANCISCO": {
+    "lat": 37.765357,
+    "lon": -122.441027
+  },
+  "W. Caroline Lane at S. Beck Avenue|PHOENIX": null,
+  "22nd Street at Pennsylvania Avenue|SAN_FRANCISCO": {
+    "lat": 37.758934,
+    "lon": -122.393253
+  },
+  "W. 7th Street near S. Maple Avenue|PHOENIX": {
+    "lat": 33.608232,
+    "lon": -112.064973
+  },
+  "Banton Road near Manor Road|AUSTIN": {
+    "lat": 30.286113,
+    "lon": -97.70794
+  },
+  "Post Street near Mason Street|SAN_FRANCISCO": {
+    "lat": 37.795486,
+    "lon": -122.411698
+  },
+  "S. Whisman Road at E. Dana Street|SAN_FRANCISCO": null,
+  "Lombard Street near Polk Street|SAN_FRANCISCO": {
+    "lat": 37.801679,
+    "lon": -122.423025
+  },
+  "Palou Avenue at Quint Street|SAN_FRANCISCO": {
+    "lat": 37.737149,
+    "lon": -122.396316
+  },
+  "Laguna Street at Pine Street|SAN_FRANCISCO": {
+    "lat": 37.795848,
+    "lon": -122.430197
+  },
+  "Harris Boulevard at W. 30th Street|AUSTIN": {
+    "lat": 30.29056,
+    "lon": -97.756852
+  },
+  "parking lot at 2928 E. Osborne Road|PHOENIX": null,
+  "Colorado Street at W. 6th Street|AUSTIN": {
+    "lat": 30.278675,
+    "lon": -97.74033
+  },
+  "Green Street near Kearny Street|SAN_FRANCISCO": {
+    "lat": 37.796894,
+    "lon": -122.429565
+  },
+  "S. 1st Street near Barton Springs Road|AUSTIN": {
+    "lat": 30.254496,
+    "lon": -97.752458
+  },
+  "Montopolis Drive near Burleson Road|AUSTIN": {
+    "lat": 30.206692,
+    "lon": -97.715926
+  },
+  "San Jose Avenue near Dolores Street|SAN_FRANCISCO": {
+    "lat": 37.720391,
+    "lon": -122.446893
+  },
+  "Florida Street near 22nd Street|SAN_FRANCISCO": {
+    "lat": 37.753788,
+    "lon": -122.410186
+  },
+  "E. 11th Street near S. I-35 Frontage Road|AUSTIN": {
+    "lat": 30.270603,
+    "lon": -97.733441
+  },
+  "S. Bronson Avenue at S. Adams Boulevard|LOS_ANGELES": {
+    "lat": 34.038691,
+    "lon": -118.330388
+  },
+  "parking lot at 4500 Los Feliz Boulevard|LOS_ANGELES": {
+    "lat": 34.111298,
+    "lon": -118.287599
+  },
+  "Ellis Street near Franklin Street|SAN_FRANCISCO": {
+    "lat": 37.78435,
+    "lon": -122.416914
+  },
+  "parking lot at 2043 S. Lamar Boulevard|AUSTIN": {
+    "lat": 30.248307,
+    "lon": -97.769376
+  },
+  "Hampshire Street near 22nd Street|SAN_FRANCISCO": {
+    "lat": 37.750521,
+    "lon": -122.407094
+  },
+  "E. McDowell Road at N. 52nd Street|PHOENIX": {
+    "lat": 33.465378,
+    "lon": -111.959165
+  },
+  "N. Madison Avenue near Monroe Street|LOS_ANGELES": {
+    "lat": 34.075838,
+    "lon": -118.289409
+  },
+  "14th Street near Olympic Boulevard|LOS_ANGELES": {
+    "lat": 34.013211,
+    "lon": -118.489493
+  },
+  "Logue Avenue at E. Middlefield Road|SAN_FRANCISCO": null,
+  "Kearny Street near Geary Street|SAN_FRANCISCO": {
+    "lat": 37.788414,
+    "lon": -122.403486
+  },
+  "E. 3rd Street near Wall Street|LOS_ANGELES": {
+    "lat": 34.04763,
+    "lon": -118.243168
+  },
+  "Clinton Street near N. Kenmore Avenue|LOS_ANGELES": {
+    "lat": 34.081243,
+    "lon": -118.297727
+  },
+  "Silver Lake Boulevard near Scott Place|LOS_ANGELES": {
+    "lat": 34.078199,
+    "lon": -118.279388
+  },
+  "parking lot at 8496 Osage Avenue|LOS_ANGELES": {
+    "lat": 33.961172,
+    "lon": -118.378678
+  },
+  "Normandie Avenue near Santa Monica Boulevard|LOS_ANGELES": {
+    "lat": 34.031615,
+    "lon": -118.300278
+  },
+  "Alabama Street near 21st Street|SAN_FRANCISCO": {
+    "lat": 37.745324,
+    "lon": -122.410476
+  },
+  "19th Street at 3rd Street|SAN_FRANCISCO": {
+    "lat": 37.760306,
+    "lon": -122.418136
+  },
+  "E. Oak Street near N. 27th Street|PHOENIX": {
+    "lat": 33.473022,
+    "lon": -111.992062
+  },
+  "S. Mansfield Avenue near Westhaven Street|LOS_ANGELES": {
+    "lat": 34.04305,
+    "lon": -118.347652
+  },
+  "E. Indianola Avenue near N. 16th Street|PHOENIX": {
+    "lat": 33.492036,
+    "lon": -111.990143
+  },
+  "N. Rengstorff Avenue near E. Charleston Road|SAN_FRANCISCO": null,
+  "19th Avenue near Rivera Street|SAN_FRANCISCO": {
+    "lat": 37.747132,
+    "lon": -122.475843
+  },
+  "Logue Avenue at E. Middlefielf Road|SAN_FRANCISCO": null,
+  "Waverley Street near Lincoln Avenue|SAN_FRANCISCO": {
+    "lat": 37.764214,
+    "lon": -122.507519
+  },
+  "Sunset Boulevard near Cory Avenue|LOS_ANGELES": {
+    "lat": 34.078865,
+    "lon": -118.267662
+  },
+  "E. Orange Blossom Lane near N. 83rd Street|PHOENIX": {
+    "lat": 33.482244,
+    "lon": -111.95454
+  },
+  "N. 43rd Street near E. Beck Lane|PHOENIX": {
+    "lat": 33.771881,
+    "lon": -111.989106
+  },
+  "California State Route 1 near Crossover Drive|SAN_FRANCISCO": {
+    "lat": 37.768082,
+    "lon": -122.478234
+  },
+  "N. 41st Street near E. Campo Bello Drive|PHOENIX": {
+    "lat": 33.691482,
+    "lon": -111.982469
+  },
+  "US-101 South near the Merchant Road on-ramp|SAN_FRANCISCO": {
+    "lat": 37.769488,
+    "lon": -122.41359
+  },
+  "N. 54th Street near E. Thunderbird Road|PHOENIX": {
+    "lat": 33.644092,
+    "lon": -111.964377
+  },
+  "N. McCadden Place near Sunset Boulevard|LOS_ANGELES": {
+    "lat": 34.091744,
+    "lon": -118.337464
   }
 }
