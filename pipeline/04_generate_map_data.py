@@ -628,11 +628,31 @@ def main():
     accurate = total_mapped - coords_estimated
     accuracy_pct = round(accurate / total_mapped * 100, 1) if total_mapped > 0 else 0
 
+    # Per-city geocoding accuracy
+    city_geo = {}
+    for entry in map_data:
+        city = entry.get("city", "")
+        if not city:
+            continue
+        if city not in city_geo:
+            city_geo[city] = {"total": 0, "estimated": 0}
+        city_geo[city]["total"] += 1
+        if entry.get("is_estimated_location", False):
+            city_geo[city]["estimated"] += 1
+
+    city_accuracy = {}
+    for city_code, counts in city_geo.items():
+        display_name = CITIES.get(city_code, {}).get("name", city_code)
+        city_total = counts["total"]
+        city_accurate = city_total - counts["estimated"]
+        city_accuracy[display_name] = round(city_accurate / city_total * 100) if city_total > 0 else 0
+
     geocoding_stats = {
         "total_mapped": total_mapped,
         "accurate": accurate,
         "estimated": coords_estimated,
         "accuracy_pct": accuracy_pct,
+        "by_city": city_accuracy,
     }
 
     print()

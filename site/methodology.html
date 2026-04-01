@@ -142,8 +142,8 @@
             <p>NHTSA redacts GPS coordinates from public data, but provides street addresses for nearly all crashes in the "Location Address / Description" field. We geocode these addresses using OpenStreetMap's Nominatim service with a multi-strategy approach (intersection parsing, direct address lookup, city-bounded search).</p>
             <p>Current accuracy: <strong><span data-stat="geocoding.accuracy_pct">--</span>% of crashes</strong> (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location. The remaining <span data-stat="geocoding.estimated">--</span> fall back to city-center placement and are flagged as approximate. Accuracy varies by city:</p>
             <ul>
-                <li>San Francisco: 98%, Los Angeles: 98%, Austin: 97%</li>
-                <li>Atlanta: 85%, Phoenix: 77% (some reports have less detailed addresses)</li>
+                <li>San Francisco: <span data-stat="geocoding.by_city.San Francisco">--</span>%, Los Angeles: <span data-stat="geocoding.by_city.Los Angeles">--</span>%, Austin: <span data-stat="geocoding.by_city.Austin">--</span>%</li>
+                <li>Atlanta: <span data-stat="geocoding.by_city.Atlanta">--</span>%, Phoenix: <span data-stat="geocoding.by_city.Phoenix">--</span>% (some reports have less detailed addresses)</li>
             </ul>
             <p>Geocode results are cached in <code>geocode_cache.json</code> to ensure reproducibility and avoid repeated API calls.</p>
 
