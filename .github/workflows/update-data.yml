@@ -1,12 +1,12 @@
 # =============================================================================
-# update-data.yml — Automated quarterly data refresh
+# update-data.yml — Automated bi-monthly data refresh
 # =============================================================================
 # This workflow downloads the latest NHTSA + Waymo crash data, runs the
 # processing pipeline, and commits any updated JSON files to the repository.
 #
 # Triggers:
 #   - Manual: Click "Run workflow" in GitHub Actions
-#   - Scheduled: March 17, June 17, September 17, December 17 (quarterly)
+#   - Scheduled: 1st and 15th of every month at 10:00 AM UTC
 #
 # What gets committed:
 #   - data/web/*.json (site statistics, crash data, serious incidents)
@@ -21,19 +21,17 @@ on:
   # Manual trigger (run anytime from the Actions tab)
   workflow_dispatch:
 
-  # Quarterly schedule (Waymo releases ~Dec 15, Mar 15, Jun 15, Sep 15)
-  # Runs at 10:00 AM UTC on the 17th of Mar, Jun, Sep, Dec
-  # (17th gives a 2-day buffer for Waymo to publish new data)
-  # For this part we consulted Claude who recommended cron scheduling for quarterly
-  # automation. The cron syntax "0 10 17 3,6,9,12 *" has five fields:
-  # ┌─── minute (0)          = at the top of the hour
-  # │ ┌─── hour (10)         = 10 AM UTC
-  # │ │ ┌─── day of month (17) = the 17th
-  # │ │ │ ┌─── month (3,6,9,12) = March, June, September, December
-  # │ │ │ │ ┌─── day of week (*) = any day
-  # This runs the pipeline four times a year, timed to when Waymo publishes new data.
+  # Bi-monthly schedule — runs on the 1st and 15th of every month at 10:00 AM UTC.
+  # Waymo releases new data around the 15th, so the 15th run catches new data
+  # and the 1st run catches any late NHTSA updates from the prior month.
+  # The cron syntax "0 10 1,15 * *" has five fields:
+  # ┌─── minute (0)            = at the top of the hour
+  # │ ┌─── hour (10)           = 10 AM UTC
+  # │ │ ┌─── day of month (1,15) = 1st and 15th
+  # │ │ │  ┌─── month (*)       = every month
+  # │ │ │  │ ┌─── day of week (*) = any day
   schedule:
-    - cron: "0 10 17 3,6,9,12 *"
+    - cron: "0 10 1,15 * *"
 
 jobs:
   update-data:
