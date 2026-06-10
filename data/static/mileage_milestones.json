@@ -46,6 +46,12 @@
       "url": "https://x.com/Waymo/status/1945106097741664630"
     },
     {
+      "date": "2025-09-30",
+      "miles_millions": 127,
+      "source": "Waymo press release ($16B investment round, published Feb 2, 2026). The post cites '127 million miles of fully autonomous operation' without an as-of date; the figure matches the then-current Safety Impact Data Hub release, whose data ran through September 2025, so it is dated to that period here.",
+      "url": "https://waymo.com/blog/2026/02/waymo-raises-usd16-billion-investment-round/"
+    },
+    {
       "date": "2025-12-31",
       "miles_millions": 170.71,
       "source": "Waymo Safety Impact Data Hub CSV1, 202009-202512 release (rider-only miles through December 2025)",
