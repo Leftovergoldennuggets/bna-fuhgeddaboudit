@@ -599,6 +599,103 @@ const Charts = (function () {
     }
 
     // ============================================
+    // Chart 7: Monthly Crash Trend (bar chart over time)
+    // ============================================
+
+    /**
+     * Build a bar chart of crashes per month across the whole dataset.
+     * The most recent months come from federal reports that Waymo's
+     * quarterly release hasn't enriched yet — they're drawn in a lighter
+     * shade to signal that those counts can still be amended.
+     *
+     * @param {Object} stats — The parsed site-data.json object
+     */
+    function buildTrendChart(stats) {
+        const canvas = document.getElementById("trend-chart");
+        if (!canvas || !stats.monthly_trend) return;
+
+        const entries = Object.entries(stats.monthly_trend)
+            .sort((a, b) => a[0].localeCompare(b[0]));
+
+        const hubThrough = stats.meta && stats.meta.hub_data_through
+            ? String(stats.meta.hub_data_through) : null;
+
+        const MONTHS_SHORT = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const MONTHS_LONG = ["", "January", "February", "March", "April", "May",
+            "June", "July", "August", "September", "October", "November", "December"];
+
+        const labels = entries.map(([ym]) => {
+            const year = ym.substring(0, 4);
+            const month = parseInt(ym.substring(4), 10);
+            // Show the year at each January for orientation
+            return month === 1 ? MONTHS_SHORT[month] + " " + year : MONTHS_SHORT[month];
+        });
+        const values = entries.map(([, count]) => count);
+        const colors = entries.map(([ym]) =>
+            hubThrough && ym > hubThrough ? "#cfc4b4" : ACCENT
+        );
+
+        new Chart(canvas, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                    borderWidth: 0,
+                    barPercentage: 0.9,
+                    categoryPercentage: 0.95,
+                }],
+            },
+            options: {
+                ...getDefaults(),
+                plugins: {
+                    ...getDefaults().plugins,
+                    tooltip: {
+                        ...getDefaults().plugins.tooltip,
+                        callbacks: {
+                            title: function (items) {
+                                const ym = entries[items[0].dataIndex][0];
+                                return MONTHS_LONG[parseInt(ym.substring(4), 10)] + " " + ym.substring(0, 4);
+                            },
+                            label: function (item) {
+                                const ym = entries[item.dataIndex][0];
+                                const pending = hubThrough && ym > hubThrough
+                                    ? " (preliminary federal count)" : "";
+                                return item.parsed.y + " crashes" + pending;
+                            },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        border: { color: BORDER_COLOR },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 10 },
+                            color: TEXT_COLOR,
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 14,
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: BORDER_COLOR, drawTicks: false },
+                        border: { display: false },
+                        ticks: {
+                            font: { family: MONO_FONT, size: 11 },
+                            color: TEXT_COLOR,
+                            padding: 8,
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+    // ============================================
     // Utility
     // ============================================
 
@@ -610,7 +707,7 @@ const Charts = (function () {
         return (hour - 12) + "pm";               // Afternoon/evening hours
     }
 
-    // Public API — these 6 functions are the only things accessible from outside the module
+    // Public API — these functions are the only things accessible from outside the module
     return {
         buildHourlyChart,
         buildDayOfWeekChart,
@@ -618,6 +715,7 @@ const Charts = (function () {
         buildSpeedChart,
         buildCrashTypeChart,
         buildMileageChart,
+        buildTrendChart,
     };
 
 // The closing })() immediately runs the function and stores the returned object in Charts

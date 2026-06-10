@@ -4960,5 +4960,166 @@
   "N. McCadden Place near Sunset Boulevard|LOS_ANGELES": {
     "lat": 34.091744,
     "lon": -118.337464
+  },
+  "S McClintock Drive at E Baseline Rd|PHOENIX": {
+    "lat": 33.378149,
+    "lon": -112.002197
+  },
+  "849 S Dobbson Rd|PHOENIX": null,
+  "__city__Atlanta|GA": {
+    "lat": 33.754466,
+    "lon": -84.389815
+  },
+  "__city__Austin|TX": {
+    "lat": 30.271129,
+    "lon": -97.7437
+  },
+  "__city__Beverly Hills|CA": {
+    "lat": 34.06965,
+    "lon": -118.396306
+  },
+  "__city__Chandler|AZ": {
+    "lat": 33.306203,
+    "lon": -111.841185
+  },
+  "__city__Culver City|CA": {
+    "lat": 34.021122,
+    "lon": -118.396466
+  },
+  "__city__Dallas|TX": {
+    "lat": 32.776272,
+    "lon": -96.796856
+  },
+  "__city__Daly City|CA": {
+    "lat": 37.690483,
+    "lon": -122.47267
+  },
+  "__city__Del Valle|TX": {
+    "lat": 30.177605,
+    "lon": -97.610631
+  },
+  "__city__Denver|CO": {
+    "lat": 39.739236,
+    "lon": -104.984862
+  },
+  "__city__Ennis|TX": {
+    "lat": 32.329311,
+    "lon": -96.625268
+  },
+  "__city__Houston|TX": {
+    "lat": 29.758938,
+    "lon": -95.367697
+  },
+  "__city__Huntsville|TX": {
+    "lat": 30.723526,
+    "lon": -95.550777
+  },
+  "__city__Inglewood|CA": {
+    "lat": 33.9562,
+    "lon": -118.353132
+  },
+  "__city__Lennox|CA": {
+    "lat": 33.93806,
+    "lon": -118.357708
+  },
+  "__city__Los Angeles|CA": {
+    "lat": 34.053691,
+    "lon": -118.242766
+  },
+  "__city__Marina Del Rey|CA": {
+    "lat": 33.977685,
+    "lon": -118.448647
+  },
+  "__city__Mesa|AZ": {
+    "lat": 33.415101,
+    "lon": -111.831455
+  },
+  "__city__Miami|FL": {
+    "lat": 25.774157,
+    "lon": -80.193597
+  },
+  "__city__Miami Beach|FL": {
+    "lat": 25.79292,
+    "lon": -80.135301
+  },
+  "__city__Mountain View|CA": {
+    "lat": 37.389389,
+    "lon": -122.08321
+  },
+  "__city__Nashville|TN": {
+    "lat": 36.162277,
+    "lon": -86.774298
+  },
+  "__city__Orlando|FL": {
+    "lat": 28.542122,
+    "lon": -81.379045
+  },
+  "__city__Palo Alto|CA": {
+    "lat": 37.444329,
+    "lon": -122.159847
+  },
+  "__city__Philadelphia|PA": {
+    "lat": 39.952724,
+    "lon": -75.163526
+  },
+  "__city__Phoenix|AZ": {
+    "lat": 33.448437,
+    "lon": -112.074141
+  },
+  "__city__Portola Valley|CA": {
+    "lat": 37.37363,
+    "lon": -122.219047
+  },
+  "__city__Sacaton|AZ": {
+    "lat": 33.086806,
+    "lon": -111.758188
+  },
+  "__city__San Antonio|TX": {
+    "lat": 29.4246,
+    "lon": -98.495141
+  },
+  "__city__San Bernardino|CA": {
+    "lat": 34.825302,
+    "lon": -116.083314
+  },
+  "__city__San Bruno|CA": {
+    "lat": 37.624854,
+    "lon": -122.414599
+  },
+  "__city__San Francisco|CA": {
+    "lat": 37.787936,
+    "lon": -122.40752
+  },
+  "__city__San Jose|CA": {
+    "lat": 37.336166,
+    "lon": -121.890591
+  },
+  "__city__Santa Clara|CA": {
+    "lat": 37.233325,
+    "lon": -121.684635
+  },
+  "__city__Santa Monica|CA": {
+    "lat": 34.01947,
+    "lon": -118.491227
+  },
+  "__city__Scottsdale|AZ": {
+    "lat": 33.494219,
+    "lon": -111.926018
+  },
+  "__city__Sunnyvale|CA": {
+    "lat": 37.36883,
+    "lon": -122.036349
+  },
+  "__city__Tempe|AZ": {
+    "lat": 33.425512,
+    "lon": -111.940016
+  },
+  "__city__Venice|CA": {
+    "lat": 33.995044,
+    "lon": -118.466887
+  },
+  "__city__Washington|DC": {
+    "lat": 38.895098,
+    "lon": -77.036385
   }
 }

@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         Charts.buildDayOfWeekChart(data.stats);        // Similar to above
         Charts.buildLocationTypeChart(data.stats);     // Similar to above
         Charts.buildMileageChart(data.mileageMilestones);  // Line chart: rider-only miles over time
+        Charts.buildTrendChart(data.stats);            // Bar chart: crashes per month over time
 
         // Step 7: Initialize the interactive explore section
         Explore.init(data.crashes, data.stats);
@@ -96,8 +97,6 @@ function buildCityCards(stats) {
 
         // Look up peak hour for this city (if available)
         const peak = stats.city_peaks ? stats.city_peaks[cityName] : null;
-        // If peak data exists use it, otherwise show "N/A"
-        const peakLabel = peak ? peak.peak_label : "N/A";
 
         // Look up mileage data for this city (if available)
         const mileage = stats.city_mileage ? stats.city_mileage[cityName] : null;
@@ -109,7 +108,7 @@ function buildCityCards(stats) {
 
         // Build mileage lines — only show if we have miles data
         let mileageHTML = "";
-        if (mileage && mileage.miles_millions !== null) {
+        if (mileage && mileage.miles_millions !== null && mileage.miles_millions !== undefined) {
             // .toFixed(1) rounds to 1 decimal place: 56.535 → "56.5"
             const milesFormatted = mileage.miles_millions.toFixed(1) + "M";
             // Template literal (backtick string): ${...} inserts a variable's value into the string
@@ -120,6 +119,18 @@ function buildCityCards(stats) {
             }
         }
 
+        // Status note for metros without open public service, and for the
+        // catch-all "Other" bucket (supervised testing locations, etc.)
+        let statusHTML = "";
+        if (info.status === "testing") {
+            statusHTML = `<div class="city-card-status">Driverless testing — service not yet open</div>`;
+        } else if (info.code === "OTHER") {
+            statusHTML = `<div class="city-card-status">Outside mapped metro areas</div>`;
+        }
+
+        // Peak hour line — only shown when there's enough data to compute it
+        const peakHTML = peak ? `<div class="city-card-peak">Peak: ${peak.peak_label}</div>` : "";
+
         // Set the card's inner HTML using a template literal with embedded variables
         // .toLocaleString("en-US") formats 1123 as "1,123" with commas
         card.innerHTML = `
@@ -127,7 +138,8 @@ function buildCityCards(stats) {
             <div class="city-card-count">${info.count.toLocaleString("en-US")}</div>
             <div class="city-card-label">crashes (${info.percentage}%)</div>
             ${mileageHTML}
-            <div class="city-card-peak">Peak: ${peakLabel}</div>
+            ${peakHTML}
+            ${statusHTML}
         `;
 
         // Add the finished card into the container on the page

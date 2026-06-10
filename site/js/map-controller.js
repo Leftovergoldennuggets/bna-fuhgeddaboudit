@@ -34,14 +34,9 @@ const MapController = (function () {
     };
 
     // --- City Coordinates (for overview markers) ---
-    const CITY_COORDS = {
-        "SAN_FRANCISCO": { lat: 37.7749, lon: -122.4194, name: "San Francisco" },
-        "PHOENIX":       { lat: 33.4484, lon: -112.0740, name: "Phoenix" },
-        "LOS_ANGELES":   { lat: 34.0522, lon: -118.2437, name: "Los Angeles" },
-        "AUSTIN":        { lat: 30.2672, lon: -97.7431,  name: "Austin" },
-        "ATLANTA":       { lat: 33.7490, lon: -84.3880,  name: "Atlanta" },
-        "MOUNTAIN_VIEW": { lat: 37.3861, lon: -122.0839, name: "Mountain View" },
-    };
+    // Populated from site-data.json's "cities" block at init() so new
+    // metros never require a frontend code change.
+    const CITY_COORDS = {};
 
     // --- Plain-English Crash Type Labels ---
     // The data uses Waymo's official codes (e.g., "V2V F2R").
@@ -58,6 +53,7 @@ const MapController = (function () {
         "Motorcycle":       "Motorcycle",
         "Cyclist":          "Cyclist",
         "Pedestrian":       "Pedestrian",
+        "Pending classification": "Crash (classification pending)",
     };
 
     /** Convert a raw crash type code to a human-readable label */
@@ -94,6 +90,19 @@ const MapController = (function () {
         crashData = crashes;
         incidentData = incidents;
         statsData = stats;
+
+        // Populate CITY_COORDS from the pipeline-generated metro metadata
+        if (stats && stats.cities) {
+            Object.entries(stats.cities).forEach(([code, info]) => {
+                CITY_COORDS[code] = {
+                    lat: info.lat,
+                    lon: info.lon,
+                    name: info.name,
+                    status: info.status,
+                    count: info.count,
+                };
+            });
+        }
 
         // L.map() creates a new Leaflet map inside the HTML element with id="main-map"
         map = L.map("main-map", {
@@ -206,14 +215,33 @@ const MapController = (function () {
                 fillOpacity: 0.8,       // Fill opacity (slightly transparent)
             });
 
-            // .bindTooltip() attaches a tooltip that appears on hover
-            // Template literal: `text ${variable}` inserts the variable's value into the string
+            const statusNote = cityCoord.status === "testing"
+                ? "<br><em>Driverless testing — public service not yet open</em>" : "";
             marker.bindTooltip(
-                `<strong>${cityName}</strong><br>${info.count} crashes (${info.percentage}%)`,
-                { direction: "top", className: "city-tooltip" }  // Tooltip appears above the marker
+                `<strong>${cityName}</strong><br>${info.count} crashes (${info.percentage}%)${statusNote}`,
+                { direction: "top", className: "city-tooltip" }
             );
 
             // .addLayer() adds this marker to the cityMarkersLayer group
+            cityMarkersLayer.addLayer(marker);
+        });
+
+        // Hollow circles for announced metros where Waymo is heading next —
+        // visible context for "where it's going", not part of crash stats.
+        (statsData.expansion || []).forEach((metro) => {
+            const marker = L.circleMarker([metro.lat, metro.lon], {
+                radius: 6,
+                fillColor: "#fff",
+                color: "#8b6f47",
+                weight: 2,
+                opacity: 0.7,
+                fillOpacity: 0.1,
+                dashArray: "3",
+            });
+            marker.bindTooltip(
+                `<strong>${metro.name}</strong><br>Announced / preparing to launch`,
+                { direction: "top", className: "city-tooltip" }
+            );
             cityMarkersLayer.addLayer(marker);
         });
     }
@@ -223,8 +251,11 @@ const MapController = (function () {
      * Each crash gets a small circle marker colored by severity.
      */
     function buildCrashMarkers() {
-        // Loop through every crash record
+        // The scrollytelling map shows the headline dataset: driverless
+        // operations only. Supervised test-driver crashes are available
+        // in the Explore section via a filter toggle.
         crashData.forEach((crash) => {
+            if (crash.operation_type === "supervised") return;
             // Choose color by severity: red for serious, amber for injury, grey for default
             let color = "#b0a696";  // default: warm grey
             if (crash.is_serious) color = "#8b2020";      // deep red for serious
@@ -469,8 +500,29 @@ const MapController = (function () {
 
     /** Convert city code to display name (e.g., "SAN_FRANCISCO" → "San Francisco") */
     function formatCityName(code) {
+        if (code === "OTHER") return "Other";
         const city = CITY_COORDS[code];        // Look up the city by its code
         return city ? city.name : code;        // Return the name, or the raw code if not found
+    }
+
+    const MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
+
+    /**
+     * Format a crash date respecting its precision.
+     * "2026-03-14" → "Mar 14, 2026"; "2026-03" → "March 2026" (NHTSA
+     * redacts exact dates until Waymo's quarterly release fills them in).
+     */
+    function formatCrashDate(dateStr) {
+        if (!dateStr) return "Unknown date";
+        const parts = dateStr.split("-");
+        const year = parts[0];
+        const month = parseInt(parts[1], 10);
+        if (!month || month < 1 || month > 12) return dateStr;
+        if (parts.length === 2) {
+            return MONTH_NAMES[month - 1] + " " + year;
+        }
+        return MONTH_NAMES[month - 1].substring(0, 3) + " " + parseInt(parts[2], 10) + ", " + year;
     }
 
     /**
@@ -483,7 +535,7 @@ const MapController = (function () {
      * @returns {string} HTML string for the Leaflet popup
      */
     function buildPopupContent(crash) {
-        const dateStr = crash.date || "Unknown date";
+        const dateStr = formatCrashDate(crash.date);
         const hourStr = crash.hour !== null ? formatHour(crash.hour) : "Unknown";
 
         // Start building the popup HTML
@@ -548,9 +600,16 @@ const MapController = (function () {
             }
         }
 
-        // Estimated location flag
-        if (crash.is_estimated_location) {
-            html += `<br><em class="popup-estimated">Approximate location</em>`;
+        // Provenance notes: location precision + pending hub enrichment
+        if (crash.location_precision === "city" || crash.location_precision === "metro") {
+            const place = crash.city_name ? ` (placed near ${crash.city_name})` : "";
+            html += `<br><em class="popup-estimated">Approximate location${place} — exact address not yet public</em>`;
+        }
+        if (crash.in_hub === false) {
+            html += `<br><em class="popup-estimated">Recent federal report — details will be refined when Waymo's next quarterly data release covers this period</em>`;
+        }
+        if (crash.operation_type === "supervised") {
+            html += `<br><em class="popup-estimated">Occurred during supervised testing (human safety driver on board)</em>`;
         }
 
         html += `</div>`;

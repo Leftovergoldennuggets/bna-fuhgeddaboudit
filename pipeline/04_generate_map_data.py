@@ -2,24 +2,27 @@
 04_generate_map_data.py — Generate crash_data.json for the interactive map
 ==========================================================================
 Creates a JSON array of individual crash records for the Leaflet map.
-Each record has coordinates, time info, crash type, and city — everything
-the map needs to display markers and support filtering.
 
-GEOCODING: We use the "Location Address / Description" column from NHTSA
-(e.g., "Florida Street near 24th Street") and geocode it via OpenStreetMap's
-Nominatim service. Results are cached in geocode_cache.json so we only
-need to geocode each unique address once. If geocoding fails for an address,
-we fall back to a random offset from the city center.
+LOCATION PRECISION — three tiers, flagged on every record:
+  "street"  Hub-enriched crashes have a street-level address
+            ("Florida Street near 24th Street") geocoded via OpenStreetMap
+            Nominatim. ~92% of enriched crashes geocode successfully.
+  "city"    Recent crashes not yet in Waymo's hub: NHTSA redacts the
+            street address, so we geocode the city itself and place the
+            marker near the city center with a small random offset.
+  "metro"   Last resort when even the city can't be geocoded: metro
+            center with a random offset.
 
-The first run takes ~15-20 minutes (1 request/second rate limit).
-Subsequent runs are near-instant because cached results are reused.
+Results are cached in geocode_cache.json (committed to git) so each
+unique address/city is only geocoded once across all pipeline runs.
 
 Inputs:
   - data/processed/waymo_merged.csv
 
 Outputs:
   - data/web/crash_data.json
-  - data/web/geocode_cache.json (address → lat/lon cache)
+  - data/web/geocode_cache.json (updated cache)
+  - geocoding accuracy stats appended to data/web/site-data.json
 
 Usage:
   python pipeline/04_generate_map_data.py
@@ -40,114 +43,21 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 # Add the project root to Python's path so we can import config
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline.config import (
-    PROCESSED_MERGED, WEB_CRASH_DATA, WEB_SITE_DATA, CITIES, TIME_PERIODS,
-    LOCATION_PATTERNS, GEOCODE_CACHE,
+    PROCESSED_MERGED, WEB_CRASH_DATA, WEB_SITE_DATA, CITIES,
+    OTHER_METRO_CODE, GEOCODE_CACHE,
+)
+from pipeline.utils import (
+    parse_time, categorize_time_period, extract_location_type,
+    clean_coordinate, severity_level, normalize_place, normalize_state,
 )
 
 
 # ===========================================================================
-# HELPER FUNCTIONS
-# ===========================================================================
-
-def parse_time(time_str):
-    """Parse time string into (hour, minute). Returns (None, None) on failure."""
-    if pd.isna(time_str) or str(time_str).strip() == "":
-        return None, None
-    try:
-        time_str = str(time_str).strip()
-        if ":" in time_str:
-            parts = time_str.split(":")
-            hour, minute = int(parts[0]), int(parts[1]) if len(parts) > 1 else 0
-        elif len(time_str) == 4 and time_str.isdigit():
-            hour, minute = int(time_str[:2]), int(time_str[2:])
-        else:
-            return None, None
-        if 0 <= hour <= 23 and 0 <= minute <= 59:
-            return hour, minute
-    except (ValueError, IndexError):
-        pass
-    return None, None
-
-
-def categorize_time_period(hour):
-    """Assign a named time period to an hour (0-23)."""
-    if hour is None or pd.isna(hour):
-        return "Unknown"
-    hour = int(hour)
-    for period_name, (start, end) in TIME_PERIODS.items():
-        if start < end:
-            if start <= hour < end:
-                return period_name
-        else:
-            if hour >= start or hour < end:
-                return period_name
-    return "Unknown"
-
-
-def extract_location_type(row):
-    """Determine crash location type from narrative text."""
-    text = ""
-    for col in ["Narrative", "Location Address / Description", "Address"]:
-        val = row.get(col)
-        if pd.notna(val):
-            text += str(val).lower() + " "
-    if not text.strip():
-        return "Other/Unknown"
-    for loc_type, patterns in LOCATION_PATTERNS.items():
-        for pattern in patterns:
-            if re.search(pattern, text, re.IGNORECASE):
-                return loc_type
-    if re.search(r"\b(street|st|avenue|ave|road|rd|boulevard|blvd|drive|dr|way|lane|ln)\b", text, re.IGNORECASE):
-        return "Street/Road"
-    return "Other/Unknown"
-
-
-def clean_coordinate(val):
-    """
-    Clean a latitude or longitude value from the NHTSA data.
-
-    Some coordinate fields contain "[PERSONALLY IDENTIFIABLE]" or other
-    non-numeric text instead of actual coordinates. We return None for those.
-    """
-    if pd.isna(val):
-        return None
-    try:
-        val_str = str(val).strip()
-        if "PERSONALLY" in val_str.upper() or val_str == "" or "[" in val_str:  # NHTSA redacts coords as "[PERSONALLY IDENTIFIABLE]"
-            return None
-        return float(val_str)
-    except (ValueError, TypeError):
-        return None
-
-
-def parse_date(date_str):
-    """Parse a date string into a pandas Timestamp."""
-    if pd.isna(date_str):
-        return None
-    try:
-        date_str = str(date_str).strip()
-        for fmt in ["%m/%d/%y", "%m/%d/%Y", "%Y-%m-%d", "%d-%b-%Y"]:
-            try:
-                return pd.to_datetime(date_str, format=fmt)
-            except (ValueError, TypeError):
-                continue
-        return pd.to_datetime(date_str)
-    except (ValueError, TypeError):
-        return None
-
-
-# ===========================================================================
-# GEOCODING FUNCTIONS
+# GEOCODING
 # ===========================================================================
 
 def load_geocode_cache():
-    """
-    Load the geocode cache from disk.
-
-    The cache maps "address|city" strings to {"lat": ..., "lon": ...} dicts.
-    If geocoding previously failed for an address, it's stored as None so we
-    don't keep retrying the same bad address.
-    """
+    """Load the geocode cache: "address|city" → {"lat","lon"} or None."""
     if os.path.exists(GEOCODE_CACHE):
         with open(GEOCODE_CACHE, "r") as f:
             return json.load(f)
@@ -162,20 +72,12 @@ def save_geocode_cache(cache):
 
 
 def clean_address(address):
-    """
-    Clean an NHTSA address string before geocoding.
-
-    Strips noise like "parking lot located near..." and expands abbreviations
-    like "N." → "North" so geocoders can parse them better.
-
-    Returns the cleaned address string (without city/state appended).
-    """
+    """Clean an NHTSA address string before geocoding."""
     if pd.isna(address) or str(address).strip() == "":
         return ""
     address = str(address).strip()
 
     # Strip descriptive preambles that confuse geocoders
-    # e.g., "parking lot located near Main Street" → "Main Street"
     preambles = [
         r"^parking\s+lot\s+(located\s+)?(near|at|on|of|entrance\s+of)\s+",
         r"^parking\s+lot\s+",
@@ -188,7 +90,6 @@ def clean_address(address):
         address = re.sub(pattern, "", address, flags=re.IGNORECASE)
 
     # Expand directional abbreviations — Nominatim handles full words better
-    # e.g., "E. Broadway Road" → "East Broadway Road"
     direction_map = {
         r"\bN\.?\s": "North ",
         r"\bS\.?\s": "South ",
@@ -206,204 +107,137 @@ def clean_address(address):
 
 
 def split_intersection(address):
-    """
-    Split an intersection-style address into its two street parts.
-
-    NHTSA uses formats like:
-      "Florida Street near 24th Street"
-      "Kansas Street at 23rd Street"
-      "Main Street and Broadway"
-      "Elm Street between Oak and Pine"
-
-    Returns (street_a, street_b) or (address, None) if not an intersection.
-    """
-    # Try splitting on "near", "at", "and", "&"
-    # For this part we consulted Claude who recommended using a regular expression (regex)
-    # to split intersection addresses. The pattern r'\s*[&/]\s*' means: match zero or more
-    # whitespace characters (\s*), then either an ampersand & or forward slash / (the [&/]
-    # character class), then zero or more whitespace again. The r prefix makes it a "raw
-    # string" so backslashes are treated literally (not as escape characters). This handles
-    # addresses like "Market St & 7th St" or "Market St / 7th St" with any amount of
-    # spacing around the separator.
+    """Split "Florida Street near 24th Street" into its two streets."""
     for separator in [r"\s+near\s+", r"\s+at\s+", r"\s+and\s+", r"\s*&\s*"]:
         parts = re.split(separator, address, maxsplit=1, flags=re.IGNORECASE)
         if len(parts) == 2 and parts[0].strip() and parts[1].strip():
             return parts[0].strip(), parts[1].strip()
 
-    # "X between Y and Z" — extract X and Y
     match = re.match(r"(.+?)\s+between\s+(.+?)(?:\s+and\s+.+)?$", address, re.IGNORECASE)
     if match:
         return match.group(1).strip(), match.group(2).strip()
 
-    # Not an intersection — return the whole address
     return address, None
 
 
-# For this part we consulted Claude who recommended a multi-strategy geocoding approach
-# with persistent caching. Geocoding (converting street addresses to latitude/longitude
-# coordinates) often fails because addresses in crash reports are messy and inconsistent.
-# Instead of giving up after one attempt, this function tries multiple strategies in order:
-# (1) parse as an intersection ("A St & B St"), (2) try the full address directly,
-# (3) search within the city bounds as a fallback. If all strategies fail, the marker
-# is placed at the city center and flagged as approximate. Results are saved to a JSON
-# cache file so that re-running the pipeline doesn't hit the geocoding API again — this
-# is important because Nominatim (OpenStreetMap's free geocoder) has a rate limit of
-# 1 request per second.
 def build_geocode_queries(address, city_code):
-    """
-    Build MULTIPLE geocoding queries to try for a single address.
-
-    Instead of one query that may fail, we generate up to 3 strategies:
-      1. Full intersection: "Street A & Street B, City, State"
-      2. First street only: "Street A, City, State"
-      3. Second street only: "Street B, City, State"
-
-    For non-intersection addresses (like "3939 E Campbell Avenue"), we
-    just return the address with city/state appended.
-
-    Returns a list of query strings to try in order.
-    """
+    """Build up to 3 geocoding query strategies for one address."""
     cleaned = clean_address(address)
     if not cleaned:
         return []
 
     city_info = CITIES.get(city_code, {})
-    city_name = city_info.get("name", "")
-    state = city_info.get("state", "")
-    suffix = f", {city_name}, {state}"
+    suffix = f", {city_info.get('name', '')}, {city_info.get('state', '')}"
 
     street_a, street_b = split_intersection(cleaned)
-
-    queries = []
-
     if street_b:
-        # Strategy 1: intersection format "Street A & Street B, City, State"
-        queries.append(f"{street_a} & {street_b}{suffix}")
-        # Strategy 2: just the first street (still gets us to the right block)
-        queries.append(f"{street_a}{suffix}")
-        # Strategy 3: just the second street (backup)
-        queries.append(f"{street_b}{suffix}")
-    else:
-        # Not an intersection — just one query
-        queries.append(f"{cleaned}{suffix}")
-
-    return queries
+        return [
+            f"{street_a} & {street_b}{suffix}",
+            f"{street_a}{suffix}",
+            f"{street_b}{suffix}",
+        ]
+    return [f"{cleaned}{suffix}"]
 
 
-def try_geocode(geocoder, queries, city_code):
-    """
-    Try each query in order and return the first valid result.
+def make_geocoder():
+    """Nominatim geocoder with the project's user agent."""
+    return Nominatim(user_agent="waymo-crash-map (github.com/leftovergoldennuggets/bna-fuhgeddaboudit)", timeout=10)
 
-    "Valid" means Nominatim returned coordinates within 0.5° (~30 miles)
-    of the expected city center. This catches cases where Nominatim
-    finds a match in the wrong state or country.
 
-    Returns {"lat": ..., "lon": ...} on success, or None on failure.
-    Each query attempt takes ~1 second due to rate limiting.
-    """
-    city_info = CITIES.get(city_code, {})
-    expected_lat = city_info.get("lat", 0)
-    expected_lon = city_info.get("lon", 0)
-
+def try_geocode(geocoder, queries, expected_lat, expected_lon, max_offset=0.5):
+    """Try queries in order; accept the first result near the expected point."""
     for query in queries:
         try:
             result = geocoder.geocode(query)
-            time.sleep(1.0)  # Rate limit: max 1 request/second (Nominatim usage policy)
-
+            time.sleep(1.1)  # Nominatim usage policy: max 1 request/second
             if result:
                 lat, lon = result.latitude, result.longitude
-                # Sanity check: result must be within ~30 miles of the expected city
-                if abs(lat - expected_lat) < 0.5 and abs(lon - expected_lon) < 0.5:
+                if abs(lat - expected_lat) < max_offset and abs(lon - expected_lon) < max_offset:
                     return {"lat": round(lat, 6), "lon": round(lon, 6)}
-                # If too far away, try the next query
         except (GeocoderTimedOut, GeocoderServiceError):
-            time.sleep(1.0)
+            time.sleep(2.0)
             continue
-
     return None
 
 
 def geocode_addresses(df, cache):
-    """
-    Geocode all addresses in the dataframe, using multiple query strategies.
+    """Geocode street addresses for hub-enriched rows (cached)."""
+    geocoder = make_geocoder()
 
-    Uses OpenStreetMap Nominatim (free, no API key needed).
-    For each address, tries up to 3 query formats before giving up.
-    Results are cached so subsequent runs are instant.
-
-    Returns the updated cache dict.
-    """
-    # Set up the geocoder with a descriptive user agent (required by Nominatim TOS)
-    # Nominatim is OpenStreetMap's free geocoding service — no API key needed
-    geocoder = Nominatim(
-        user_agent="waymo-crash-analysis-stanford-comm277t",
-        timeout=10,  # seconds to wait before giving up on a single request
-    )
-
-    # Build list of unique addresses that need geocoding
-    # (skip addresses that already have a successful cached result)
     to_geocode = []
-    seen_keys = set()
+    seen = set()
     for _, row in df.iterrows():
-        address = row.get("Location Address / Description", "")
+        address = row.get("Location Address / Description")
+        if pd.isna(address) or not str(address).strip():
+            continue
         city_code = row.get("Location", "")
         cache_key = f"{address}|{city_code}"
-
-        # Skip if already successfully cached (non-null) or already in our list
-        if cache_key in seen_keys:
+        if cache_key in seen or cache_key in cache:
             continue
-        seen_keys.add(cache_key)
-
-        # Skip if already in cache (successful OR failed).
-        # A None value means "we tried and failed" — no point retrying the same address,
-        # since the Nominatim results won't change. To force a retry, delete the entry
-        # from geocode_cache.json manually.
-        if cache_key in cache:
-            continue
-
+        seen.add(cache_key)
         queries = build_geocode_queries(address, city_code)
-        if queries:
+        if queries and city_code in CITIES:
             to_geocode.append((cache_key, queries, city_code))
 
     if not to_geocode:
         print("  All addresses already geocoded — no new lookups needed!")
         return cache
 
-    # Estimate time: each address tries up to 3 queries (1 sec each)
-    # but most will succeed or fail on the first 1-2 tries
-    print(f"  Need to geocode {len(to_geocode)} NEW addresses...")
-    print(f"  Estimated time: {len(to_geocode) * 2 // 60}-{len(to_geocode) * 3 // 60} min")
-    print(f"  (each address tries up to 3 query formats)")
-    print()
+    print(f"  Need to geocode {len(to_geocode)} NEW addresses "
+          f"(~{len(to_geocode) * 2 // 60}-{len(to_geocode) * 3 // 60} min)...")
 
-    success = 0
-    failed = 0
-    total_queries = 0
-
+    success = failed = 0
     for i, (cache_key, queries, city_code) in enumerate(to_geocode):
-        result = try_geocode(geocoder, queries, city_code)
-        total_queries += min(len(queries), 3)
-
+        info = CITIES[city_code]
+        result = try_geocode(geocoder, queries, info["lat"], info["lon"])
+        cache[cache_key] = result
         if result:
-            cache[cache_key] = result
             success += 1
         else:
-            cache[cache_key] = None
             failed += 1
-
-        # Progress update every 50 addresses
         if (i + 1) % 50 == 0:
-            pct = round(success / (success + failed) * 100, 1) if (success + failed) > 0 else 0
-            print(f"  Progress: {i + 1}/{len(to_geocode)} "
-                  f"(success: {success}, failed: {failed}, rate: {pct}%)")
-
-        # Save cache periodically (every 100) in case of interruption
+            print(f"  Progress: {i + 1}/{len(to_geocode)} (success: {success}, failed: {failed})")
         if (i + 1) % 100 == 0:
             save_geocode_cache(cache)
 
-    pct = round(success / (success + failed) * 100, 1) if (success + failed) > 0 else 0
-    print(f"  Geocoding complete: {success} succeeded, {failed} failed ({pct}% success)")
-    print(f"  Total API queries made: {total_queries}")
+    print(f"  Geocoding complete: {success} succeeded, {failed} failed")
+    return cache
+
+
+def geocode_cities(df, cache):
+    """Geocode city centroids for rows without a street address.
+
+    NHTSA redacts street addresses, so recent crashes not yet enriched by
+    the hub can only be placed at city level. One lookup per unique city.
+    """
+    geocoder = make_geocoder()
+
+    needed = set()
+    no_address = df[df["Location Address / Description"].isna()
+                    | (df["Location Address / Description"].astype(str).str.strip() == "")]
+    for _, row in no_address.iterrows():
+        city = normalize_place(row.get("City"))
+        state = normalize_state(row.get("State"))
+        if city and state:
+            needed.add((city, state))
+
+    to_geocode = [(c, s) for c, s in sorted(needed) if f"__city__{c}|{s}" not in cache]
+    if not to_geocode:
+        return cache
+
+    print(f"  Geocoding {len(to_geocode)} city centroid(s)...")
+    for city, state in to_geocode:
+        cache_key = f"__city__{city}|{state}"
+        result = None
+        try:
+            hit = geocoder.geocode(f"{city}, {state}, USA")
+            time.sleep(1.1)
+            if hit:
+                result = {"lat": round(hit.latitude, 6), "lon": round(hit.longitude, 6)}
+        except (GeocoderTimedOut, GeocoderServiceError):
+            time.sleep(2.0)
+        cache[cache_key] = result
+        print(f"    {city}, {state}: {'ok' if result else 'FAILED'}")
     return cache
 
 
@@ -418,240 +252,186 @@ def main():
     print("=" * 60)
     print()
 
-    # Load merged dataset
     print("Loading merged dataset...")
-    df = pd.read_csv(PROCESSED_MERGED)
-    print(f"  Loaded {len(df)} rows")
+    df = pd.read_csv(PROCESSED_MERGED, low_memory=False)
+    print(f"  Loaded {len(df)} rows (all operation types)")
 
-    # Parse time data
-    print("Parsing time data...")
+    # Parse time — kept nullable; crashes without a time stay on the map
     df["_hour"], df["_minute"] = zip(*df["Incident Time (24:00)"].apply(parse_time))
-    df_time = df[df["_hour"].notna()].copy()
-    df_time["_hour"] = df_time["_hour"].astype(int)
-    print(f"  Rows with valid time: {len(df_time)}")
+    df["_time_period"] = df["_hour"].apply(categorize_time_period)
+    df["_location_type"] = df.apply(extract_location_type, axis=1)
+    df["_date"] = pd.to_datetime(df["incident_date"], errors="coerce")
+    has_day = df["date_precision"] == "day"
+    df["_day_of_week"] = df["_date"].dt.day_name().where(has_day & df["_date"].notna())
+    df["_day_num"] = df["_date"].dt.dayofweek.where(has_day & df["_date"].notna())
+    df["_is_weekend"] = df["_date"].dt.dayofweek.isin([5, 6]).where(has_day & df["_date"].notna(), False)
 
-    # Parse dates and convert to proper datetime
-    df_time["_date"] = pd.to_datetime(df_time["Incident Date"].apply(parse_date))
-    has_date = df_time["_date"].notna()
-    df_time["_day_of_week"] = df_time["_date"].dt.day_name().where(has_date, "Unknown")
-    df_time["_day_num"] = df_time["_date"].dt.dayofweek.where(has_date)
-    df_time["_is_weekend"] = df_time["_date"].dt.dayofweek.isin([5, 6]).where(has_date, False)
+    # NHTSA's own coordinates (almost always redacted, but check anyway)
+    df["_lat"] = df["Latitude"].apply(clean_coordinate) if "Latitude" in df.columns else None
+    df["_lon"] = df["Longitude"].apply(clean_coordinate) if "Longitude" in df.columns else None
 
-    # Add time period and location type
-    df_time["_time_period"] = df_time["_hour"].apply(categorize_time_period)
-    df_time["_location_type"] = df_time.apply(extract_location_type, axis=1)
-
-    # Clean NHTSA coordinates (almost always redacted, but check anyway)
-    print("Cleaning coordinates...")
-    df_time["_lat"] = df_time["Latitude"].apply(clean_coordinate)
-    df_time["_lon"] = df_time["Longitude"].apply(clean_coordinate)
-
-    # -----------------------------------------------------------------------
-    # GEOCODE addresses for accurate map markers
-    # -----------------------------------------------------------------------
     print()
-    print("Geocoding addresses...")
+    print("Geocoding...")
     cache = load_geocode_cache()
-    cache_size_before = len(cache)
-    cache = geocode_addresses(df_time, cache)
-
-    # Save the updated cache
+    cache_before = len(cache)
+    cache = geocode_addresses(df, cache)
+    cache = geocode_cities(df, cache)
     save_geocode_cache(cache)
-    new_entries = len(cache) - cache_size_before
-    if new_entries > 0:
-        print(f"  Cache updated: {new_entries} new entries (total: {len(cache)})")
+    if len(cache) > cache_before:
+        print(f"  Cache updated: {len(cache) - cache_before} new entries (total: {len(cache)})")
     print()
 
-    # Use a fixed random seed so the same addresses always get the same fallback positions
+    # Fixed seed: identical fallback positions on every run
     rng = np.random.default_rng(seed=42)
 
-    # Build the JSON array
     print("Building JSON records...")
     map_data = []
-    coords_geocoded = 0
-    coords_nhtsa = 0
-    coords_estimated = 0
+    precision_counts = {"exact": 0, "street": 0, "city": 0, "metro": 0, "skipped": 0}
 
-    for _, row in df_time.iterrows():
-        lat = row["_lat"]
-        lon = row["_lon"]
-        is_estimated = False
+    for _, row in df.iterrows():
+        lat, lon = row["_lat"], row["_lon"]
+        city_code = row.get("Location", "")
+        location_precision = None
 
-        # Priority 1: Use NHTSA coordinates if available (rarely are)
         if lat is not None and lon is not None and lat != 0 and lon != 0:
-            coords_nhtsa += 1
+            location_precision = "exact"
         else:
-            # Priority 2: Use geocoded address
-            address = row.get("Location Address / Description", "")
-            city_code = row.get("Location", "")
-            cache_key = f"{address}|{city_code}"
-            cached = cache.get(cache_key)
+            # Street-level geocode (hub-enriched rows with an address)
+            address = row.get("Location Address / Description")
+            if pd.notna(address) and str(address).strip():
+                cached = cache.get(f"{address}|{city_code}")
+                if cached is not None:
+                    lat, lon = cached["lat"], cached["lon"]
+                    location_precision = "street"
 
+        if location_precision is None:
+            # City-level geocode (NHTSA redacts addresses)
+            city = normalize_place(row.get("City"))
+            state = normalize_state(row.get("State"))
+            cached = cache.get(f"__city__{city}|{state}") if city and state else None
             if cached is not None:
-                lat = cached["lat"]
-                lon = cached["lon"]
-                coords_geocoded += 1
+                lat = cached["lat"] + rng.uniform(-0.01, 0.01)
+                lon = cached["lon"] + rng.uniform(-0.01, 0.01)
+                location_precision = "city"
+            elif city_code in CITIES:
+                info = CITIES[city_code]
+                lat = info["lat"] + rng.uniform(-0.02, 0.02)
+                lon = info["lon"] + rng.uniform(-0.02, 0.02)
+                location_precision = "metro"
             else:
-                # Priority 3: Fall back to city center with random jitter
-                # For this part we consulted Claude who recommended adding random jitter (tiny random
-                # offsets) to markers that fall back to the city center location. Without jitter, all
-                # failed-geocoding markers in the same city would stack on the exact same pixel, making
-                # it look like there's only one crash when there might be dozens. np.random.uniform
-                # generates a random number in a range — here roughly ±0.01 degrees, which is about
-                # ±0.7 miles. The random seed (np.random.seed) ensures the same "random" offsets are
-                # generated every time the pipeline runs, so the map looks identical across runs.
-                if city_code and city_code in CITIES:
-                    city_info = CITIES[city_code]
-                    lat = city_info["lat"] + rng.uniform(-0.02, 0.02)  # ~1.4 miles random offset
-                    lon = city_info["lon"] + rng.uniform(-0.02, 0.02)  # Spreads dots around city center
-                    is_estimated = True
-                    coords_estimated += 1
-                else:
-                    continue  # Skip crashes we can't map at all
+                precision_counts["skipped"] += 1
+                continue
 
-        # Format date for display
+        precision_counts[location_precision] += 1
+
+        # Date display: respect precision (month-only for NHTSA-redacted dates)
         date_str = None
         if pd.notna(row["_date"]):
-            date_str = row["_date"].strftime("%Y-%m-%d")
+            if row.get("date_precision") == "day":
+                date_str = row["_date"].strftime("%Y-%m-%d")
+            else:
+                date_str = row["_date"].strftime("%Y-%m")
 
-        # Severity flags for filtering
-        has_injury = bool(row.get("Is Any-Injury-Reported", False))  # From Waymo Hub boolean column
-        crash_type = row.get("Crash Type", "Unknown")
-        is_vulnerable = crash_type in ("Pedestrian", "Cyclist", "Motorcycle")  # Vulnerable road users (VRU)
+        has_injury = str(row.get("Is Any-Injury-Reported", "")).strip() == "True"
+        level = severity_level(row.get("Highest Injury Severity Alleged"), has_injury)
 
-        # Severity level from NHTSA "Highest Injury Severity Alleged" column.
-        # This matches the definition used in 05_generate_incidents.py and the
-        # scrollytelling section (moderate + serious + fatal = 15 incidents).
-        severity_raw = str(row.get("Highest Injury Severity Alleged", "")).lower()
-        if "fatal" in severity_raw:
-            severity_level = "fatal"
-        elif "serious" in severity_raw:
-            severity_level = "serious"
-        elif "moderate" in severity_raw:
-            severity_level = "moderate"
-        elif has_injury:
-            severity_level = "minor"
-        else:
-            severity_level = "none"
-
-        # is_serious = moderate, serious, or fatal (the "moderate_plus" group)
-        is_serious = severity_level in ("moderate", "serious", "fatal")
-
-        # --- Enriched fields for explore section popups (Part F of spec) ---
-        # SV = Subject Vehicle (Waymo), CP = Contact Party (the other vehicle/person)
-        sv_movement = row.get("SV Pre-Crash Movement", "")
-        sv_movement = str(sv_movement).strip() if pd.notna(sv_movement) else None
-
-        cp_movement = row.get("CP Pre-Crash Movement", "")
-        cp_movement = str(cp_movement).strip() if pd.notna(cp_movement) else None
-
-        crash_with = row.get("Crash With", "")
+        crash_type = row.get("Crash Type")
+        crash_type = str(crash_type) if pd.notna(crash_type) else None
+        crash_with = row.get("Crash With")
         crash_with = str(crash_with).strip() if pd.notna(crash_with) else None
 
-        # Speed in MPH — store as number (float) for display
-        speed_raw = row.get("SV Precrash Speed (MPH)", None)
+        is_vulnerable = (
+            crash_type in ("Pedestrian", "Cyclist", "Motorcycle")
+            or (crash_type is None and crash_with in (
+                "Non-Motorist: Pedestrian", "Non-Motorist: Cyclist", "Motorcycle"))
+        )
+
+        def text_or_none(value):
+            value = str(value).strip() if pd.notna(value) else None
+            return None if value in (None, "", "nan") else value
+
         speed_mph = None
+        speed_raw = row.get("SV Precrash Speed (MPH)")
         if pd.notna(speed_raw):
             try:
                 speed_mph = round(float(speed_raw), 1)
             except (ValueError, TypeError):
                 pass
 
-        # Injury severity description from NHTSA
-        injury_severity = str(row.get("Highest Injury Severity Alleged", "")).strip()
-        if not injury_severity or injury_severity.lower() == "nan":
-            injury_severity = None
-
-        # Full NHTSA narrative — included for all crashes so explore popups
-        # can show a truncated version with "read more" expansion
-        narrative = row.get("Narrative", "")
-        narrative = str(narrative).strip() if pd.notna(narrative) else None
-        if narrative and narrative.lower() == "nan":
-            narrative = None
-
-        # Zip code from Waymo Hub data (available for ~86% of crashes)
-        zip_code_raw = row.get("Zip Code", "")
-        zip_code = str(zip_code_raw).strip() if pd.notna(zip_code_raw) else None
-        # Clean: keep only valid 5-digit zip codes
+        zip_code = text_or_none(row.get("Zip Code"))
         if zip_code and (len(zip_code) < 5 or not zip_code[:5].isdigit()):
             zip_code = None
         elif zip_code:
-            zip_code = zip_code[:5]  # Take first 5 digits only
+            zip_code = zip_code[:5]
 
         record = {
             "lat": round(float(lat), 6),
             "lon": round(float(lon), 6),
-            "hour": int(row["_hour"]),
-            "day_of_week": row["_day_of_week"] if row["_day_of_week"] != "Unknown" else None,
+            "hour": int(row["_hour"]) if pd.notna(row["_hour"]) else None,
+            "day_of_week": row["_day_of_week"] if pd.notna(row["_day_of_week"]) else None,
             "day_num": int(row["_day_num"]) if pd.notna(row["_day_num"]) else None,
             "time_period": row["_time_period"],
             "location_type": row["_location_type"],
-            "crash_type": crash_type,
-            "city": row.get("Location", "Unknown"),
+            "crash_type": crash_type or "Pending classification",
+            "city": city_code if city_code else OTHER_METRO_CODE,
+            "city_name": normalize_place(row.get("City")) or None,
             "date": date_str,
+            "date_precision": row.get("date_precision"),
             "is_weekend": bool(row["_is_weekend"]) if pd.notna(row["_is_weekend"]) else False,
-            "is_estimated_location": is_estimated,
+            "is_estimated_location": location_precision in ("city", "metro"),
+            "location_precision": location_precision,
+            "operation_type": row.get("operation_type"),
+            "in_hub": bool(row.get("in_hub")),
             "has_injury": has_injury,
-            "is_serious": is_serious,
-            "severity_level": severity_level,
-            "is_vulnerable_road_user": is_vulnerable,
-            # Enriched fields for explore popups
-            "sv_movement": sv_movement,
-            "cp_movement": cp_movement,
+            "is_serious": level in ("moderate", "serious", "fatal"),
+            "severity_level": level,
+            "is_vulnerable_road_user": bool(is_vulnerable),
+            "sv_movement": text_or_none(row.get("SV Pre-Crash Movement")),
+            "cp_movement": text_or_none(row.get("CP Pre-Crash Movement")),
             "crash_with": crash_with,
             "speed_mph": speed_mph,
-            "injury_severity": injury_severity,
-            "narrative": narrative,
+            "injury_severity": text_or_none(row.get("Highest Injury Severity Alleged")),
+            "narrative": text_or_none(row.get("Narrative")),
             "zip_code": zip_code,
         }
         map_data.append(record)
 
     print(f"  Total records: {len(map_data)}")
-    print(f"  From NHTSA coordinates: {coords_nhtsa}")
-    print(f"  From geocoded addresses: {coords_geocoded}")
-    print(f"  Estimated (city center fallback): {coords_estimated}")
+    for tier, count in precision_counts.items():
+        print(f"    {tier}: {count}")
 
-    # Save JSON
     print()
     print("Saving crash_data.json...")
     os.makedirs(os.path.dirname(WEB_CRASH_DATA), exist_ok=True)
     with open(WEB_CRASH_DATA, "w") as f:
-        json.dump(map_data, f)  # No indent — keeps file smaller (~400 KB vs ~1.5 MB)
+        json.dump(map_data, f)  # No indent — keeps the file ~3x smaller
+    print(f"  Saved: {WEB_CRASH_DATA} ({os.path.getsize(WEB_CRASH_DATA) / 1024:.0f} KB)")
 
-    size_kb = os.path.getsize(WEB_CRASH_DATA) / 1024
-    print(f"  Saved: {WEB_CRASH_DATA} ({size_kb:.0f} KB)")
+    # --- Append geocoding stats to site-data.json (driverless only, to
+    # match the headline dataset the site describes) ---
+    driverless = [r for r in map_data if r["operation_type"] == "driverless"]
+    total_mapped = len(driverless)
+    estimated = sum(1 for r in driverless if r["is_estimated_location"])
+    accurate = total_mapped - estimated
 
-    # --- Append geocoding stats to site-data.json ---
-    # These stats let methodology.html and faq.html display accurate geocoding
-    # numbers via data-stat bindings instead of hardcoded values.
-    total_mapped = len(map_data)
-    accurate = total_mapped - coords_estimated
-    accuracy_pct = round(accurate / total_mapped * 100, 1) if total_mapped > 0 else 0
-
-    # Per-city geocoding accuracy
     city_geo = {}
-    for entry in map_data:
-        city = entry.get("city", "")
-        if not city:
-            continue
-        if city not in city_geo:
-            city_geo[city] = {"total": 0, "estimated": 0}
-        city_geo[city]["total"] += 1
-        if entry.get("is_estimated_location", False):
-            city_geo[city]["estimated"] += 1
+    for entry in driverless:
+        code = entry["city"]
+        city_geo.setdefault(code, {"total": 0, "estimated": 0})
+        city_geo[code]["total"] += 1
+        if entry["is_estimated_location"]:
+            city_geo[code]["estimated"] += 1
 
-    city_accuracy = {}
-    for city_code, counts in city_geo.items():
-        display_name = CITIES.get(city_code, {}).get("name", city_code)
-        city_total = counts["total"]
-        city_accurate = city_total - counts["estimated"]
-        city_accuracy[display_name] = round(city_accurate / city_total * 100) if city_total > 0 else 0
+    city_accuracy = {
+        CITIES.get(code, {}).get("name", code): round((c["total"] - c["estimated"]) / c["total"] * 100)
+        for code, c in city_geo.items() if c["total"] > 0
+    }
 
     geocoding_stats = {
         "total_mapped": total_mapped,
         "accurate": accurate,
-        "estimated": coords_estimated,
-        "accuracy_pct": accuracy_pct,
+        "estimated": estimated,
+        "accuracy_pct": round(accurate / total_mapped * 100, 1) if total_mapped else 0,
         "by_city": city_accuracy,
     }
 
@@ -663,7 +443,7 @@ def main():
         site_data["geocoding"] = geocoding_stats
         with open(WEB_SITE_DATA, "w") as f:
             json.dump(site_data, f, indent=2)
-        print(f"  Geocoding: {accurate}/{total_mapped} accurate ({accuracy_pct}%)")
+        print(f"  Geocoding: {accurate}/{total_mapped} street-level ({geocoding_stats['accuracy_pct']}%)")
     else:
         print(f"  WARNING: {WEB_SITE_DATA} not found — skipping geocoding stats")
 
