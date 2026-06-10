@@ -879,20 +879,17 @@ a:hover {
 
 /* City Cards (spatial section) */
 .city-cards {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-md) var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
 }
 
 .city-card {
-    padding: var(--spacing-md) var(--spacing-sm);
+    width: 175px;
+    padding: var(--spacing-sm) 0;
     text-align: center;
-    border-right: 1px solid var(--color-border);
-}
-
-.city-card:last-child {
-    border-right: none;
 }
 
 .city-card-name {
@@ -1695,15 +1692,13 @@ a:hover {
     }
 
     .stat-card,
-    .analysis-card,
-    .city-card {
+    .analysis-card {
         border-right: none;
         border-bottom: 1px solid var(--color-border);
     }
 
     .stat-card:last-child,
-    .analysis-card:last-child,
-    .city-card:last-child {
+    .analysis-card:last-child {
         border-bottom: none;
     }
 
@@ -1733,8 +1728,11 @@ a:hover {
     }
 
     .city-cards {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0;
+        gap: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .city-card {
+        width: 150px;
     }
 
     .stats-grid {
@@ -1761,9 +1759,6 @@ a:hover {
         font-size: 1.5rem;
     }
 
-    .city-cards {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* ============================================
