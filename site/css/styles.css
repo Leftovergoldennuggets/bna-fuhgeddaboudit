@@ -2096,3 +2096,100 @@ a:hover {
     margin-left: auto;
     margin-right: auto;
 }
+
+/* ============================================
+   Explore usability pass (June 2026):
+   pill filters, presets, readable sidebar
+   ============================================ */
+
+/* Filter options become tappable pills with an unmistakable active state */
+.filter-toggle {
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    background: #fff;
+    color: var(--color-text);
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+.filter-toggle:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.filter-toggle.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+    font-weight: 500;
+}
+
+.filter-toggles {
+    gap: 0.4rem;
+}
+
+/* Supervised checkbox: sentence case, never clipped */
+.supervised-label {
+    font-family: var(--font-body);
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.85rem;
+    color: var(--color-text);
+}
+
+.explore-filters {
+    max-height: none;
+    overflow: visible;
+}
+
+/* "Things to try" become one-click preset chips */
+.explore-presets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: var(--content-width);
+    margin: 0 auto var(--spacing-md);
+}
+
+.preset-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.95rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: #fff;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.preset-chip:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.preset-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Live count gets real prominence */
+.filter-stats {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--spacing-sm);
+}
+
+.filter-stat #filtered-count {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--color-number);
+    margin-right: 0.4rem;
+}

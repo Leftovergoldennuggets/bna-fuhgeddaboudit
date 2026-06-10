@@ -90,6 +90,17 @@ const Explore = (function () {
         // Show all markers on the map initially (no filters active)
         applyFilters();
 
+        // Open with every city bubble in view (DC to Miami to SF) instead
+        // of a fixed center that can leave markers off-screen
+        try {
+            exploreMap.fitBounds(exploreCluster.getBounds(), { padding: [40, 40], maxZoom: 5 });
+        } catch (e) { /* no markers — keep the default view */ }
+
+        // Preset chips above the map apply common filter combinations
+        document.querySelectorAll(".preset-chip").forEach((chip) => {
+            chip.addEventListener("click", () => applyPreset(chip.dataset.preset));
+        });
+
         // Fullscreen toggle button
         const fsBtn = document.getElementById("explore-fullscreen-btn");
         if (fsBtn) {
@@ -362,8 +373,9 @@ const Explore = (function () {
             allBtn.classList.toggle("active", filters.cities.size === 0);
         }
 
-        // Re-filter and update the map
+        // Re-filter, then move the map to match the new city selection
         applyFilters();
+        flyToSelection();
     }
 
     /**
@@ -483,21 +495,39 @@ const Explore = (function () {
             // .toLocaleString() adds commas for readability (e.g., 1,123 instead of 1123)
             countEl.textContent = shownCount.toLocaleString("en-US");
         }
+    }
 
-        // If exactly one city is selected, zoom the map to that city
+    /**
+     * Move the map when the CITY selection changes (and only then —
+     * other filters must never yank the user's pan/zoom away).
+     */
+    function flyToSelection() {
         if (filters.cities.size === 1) {
-            // [...filters.cities] converts the Set to an array so we can grab the first element
             const cityCode = [...filters.cities][0];
-            // Look up the city's coordinates from MapController
             const coords = MapController.CITY_COORDS[cityCode];
             if (coords) {
-                // .flyTo() animates the map to the city's location at zoom level 11
                 exploreMap.flyTo([coords.lat, coords.lon], 11, { duration: 1 });
             }
         } else if (filters.cities.size === 0) {
-            // No city filter — zoom back out to show the full US
             exploreMap.flyTo([37.0902, -95.7129], 4, { duration: 1 });
         }
+    }
+
+    /**
+     * Apply a one-click preset from the chips above the map.
+     * Resets everything, then programmatically "clicks" the matching
+     * pill so the sidebar state and map stay perfectly in sync.
+     */
+    function applyPreset(kind) {
+        resetFilters();
+        const clickToggle = (containerId, value) => {
+            const btn = document.querySelector(`#${containerId} .filter-toggle[data-value="${value}"]`);
+            if (btn) btn.click();
+        };
+        if (kind === "serious") clickToggle("severity-filter", "serious");
+        else if (kind === "pedestrian") clickToggle("road-user-filter", "Pedestrian");
+        else if (kind === "night") clickToggle("time-filter", "night");
+        // "all" → the reset above already showed everything
     }
 
     /**

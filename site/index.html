@@ -348,13 +348,12 @@
             <h2 class="section-title">Explore the Data</h2>
             <p class="section-intro">Every reported crash is mapped below. Use the filters to find patterns — or look up what's happened near you.</p>
             <p class="explore-freshness">The <span data-stat="overview.preliminary_count">--</span> most recent crashes are placed at city-level accuracy — federal reports redact exact addresses until Waymo's quarterly release fills them in.</p>
-            <div class="explore-prompts">
-                <p><strong>Things to try:</strong></p>
-                <ul>
-                    <li>Filter by <strong>"Serious"</strong> to see only the <span data-stat="severity.moderate_plus.count">--</span> crashes that resulted in moderate-to-fatal injuries.</li>
-                    <li>Select <strong>"Pedestrian"</strong> or <strong>"Cyclist"</strong> to find incidents involving vulnerable road users.</li>
-                    <li>Switch to <strong>"Night"</strong> to see how crash patterns shift after dark.</li>
-                </ul>
+            <!-- One-click starting points — each chip applies the filters for you -->
+            <div class="explore-presets" role="group" aria-label="Quick filter presets">
+                <button class="preset-chip" data-preset="serious"><span class="preset-dot" style="background:#8b2020"></span>Serious injuries only (<span data-stat="severity.moderate_plus.count">--</span>)</button>
+                <button class="preset-chip" data-preset="pedestrian"><span class="preset-dot" style="background:#c4841d"></span>Pedestrian crashes (<span data-stat="crash_circumstances.vulnerable_road_users.pedestrian">--</span>)</button>
+                <button class="preset-chip" data-preset="night"><span class="preset-dot" style="background:#1a1a1a"></span>After dark</button>
+                <button class="preset-chip" data-preset="all">Show everything</button>
             </div>
 
             <div class="explore-layout">
