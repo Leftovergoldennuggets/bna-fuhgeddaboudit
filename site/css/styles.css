@@ -1789,17 +1789,6 @@ a:hover {
     top: var(--spacing-xs);
 }
 
-/* Data-freshness note in the hero step */
-.step-freshness {
-    margin-top: var(--spacing-sm);
-    padding-top: var(--spacing-xs);
-    border-top: 1px solid var(--color-border);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    line-height: 1.5;
-    color: var(--color-text-light);
-}
-
 /* Footnote under the stat cards */
 .stats-footnote {
     max-width: var(--content-width);
@@ -1840,4 +1829,181 @@ a:hover {
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--color-warning);
+}
+
+/* ============================================
+   Visual redesign (June 2026): hero, scrolly
+   stat callouts, severity waffle
+   ============================================ */
+
+/* --- Hero: tighter, number-forward --- */
+.step-dek {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--color-text);
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-sm) 0;
+    padding: var(--spacing-sm) 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.hero-stat-number {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-number);
+    line-height: 1;
+}
+
+.hero-stat-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-light);
+}
+
+.hero-meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+}
+
+.hero-datanote {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+}
+
+.hero-datanote a {
+    color: var(--color-accent);
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-success);
+    flex-shrink: 0;
+    animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+/* --- Scrolly steps: kicker + oversized stat --- */
+.step-kicker {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.stat-callout {
+    margin-bottom: var(--spacing-sm);
+}
+
+.stat-callout-number {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 3.2rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-number);
+    margin-bottom: 0.35rem;
+}
+
+.stat-callout-label {
+    display: block;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--color-text);
+    max-width: 28ch;
+}
+
+/* --- Severity waffle: one square per crash --- */
+.waffle-block {
+    max-width: var(--content-width);
+    margin: var(--spacing-md) 0;
+}
+
+.waffle-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.waffle-cell {
+    width: 9px;
+    height: 9px;
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+.waffle-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: var(--spacing-sm);
+}
+
+.waffle-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+}
+
+.waffle-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+/* --- Mobile adjustments --- */
+@media (max-width: 640px) {
+    .hero-stats {
+        gap: var(--spacing-sm);
+    }
+
+    .hero-stat-number {
+        font-size: 1.25rem;
+    }
+
+    .stat-callout-number {
+        font-size: 2.4rem;
+    }
+
+    .waffle-cell,
+    .waffle-swatch {
+        width: 6px;
+        height: 6px;
+    }
 }

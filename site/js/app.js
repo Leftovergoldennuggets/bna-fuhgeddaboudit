@@ -34,8 +34,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Step 2: Fill in all data-stat placeholders with real numbers
         StatRenderer.renderAll(data.stats);
 
-        // Step 3: Build dynamic city cards in the spatial section
+        // Step 3: Build dynamic city cards and the severity waffle
         buildCityCards(data.stats);
+        buildSeverityWaffle(data.crashes);
 
         // Step 4: Initialize the scrollytelling map
         MapController.init(data.crashes, data.incidents, data.stats);
@@ -145,6 +146,56 @@ function buildCityCards(stats) {
         // Add the finished card into the container on the page
         container.appendChild(card);
     });
+}
+
+// ============================================
+// Severity Waffle — one square per crash
+// ============================================
+
+/**
+ * Render every driverless crash as a single colored square, grouped by
+ * the worst injury reported. The point is scale: a bar chart says "1%
+ * serious"; the waffle lets you SEE 17 red squares in a field of 1,600.
+ *
+ * @param {Array} crashes — crash_data.json records
+ */
+function buildSeverityWaffle(crashes) {
+    const grid = document.getElementById("severity-waffle");
+    const legend = document.getElementById("severity-waffle-legend");
+    if (!grid || !crashes) return;
+
+    // Severity tiers, most severe first so they sit top-left where the
+    // eye starts — they'd be invisible buried at the bottom.
+    const TIERS = [
+        { key: "fatal",    label: "Fatal",            color: "#1a1a1a" },
+        { key: "serious",  label: "Serious injury",   color: "#8b2020" },
+        { key: "moderate", label: "Moderate injury",  color: "#b5573a" },
+        { key: "minor",    label: "Minor injury",     color: "#c4841d" },
+        { key: "none",     label: "No injury reported", color: "#ddd6cb" },
+    ];
+
+    const counts = {};
+    crashes.forEach((crash) => {
+        if (crash.operation_type === "supervised") return;  // headline dataset only
+        counts[crash.severity_level] = (counts[crash.severity_level] || 0) + 1;
+    });
+
+    // One <span> per crash; built as a single string for fast rendering
+    let cells = "";
+    TIERS.forEach((tier) => {
+        const n = counts[tier.key] || 0;
+        for (let i = 0; i < n; i++) {
+            cells += `<span class="waffle-cell" style="background:${tier.color}"></span>`;
+        }
+    });
+    grid.innerHTML = cells;
+
+    if (legend) {
+        legend.innerHTML = TIERS.map((tier) => {
+            const n = counts[tier.key] || 0;
+            return `<span class="waffle-legend-item"><span class="waffle-swatch" style="background:${tier.color}"></span>${tier.label} &middot; ${n.toLocaleString("en-US")}</span>`;
+        }).join("");
+    }
 }
 
 // ============================================

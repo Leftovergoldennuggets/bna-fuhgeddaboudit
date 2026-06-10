@@ -102,60 +102,72 @@
                 <div class="step-content step-hero">
                     <span class="step-tag">Autonomous Vehicles</span>
                     <h1>Every Waymo Crash, Mapped</h1>
-                    <p>The federal government requires companies operating self-driving cars to report crashes that result in injury, airbag deployment, or significant property damage. This is every reported Waymo crash on record.</p>
-                    <p class="step-byline">By Anders Eidesvik and Kate Li</p>
-                    <p class="step-purpose">Self-driving cars are rapidly expanding across American cities. This project makes the federal crash data accessible so the public can see for themselves what the safety record looks like.</p>
-                    <div class="step-meta">
-                        <!-- data-stat="meta.date_range_start" tells JS to look up this value
-                             in site-data.json and insert it here. The "--" is a placeholder
-                             shown before the data loads.
-                             data-format="yearmonth" tells JS to format the date nicely (e.g. "Sep 2020"). -->
-                        <span>Covering <span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></span>
-                        <!-- data-format="date" formats as a full date like "Feb 23, 2026" -->
-                        <span>Updated <span data-stat="meta.generated_at" data-format="date">--</span></span>
+                    <p class="step-dek">Self-driving cars must report every crash to federal regulators — from parking-lot taps to fatal collisions. This is the complete public record of Waymo's driverless miles.</p>
+                    <!-- Compact stat strip: the three numbers that frame the story -->
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="hero-stat-number" data-stat="overview.total_crashes" data-animate="true">--</span>
+                            <span class="hero-stat-label">reported crashes</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number" data-stat="overview.cities_count">--</span>
+                            <span class="hero-stat-label">metro areas</span>
+                        </div>
+                        <div class="hero-stat">
+                            <span class="hero-stat-number" data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span>
+                            <span class="hero-stat-label">driverless miles</span>
+                        </div>
                     </div>
-                    <p class="step-context">Fully driverless operation — no human behind the wheel. The majority of incidents occurred from 2023 onward as Waymo expanded commercial service.</p>
-                    <p class="step-freshness">The newest <span data-stat="overview.preliminary_count">--</span> crashes come from federal reports filed through <span data-stat="meta.federal_data_through_label">--</span> and are shown at city-level accuracy until Waymo's next quarterly release adds exact locations (currently through <span data-stat="meta.hub_data_through_label">--</span>).</p>
+                    <p class="hero-meta">By Anders Eidesvik and Kate Li<br><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> – <span data-stat="meta.date_range_end" data-format="yearmonth">--</span> &middot; Updated <span data-stat="meta.generated_at" data-format="date">--</span></p>
+                    <p class="hero-datanote"><span class="pulse-dot" aria-hidden="true"></span>Living dataset, updates weekly &middot; <a href="methodology.html">How it works</a></p>
                 </div>
             </div>
 
             <!-- data-step="us-overview" — similar to above: triggers the US-wide map view -->
             <div class="scrolly-step" data-step="us-overview">
                 <div class="step-content">
-                    <h2>The National Picture</h2>
-                    <!-- data-stat works the same as above — JS fills in the number from site-data.json -->
-                    <p>Waymo's driverless service is now open to the public in <strong><span data-stat="overview.public_metros_count">--</span> metropolitan areas</strong>, and its vehicles have logged crashes in <strong><span data-stat="overview.cities_count">--</span> metros</strong> across the United States. Hollow circles on the map show announced markets where Waymo is preparing to launch.</p>
-                    <p>Through the NHTSA Standing General Order, <strong><span data-stat="overview.total_crashes">--</span> crashes</strong> have been reported during driverless operation — everything from freeway collisions to parking lot fender-benders.</p>
-                    <!-- data-format="millions" formats big numbers like "56.7 million" -->
-                    <p>Over the same period, Waymo has driven more than <strong><span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span></strong> rider-only miles.</p>
-                    <p>Waymo's operations have grown rapidly — from 1 million rider-only miles in January 2023 to over <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> today. The vast majority of crashes in this dataset occurred during this period of rapid expansion.</p>
+                    <span class="step-kicker">01 &middot; The national picture</span>
+                    <div class="stat-callout">
+                        <span class="stat-callout-number" data-stat="overview.public_metros_count">--</span>
+                        <span class="stat-callout-label">metros with public driverless service</span>
+                    </div>
+                    <p>Filled circles are sized by crash count. Hollow circles mark the next wave — cities where Waymo is preparing to launch.</p>
                 </div>
             </div>
 
             <!-- Step 3: Zoom to California -->
             <div class="scrolly-step" data-step="zoom-california">
                 <div class="step-content">
-                    <h2>California: The Testing Ground</h2>
-                    <p>More crashes have been reported in the San Francisco Bay Area than anywhere else — <strong><span data-stat="city_breakdown.San Francisco.percentage">--</span>%</strong> of the national total. Waymo began commercial operations in San Francisco in 2023, later than Phoenix but in a denser and more complex traffic environment.</p>
-                    <p>Within each city, the number of reported crashes reflects how many miles Waymo has driven there. More miles means more incidents reported.</p>
+                    <span class="step-kicker">02 &middot; Where it concentrates</span>
+                    <div class="stat-callout">
+                        <span class="stat-callout-number"><span data-stat="city_breakdown.San Francisco.percentage">--</span>%</span>
+                        <span class="stat-callout-label">of all crashes are in the San Francisco Bay Area</span>
+                    </div>
+                    <p>Waymo's densest, longest-running urban market. More miles in harder traffic means more reports — that's exposure, not necessarily risk.</p>
                 </div>
             </div>
 
             <!-- Step 4: SF Heatmap -->
             <div class="scrolly-step" data-step="sf-heatmap">
                 <div class="step-content">
-                    <h2>Where Crashes Cluster</h2>
-                    <p><strong><span data-stat="city_breakdown.San Francisco.count">--</span> crashes</strong> have been reported in the San Francisco area. The cluster markers show where they concentrate — intersections, busy corridors, and commercial areas.</p>
-                    <p>Click any cluster to zoom in and see individual incidents. Most of these dots represent low-speed events: a tap at a stoplight, a parking lot bump, another vehicle backing into the Waymo.</p>
+                    <span class="step-kicker">03 &middot; Street level</span>
+                    <div class="stat-callout">
+                        <span class="stat-callout-number" data-stat="city_breakdown.San Francisco.count">--</span>
+                        <span class="stat-callout-label">crashes across the Bay Area</span>
+                    </div>
+                    <p>The clusters trace busy corridors and intersections. Click one and keep zooming — most dots are low-speed events: a tap at a stoplight, a parking-lot bump.</p>
                 </div>
             </div>
 
             <!-- Step 5: Serious incidents -->
             <div class="scrolly-step" data-step="sf-serious">
                 <div class="step-content">
-                    <h2>The Most Serious Incidents</h2>
-                    <p>Of <span data-stat="overview.total_crashes">--</span> reported crashes nationwide, the vast majority resulted in no injuries at all. Only <strong><span data-stat="severity.moderate_plus.count">--</span></strong> involved moderate, serious, or fatal injuries — and <strong><span data-stat="severity.sf_moderate_plus.count">--</span></strong> of those occurred here in San Francisco.</p>
-                    <p class="step-note">The red markers show where those incidents occurred. Click any one to read the full federal crash narrative.</p>
+                    <span class="step-kicker">04 &middot; The serious ones</span>
+                    <div class="stat-callout">
+                        <span class="stat-callout-number" data-stat="severity.moderate_plus.count">--</span>
+                        <span class="stat-callout-label">crashes caused moderate or worse injuries &mdash; <span data-stat="severity.sf_moderate_plus.count">--</span> of them here</span>
+                    </div>
+                    <p class="step-note">Each red marker is one of them. Click to read the full federal crash narrative.</p>
                 </div>
             </div>
         </div>
@@ -239,7 +251,13 @@
             <h2 class="section-title">What Happens in These Crashes?</h2>
             <p class="section-subtitle">Understanding the circumstances behind <span data-stat="overview.total_crashes">--</span> reported incidents</p>
 
-            <p class="section-intro">The word "crash" conjures images of high-speed collisions. The reality in this dataset is very different.</p>
+            <p class="section-intro">The word "crash" conjures images of high-speed collisions. The reality in this dataset is very different. Here is every crash — one square each, colored by the worst injury reported:</p>
+
+            <!-- Waffle: one square per crash, built by app.js from crash_data.json -->
+            <div class="waffle-block">
+                <div class="waffle-grid" id="severity-waffle" role="img" aria-label="Grid showing every reported crash as one square, colored by worst injury: the vast majority caused no injury, a small share caused minor injuries, and a handful caused moderate, serious, or fatal injuries"></div>
+                <div class="waffle-legend" id="severity-waffle-legend"></div>
+            </div>
 
             <p class="section-intro"><strong>In <span data-stat="crash_circumstances.speed_stats.stopped_pct">--</span>% of reported crashes with speed data, the Waymo vehicle was traveling at 0 mph at the time of contact</strong> — and <span data-stat="crash_circumstances.speed_stats.under_5mph_pct">--</span>% were at 5 mph or less.</p>
 
