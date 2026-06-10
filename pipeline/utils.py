@@ -296,6 +296,40 @@ def clean_coordinate(val):
         return None
 
 
+def clean_zip(value):
+    """Normalize a zip code to 5 digits, or None.
+
+    Handles pandas float artifacts ("94103.0") and NHTSA's redaction
+    placeholder ("[MAY CONTAIN PERSONALLY IDENTIFIABLE INFORMATION]").
+    """
+    if pd.isna(value):
+        return None
+    z = str(value).strip()
+    if len(z) >= 5 and z[:5].isdigit():
+        return z[:5]
+    return None
+
+
+def geocode_cache_key(address, city, state, metro_code):
+    """Cache key for a street-address geocode.
+
+    v2 keys include the crash's ACTUAL city and state. The v1 scheme keyed
+    by metro code, which made the geocoder search suburb addresses in the
+    metro's core city (e.g. a Tempe intersection searched as "Phoenix, AZ")
+    — sometimes silently matching a same-named street in the wrong city.
+    """
+    city = normalize_place(city)
+    state = normalize_state(state)
+    if city and state:
+        return f"v2|{address}|{city}|{state}"
+    return f"v2|{address}|{metro_code}"
+
+
+def reverse_cache_key(lat, lon):
+    """Cache key for a reverse-geocode (coordinates → zip) lookup."""
+    return f"__rev__{lat:.4f},{lon:.4f}"
+
+
 def validate_columns(df, required, source_name):
     """Fail fast with a clear message when an input file changes format."""
     missing = [c for c in required if c not in df.columns]

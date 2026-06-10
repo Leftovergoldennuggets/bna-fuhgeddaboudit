@@ -2007,3 +2007,38 @@ a:hover {
         height: 6px;
     }
 }
+
+/* --- City card landmark drawings --- */
+.city-card-art {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-accent);
+    opacity: 0.75;
+}
+
+.city-card-art svg {
+    width: 120px;
+    height: 44px;
+}
+
+/* --- FAQ expand-all button --- */
+.faq-expand-all {
+    display: inline-block;
+    margin-bottom: var(--spacing-sm);
+    padding: 0.4rem 0.9rem;
+    background: none;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.faq-expand-all:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}

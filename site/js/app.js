@@ -65,6 +65,77 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 // ============================================
+// City Card Artwork — tiny landmark line drawings
+// ============================================
+// One hand-drawn SVG per metro (120×44 grid, stroke-only, drawn in the
+// site's accent color). Each picks one or two landmarks readable at
+// small size rather than a literal skyline.
+
+const CITY_ART = {
+    SAN_FRANCISCO: `
+        <path d="M30 40 V14 M38 40 V14 M30 14 H38 M30 21 H38 M30 28 H38"/>
+        <path d="M8 26 Q19 14 30 14 M38 14 Q56 24 72 32"/>
+        <path d="M88 40 L95 11 L102 40 M95 11 V6 M91 28 H99"/>`,
+    PHOENIX: `
+        <circle cx="98" cy="13" r="6"/>
+        <path d="M32 40 V13 M32 25 H25 V16 M32 29 H39 V20"/>
+        <path d="M56 40 L61 31 H77 L82 40 M64 31 V26 H74 V31"/>`,
+    LOS_ANGELES: `
+        <path d="M28 40 C26 30 27 23 30 16"/>
+        <path d="M30 16 C24 13 18 13 14 17 M30 16 C27 10 22 7 17 8 M30 16 C35 10 40 8 44 10 M30 16 C36 13 42 14 45 18"/>
+        <path d="M66 40 V28 H76 V40 M82 40 V20 H92 V40 M98 40 V30 H106 V40"/>`,
+    AUSTIN: `
+        <path d="M26 40 V31 H52 V40 M30 31 Q39 17 48 31 M39 19 V11"/>
+        <path d="M70 40 V18 L77 11 L84 18 V40 M77 11 V6"/>`,
+    ATLANTA: `
+        <path d="M38 40 V17 L45 10 L52 17 V40 M45 10 V3"/>
+        <path d="M62 40 V25 H72 V40 M78 40 V29 H88 V40"/>`,
+    MIAMI: `
+        <path d="M24 40 C22 31 23 25 26 19"/>
+        <path d="M26 19 C21 16 16 16 12 19 M26 19 C23 13 19 11 15 12 M26 19 C31 13 36 12 39 14"/>
+        <path d="M56 40 V25 H61 V17 H69 V25 H74 V40 M65 17 V10"/>
+        <path d="M84 35 Q90 29 96 35 Q102 41 108 35"/>`,
+    DALLAS: `
+        <path d="M34 40 V19"/>
+        <circle cx="34" cy="13" r="5.5"/>
+        <path d="M64 40 V16 L88 24 V40 M72 40 V19 M80 40 V21"/>`,
+    HOUSTON: `
+        <path d="M28 40 V23 H38 V40 M44 40 V12 H56 V40 M48 12 V7 M62 40 V26 H72 V40 M78 40 V18 H88 V40"/>`,
+    SAN_ANTONIO: `
+        <path d="M36 40 V26 H45 Q48 26 49 21 Q52 15 60 15 Q68 15 71 21 Q72 26 75 26 H84 V40"/>
+        <path d="M55 40 V33 Q60 27 65 33 V40"/>`,
+    NASHVILLE: `
+        <path d="M50 40 V22 H70 V40 M53 22 V7 M67 22 V7 M53 22 Q60 14 67 22"/>
+        <path d="M82 40 V30 H92 V40"/>`,
+    WASHINGTON_DC: `
+        <path d="M28 40 V13 L31 7 L34 13 V40"/>
+        <path d="M56 40 V33 H96 V40 M62 33 Q76 15 90 33 M76 18 V10"/>`,
+    DENVER: `
+        <path d="M8 40 L26 16 L38 30 L52 12 L66 30 L76 22 L88 34"/>
+        <path d="M94 40 V29 H102 V40 M106 40 V25 H112 V40"/>`,
+    PHILADELPHIA: `
+        <path d="M52 40 V17 H68 V40 M52 17 L60 6 L68 17 M60 6 V2"/>
+        <circle cx="60" cy="25" r="3.5"/>
+        <path d="M32 40 V28 H42 V40 M78 40 V24 H88 V40"/>`,
+    ORLANDO: `
+        <circle cx="44" cy="21" r="12"/>
+        <path d="M44 9 V33 M32 21 H56 M36 13 L52 29 M52 13 L36 29 M37 40 L44 22 L51 40"/>
+        <path d="M86 40 C84 32 85 27 88 22 M88 22 C84 19 80 19 77 21 M88 22 C92 17 96 16 99 18"/>`,
+    OTHER: `
+        <path d="M28 37 H38 M48 37 H58 M68 37 H78"/>
+        <circle cx="96" cy="19" r="5"/>
+        <path d="M96 24 V32"/>`,
+};
+
+/** Wrap a metro's art paths in a consistently-styled SVG. */
+function cityArtSVG(code) {
+    const art = CITY_ART[code] || CITY_ART.OTHER;
+    return `<svg viewBox="0 0 120 44" fill="none" stroke="currentColor"
+        stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+        aria-hidden="true"><path d="M8 40 H112" opacity="0.45"/>${art}</svg>`;
+}
+
+// ============================================
 // Dynamic City Cards
 // ============================================
 
@@ -135,6 +206,7 @@ function buildCityCards(stats) {
         // Set the card's inner HTML using a template literal with embedded variables
         // .toLocaleString("en-US") formats 1123 as "1,123" with commas
         card.innerHTML = `
+            <div class="city-card-art">${cityArtSVG(info.code)}</div>
             <h3 class="city-card-name">${cityName}</h3>
             <div class="city-card-count">${info.count.toLocaleString("en-US")}</div>
             <div class="city-card-label">crashes (${info.percentage}%)</div>

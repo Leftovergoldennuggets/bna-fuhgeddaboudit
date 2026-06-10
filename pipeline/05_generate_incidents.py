@@ -36,6 +36,7 @@ from pipeline.config import (
 )
 from pipeline.utils import (
     is_moderate_plus, clean_coordinate, normalize_place, normalize_state,
+    geocode_cache_key,
 )
 
 
@@ -122,7 +123,8 @@ def main():
             address = row.get("Location Address / Description")
             cached = None
             if pd.notna(address) and str(address).strip():
-                cached = geocode_cache.get(f"{address}|{city_code}")
+                cached = geocode_cache.get(geocode_cache_key(
+                    address, row.get("City"), row.get("State"), city_code))
             if cached is not None:
                 lat, lon = cached["lat"], cached["lon"]
                 geocoded_count += 1

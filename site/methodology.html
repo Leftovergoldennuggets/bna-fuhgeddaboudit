@@ -97,11 +97,12 @@
             </ul>
 
             <h3>Step 4: Generate Map Data</h3>
-            <p>Each crash record is geocoded and converted into a simplified JSON object for the Leaflet map. Every marker carries one of three location-precision tiers, flagged in its popup:</p>
+            <p>Each crash record is geocoded and converted into a simplified JSON object for the Leaflet map. Geocoding queries use the crash's own city from the federal report (a Tempe intersection is searched in Tempe, not metro-core Phoenix), and results must land near that city's centroid to be accepted. Every marker carries a location-precision tier, flagged in its popup:</p>
             <ol>
-                <li><strong>Street level:</strong> For crashes with a street address from Waymo's Hub release, we geocode with OpenStreetMap's Nominatim using multiple strategies (intersection parsing like "7th Street &amp; Market Street", then direct address lookup), sanity-checked against the expected metro.</li>
-                <li><strong>City level:</strong> Recent crashes not yet covered by the Hub have no public address (NHTSA redacts them), so they're placed near the centroid of the city NHTSA names, with a small random offset.</li>
-                <li><strong>Metro center:</strong> The rare last resort when even the city can't be geocoded.</li>
+                <li><strong>Street level:</strong> the full intersection or address from Waymo's Hub release matched (e.g. "7th Street &amp; Market Street").</li>
+                <li><strong>Road level:</strong> only one of the two named streets matched — the marker sits on the right road, but the exact point along it is approximate.</li>
+                <li><strong>City level:</strong> recent crashes not yet covered by the Hub have no public address (NHTSA redacts them), so they're placed near the centroid of the city NHTSA names, with a small random offset.</li>
+                <li><strong>Metro center:</strong> the rare last resort when even the city can't be geocoded.</li>
             </ol>
             <p>Results are cached locally to avoid repeated API calls. Currently <span data-stat="geocoding.accuracy_pct">--</span>% of mapped driverless crashes (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location; the share rises automatically each time a quarterly Hub release adds addresses for recent crashes. Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
 

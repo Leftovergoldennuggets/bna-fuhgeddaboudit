@@ -605,6 +605,9 @@ const MapController = (function () {
             const place = crash.city_name ? ` (placed near ${crash.city_name})` : "";
             html += `<br><em class="popup-estimated">Approximate location${place} — exact address not yet public</em>`;
         }
+        if (crash.location_precision === "road") {
+            html += `<br><em class="popup-estimated">Placed on the named street — exact point along it is approximate</em>`;
+        }
         if (crash.in_hub === false) {
             html += `<br><em class="popup-estimated">Recent federal report — details will be refined when Waymo's next quarterly data release covers this period</em>`;
         }

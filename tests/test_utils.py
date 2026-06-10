@@ -219,3 +219,48 @@ class TestValidateColumns:
         df = pd.DataFrame({"a": [1]})
         with pytest.raises(SystemExit, match="missing expected column"):
             validate_columns(df, ["a", "zap"], "test source")
+
+
+# ---------------------------------------------------------------------------
+# Zip codes & geocode cache keys
+# ---------------------------------------------------------------------------
+
+from pipeline.utils import clean_zip, geocode_cache_key, reverse_cache_key
+
+
+class TestCleanZip:
+    def test_plain(self):
+        assert clean_zip("94110") == "94110"
+
+    def test_pandas_float_artifact(self):
+        assert clean_zip(94103.0) == "94103"
+        assert clean_zip("94103.0") == "94103"
+
+    def test_zip_plus_four(self):
+        assert clean_zip("94110-1234") == "94110"
+
+    def test_nhtsa_redaction_placeholder(self):
+        assert clean_zip("[MAY CONTAIN PERSONALLY IDENTIFIABLE INFORMATION]") is None
+
+    def test_garbage(self):
+        assert clean_zip("nan") is None
+        assert clean_zip("") is None
+        assert clean_zip(None) is None
+        assert clean_zip(float("nan")) is None
+
+
+class TestGeocodeCacheKey:
+    def test_uses_actual_city_and_state(self):
+        key = geocode_cache_key("Mill Ave & 5th St", "Tempe", "AZ", "PHOENIX")
+        assert key == "v2|Mill Ave & 5th St|Tempe|AZ"
+
+    def test_normalizes_state_names(self):
+        key = geocode_cache_key("Main St", "Tempe", "Arizona", "PHOENIX")
+        assert key == "v2|Main St|Tempe|AZ"
+
+    def test_falls_back_to_metro_when_city_missing(self):
+        key = geocode_cache_key("Main St", None, None, "PHOENIX")
+        assert key == "v2|Main St|PHOENIX"
+
+    def test_reverse_key_rounding(self):
+        assert reverse_cache_key(37.123456, -122.654321) == "__rev__37.1235,-122.6543"

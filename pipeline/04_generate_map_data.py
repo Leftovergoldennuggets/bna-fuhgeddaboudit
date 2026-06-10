@@ -49,6 +49,7 @@ from pipeline.config import (
 from pipeline.utils import (
     parse_time, categorize_time_period, extract_location_type,
     clean_coordinate, severity_level, normalize_place, normalize_state,
+    clean_zip, geocode_cache_key, reverse_cache_key,
 )
 
 
@@ -120,23 +121,37 @@ def split_intersection(address):
     return address, None
 
 
-def build_geocode_queries(address, city_code):
-    """Build up to 3 geocoding query strategies for one address."""
+def build_geocode_queries(address, city, state, metro_code):
+    """Build geocoding query strategies for one address.
+
+    Returns a list of (query, precision) tuples tried in order:
+      "street"  — the full intersection or address (best)
+      "road"    — a single named street (the point lands somewhere along
+                  the right road, but not necessarily at the crash spot)
+
+    Queries use the crash's ACTUAL city from the federal report; the
+    metro core city is only a fallback when the city field is missing.
+    """
     cleaned = clean_address(address)
     if not cleaned:
         return []
 
-    city_info = CITIES.get(city_code, {})
-    suffix = f", {city_info.get('name', '')}, {city_info.get('state', '')}"
+    city = normalize_place(city)
+    state = normalize_state(state)
+    if city and state:
+        suffix = f", {city}, {state}"
+    else:
+        info = CITIES.get(metro_code, {})
+        suffix = f", {info.get('name', '')}, {info.get('state', '')}"
 
     street_a, street_b = split_intersection(cleaned)
     if street_b:
         return [
-            f"{street_a} & {street_b}{suffix}",
-            f"{street_a}{suffix}",
-            f"{street_b}{suffix}",
+            (f"{street_a} & {street_b}{suffix}", "street"),
+            (f"{street_a}{suffix}", "road"),
+            (f"{street_b}{suffix}", "road"),
         ]
-    return [f"{cleaned}{suffix}"]
+    return [(f"{cleaned}{suffix}", "street")]
 
 
 def make_geocoder():
@@ -144,16 +159,21 @@ def make_geocoder():
     return Nominatim(user_agent="waymo-crash-map (github.com/leftovergoldennuggets/bna-fuhgeddaboudit)", timeout=10)
 
 
-def try_geocode(geocoder, queries, expected_lat, expected_lon, max_offset=0.5):
-    """Try queries in order; accept the first result near the expected point."""
-    for query in queries:
+def try_geocode(geocoder, queries, expected_lat, expected_lon, max_offset):
+    """Try queries in order; accept the first result near the expected point.
+
+    Returns {"lat", "lon", "precision"} or None. The sanity radius is
+    tight when we know the actual city's centroid (~0.25° ≈ 17 miles)
+    so a same-named street in a neighboring city gets rejected.
+    """
+    for query, precision in queries:
         try:
             result = geocoder.geocode(query)
             time.sleep(1.1)  # Nominatim usage policy: max 1 request/second
             if result:
                 lat, lon = result.latitude, result.longitude
                 if abs(lat - expected_lat) < max_offset and abs(lon - expected_lon) < max_offset:
-                    return {"lat": round(lat, 6), "lon": round(lon, 6)}
+                    return {"lat": round(lat, 6), "lon": round(lon, 6), "precision": precision}
         except (GeocoderTimedOut, GeocoderServiceError):
             time.sleep(2.0)
             continue
@@ -171,13 +191,15 @@ def geocode_addresses(df, cache):
         if pd.isna(address) or not str(address).strip():
             continue
         city_code = row.get("Location", "")
-        cache_key = f"{address}|{city_code}"
+        city = row.get("City")
+        state = row.get("State")
+        cache_key = geocode_cache_key(address, city, state, city_code)
         if cache_key in seen or cache_key in cache:
             continue
         seen.add(cache_key)
-        queries = build_geocode_queries(address, city_code)
+        queries = build_geocode_queries(address, city, state, city_code)
         if queries and city_code in CITIES:
-            to_geocode.append((cache_key, queries, city_code))
+            to_geocode.append((cache_key, queries, city_code, normalize_place(city), normalize_state(state)))
 
     if not to_geocode:
         print("  All addresses already geocoded — no new lookups needed!")
@@ -187,9 +209,16 @@ def geocode_addresses(df, cache):
           f"(~{len(to_geocode) * 2 // 60}-{len(to_geocode) * 3 // 60} min)...")
 
     success = failed = 0
-    for i, (cache_key, queries, city_code) in enumerate(to_geocode):
-        info = CITIES[city_code]
-        result = try_geocode(geocoder, queries, info["lat"], info["lon"])
+    for i, (cache_key, queries, city_code, city, state) in enumerate(to_geocode):
+        # Sanity-check against the crash's own city when its centroid is
+        # cached (geocode_cities runs first); fall back to the metro center.
+        city_hit = cache.get(f"__city__{city}|{state}") if city and state else None
+        if city_hit:
+            expected_lat, expected_lon, max_offset = city_hit["lat"], city_hit["lon"], 0.25
+        else:
+            info = CITIES[city_code]
+            expected_lat, expected_lon, max_offset = info["lat"], info["lon"], 0.5
+        result = try_geocode(geocoder, queries, expected_lat, expected_lon, max_offset)
         cache[cache_key] = result
         if result:
             success += 1
@@ -205,17 +234,16 @@ def geocode_addresses(df, cache):
 
 
 def geocode_cities(df, cache):
-    """Geocode city centroids for rows without a street address.
+    """Geocode city centroids for every city in the dataset.
 
-    NHTSA redacts street addresses, so recent crashes not yet enriched by
-    the hub can only be placed at city level. One lookup per unique city.
+    Used two ways: as the placement for crashes whose street address
+    NHTSA redacts, and as the sanity anchor when geocoding street
+    addresses. One lookup per unique city, cached forever.
     """
     geocoder = make_geocoder()
 
     needed = set()
-    no_address = df[df["Location Address / Description"].isna()
-                    | (df["Location Address / Description"].astype(str).str.strip() == "")]
-    for _, row in no_address.iterrows():
+    for _, row in df.iterrows():
         city = normalize_place(row.get("City"))
         state = normalize_state(row.get("State"))
         if city and state:
@@ -224,6 +252,7 @@ def geocode_cities(df, cache):
     to_geocode = [(c, s) for c, s in sorted(needed) if f"__city__{c}|{s}" not in cache]
     if not to_geocode:
         return cache
+
 
     print(f"  Geocoding {len(to_geocode)} city centroid(s)...")
     for city, state in to_geocode:
@@ -273,9 +302,19 @@ def main():
     print()
     print("Geocoding...")
     cache = load_geocode_cache()
+    # Retire v1 cache entries (keyed by metro instead of the crash's
+    # actual city — see geocode_cache_key). Everything re-geocodes once
+    # under the v2 scheme and is cached again.
+    legacy = [k for k in cache
+              if not (k.startswith("v2|") or k.startswith("__city__") or k.startswith("__rev__"))]
+    if legacy:
+        print(f"  Purging {len(legacy)} legacy (v1) cache entries — addresses "
+              f"re-geocode once with their actual city")
+        for k in legacy:
+            del cache[k]
     cache_before = len(cache)
+    cache = geocode_cities(df, cache)      # city centroids first: they anchor the sanity checks
     cache = geocode_addresses(df, cache)
-    cache = geocode_cities(df, cache)
     save_geocode_cache(cache)
     if len(cache) > cache_before:
         print(f"  Cache updated: {len(cache) - cache_before} new entries (total: {len(cache)})")
@@ -286,7 +325,8 @@ def main():
 
     print("Building JSON records...")
     map_data = []
-    precision_counts = {"exact": 0, "street": 0, "city": 0, "metro": 0, "skipped": 0}
+    pending_zip = []  # (record, hub_zip) — zips finalized after the reverse pass
+    precision_counts = {"exact": 0, "street": 0, "road": 0, "city": 0, "metro": 0, "skipped": 0}
 
     for _, row in df.iterrows():
         lat, lon = row["_lat"], row["_lon"]
@@ -299,10 +339,11 @@ def main():
             # Street-level geocode (hub-enriched rows with an address)
             address = row.get("Location Address / Description")
             if pd.notna(address) and str(address).strip():
-                cached = cache.get(f"{address}|{city_code}")
+                cached = cache.get(geocode_cache_key(
+                    address, row.get("City"), row.get("State"), city_code))
                 if cached is not None:
                     lat, lon = cached["lat"], cached["lon"]
-                    location_precision = "street"
+                    location_precision = cached.get("precision", "street")
 
         if location_precision is None:
             # City-level geocode (NHTSA redacts addresses)
@@ -358,11 +399,14 @@ def main():
             except (ValueError, TypeError):
                 pass
 
-        zip_code = text_or_none(row.get("Zip Code"))
-        if zip_code and (len(zip_code) < 5 or not zip_code[:5].isdigit()):
-            zip_code = None
-        elif zip_code:
-            zip_code = zip_code[:5]
+        # Zip code: Waymo's hub publishes it; NHTSA redacts its own.
+        # After the merge the hub's column is "Zip Code_hub" for matched
+        # rows (NHTSA's redacted "Zip Code" keeps the original name) and
+        # plain "Zip Code" only for the two hub-only pre-SGO rows.
+        if row.get("record_source") == "hub_only":
+            hub_zip = clean_zip(row.get("Zip Code"))
+        else:
+            hub_zip = clean_zip(row.get("Zip Code_hub"))
 
         record = {
             "lat": round(float(lat), 6),
@@ -392,13 +436,64 @@ def main():
             "speed_mph": speed_mph,
             "injury_severity": text_or_none(row.get("Highest Injury Severity Alleged")),
             "narrative": text_or_none(row.get("Narrative")),
-            "zip_code": zip_code,
+            "zip_code": hub_zip,
         }
         map_data.append(record)
+        pending_zip.append((record, hub_zip))
 
     print(f"  Total records: {len(map_data)}")
     for tier, count in precision_counts.items():
         print(f"    {tier}: {count}")
+
+    # -----------------------------------------------------------------------
+    # REVERSE PASS: coordinates → zip, for two purposes
+    #   1. Fill zips the hub didn't publish (street/road-tier markers)
+    #   2. Audit: does each marker actually sit in the zip the federal
+    #      record says? Gives a published accuracy number instead of an
+    #      assumption. One lookup per unique coordinate, cached forever.
+    # -----------------------------------------------------------------------
+    print()
+    print("Reverse-geocoding zips (fill + placement audit)...")
+    precise = [(rec, hz) for rec, hz in pending_zip
+               if rec["location_precision"] in ("street", "road", "exact")]
+    needed_coords = sorted({(rec["lat"], rec["lon"]) for rec, _ in precise
+                            if reverse_cache_key(rec["lat"], rec["lon"]) not in cache})
+    if needed_coords:
+        print(f"  {len(needed_coords)} new coordinate lookups (~{len(needed_coords) * 12 // 600} min)...")
+        geocoder = make_geocoder()
+        for i, (lat, lon) in enumerate(needed_coords):
+            postcode = None
+            try:
+                hit = geocoder.reverse((lat, lon), exactly_one=True, zoom=18)
+                time.sleep(1.1)
+                if hit:
+                    postcode = clean_zip((hit.raw.get("address") or {}).get("postcode"))
+            except (GeocoderTimedOut, GeocoderServiceError):
+                time.sleep(2.0)
+            cache[reverse_cache_key(lat, lon)] = postcode
+            if (i + 1) % 100 == 0:
+                print(f"  Progress: {i + 1}/{len(needed_coords)}")
+                save_geocode_cache(cache)
+        save_geocode_cache(cache)
+
+    zip_filled = zip_checked = zip_matched = 0
+    for rec, hub_zip in precise:
+        reverse_zip = cache.get(reverse_cache_key(rec["lat"], rec["lon"]))
+        if hub_zip and reverse_zip:
+            zip_checked += 1
+            if hub_zip == reverse_zip:
+                zip_matched += 1
+        if not hub_zip and reverse_zip:
+            rec["zip_code"] = reverse_zip
+            zip_filled += 1
+
+    with_zip = sum(1 for rec in map_data if rec["zip_code"])
+    print(f"  Zips: {with_zip}/{len(map_data)} records "
+          f"({zip_filled} filled from coordinates)")
+    if zip_checked:
+        print(f"  Placement audit: {zip_matched}/{zip_checked} street-level markers "
+              f"({round(zip_matched / zip_checked * 100, 1)}%) sit in the zip the "
+              f"federal record reports")
 
     print()
     print("Saving crash_data.json...")
@@ -413,6 +508,7 @@ def main():
     total_mapped = len(driverless)
     estimated = sum(1 for r in driverless if r["is_estimated_location"])
     accurate = total_mapped - estimated
+    dl_with_zip = sum(1 for r in driverless if r["zip_code"])
 
     city_geo = {}
     for entry in driverless:
@@ -433,6 +529,10 @@ def main():
         "estimated": estimated,
         "accuracy_pct": round(accurate / total_mapped * 100, 1) if total_mapped else 0,
         "by_city": city_accuracy,
+        "zip_coverage": dl_with_zip,
+        "zip_coverage_pct": round(dl_with_zip / total_mapped * 100, 1) if total_mapped else 0,
+        "zip_checked": zip_checked,
+        "zip_match_pct": round(zip_matched / zip_checked * 100, 1) if zip_checked else 0,
     }
 
     print()

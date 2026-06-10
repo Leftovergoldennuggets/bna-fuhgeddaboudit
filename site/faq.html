@@ -39,6 +39,8 @@
 
             <p>Quick answers to common questions about this project and the data behind it. For a more detailed technical discussion, see our <a href="methodology.html">Methodology</a> page.</p>
 
+            <button id="faq-expand-all" class="faq-expand-all" aria-expanded="false">Expand all</button>
+
             <!-- FAQ Items -->
             <div class="faq-list">
 
@@ -252,18 +254,35 @@
 
     <!-- Inline script: FAQ accordion, mobile nav toggle, and dynamic data loading -->
     <script>
-        // FAQ accordion toggle — makes questions expandable/collapsible
+        // FAQ accordion toggle — each question opens/closes independently
         document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
-                const item = question.parentElement;
-                // Close all other FAQ items so only one is open at a time
-                document.querySelectorAll('.faq-item').forEach(other => {
-                    if (other !== item) other.classList.remove('open');
-                });
-                // Toggle this item open or closed
-                item.classList.toggle('open');
+                question.parentElement.classList.toggle('open');
+                syncExpandAllButton();
             });
         });
+
+        // Expand all / collapse all
+        const expandAllBtn = document.getElementById('faq-expand-all');
+
+        function syncExpandAllButton() {
+            if (!expandAllBtn) return;
+            const items = document.querySelectorAll('.faq-item');
+            const openItems = document.querySelectorAll('.faq-item.open');
+            const allOpen = openItems.length === items.length;
+            expandAllBtn.textContent = allOpen ? 'Collapse all' : 'Expand all';
+            expandAllBtn.setAttribute('aria-expanded', String(allOpen));
+        }
+
+        if (expandAllBtn) {
+            expandAllBtn.addEventListener('click', () => {
+                const items = document.querySelectorAll('.faq-item');
+                const allOpen = document.querySelectorAll('.faq-item.open').length === items.length;
+                items.forEach(item => item.classList.toggle('open', !allOpen));
+                syncExpandAllButton();
+            });
+            syncExpandAllButton();
+        }
 
         // Mobile hamburger toggle (same as about.html and methodology.html)
         const navToggle = document.querySelector('.nav-toggle');
