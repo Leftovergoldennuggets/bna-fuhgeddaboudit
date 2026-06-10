@@ -1,7 +1,7 @@
 {
-  "description": "Waymo rider-only mileage milestones compiled from press releases, public statements, and archived web pages by Anders Eidesvik. Manually updated when new milestones are announced.",
-  "methodology": "Waymo does not publish a historical time series of cumulative miles driven. These data points were assembled from official Waymo press releases, news articles, and snapshots of the Waymo Safety Impact Data Hub captured via the Wayback Machine. Each entry includes the original source URL for verification.",
-  "last_updated": "2026-03-08",
+  "description": "Waymo rider-only mileage milestones compiled from press releases, public statements, archived web pages, and Waymo Safety Impact Data Hub releases by Anders Eidesvik. Manually updated when new milestones are announced.",
+  "methodology": "Waymo does not publish a historical time series of cumulative miles driven. These data points were assembled from official Waymo press releases, news articles, Safety Impact Data Hub quarterly releases, and Wayback Machine snapshots. Each entry includes the original source URL for verification. Dating convention: figures are dated to the period they cover when the source specifies it (e.g., hub releases dated to their data cutoff); real-time milestone announcements are dated to the announcement day. Figures published without an as-of date are excluded, since Waymo announcements sometimes cite mileage totals that lag the announcement date by several months.",
+  "last_updated": "2026-06-09",
   "milestones": [
     {
       "date": "2023-01-31",
@@ -46,10 +46,16 @@
       "url": "https://x.com/Waymo/status/1945106097741664630"
     },
     {
-      "date": "2026-02-02",
-      "miles_millions": 127,
-      "source": "Waymo press release ($16B investment round)",
-      "url": "https://waymo.com/blog/2026/02/waymo-raises-usd16-billion-investment-round/"
+      "date": "2025-12-31",
+      "miles_millions": 170.71,
+      "source": "Waymo Safety Impact Data Hub CSV1, 202009-202512 release (rider-only miles through December 2025)",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202512-2022benchmark.csv"
+    },
+    {
+      "date": "2026-02-23",
+      "miles_millions": 200,
+      "source": "Waymo (X/Twitter post: 'Over 200 million fully autonomous miles')",
+      "url": "https://x.com/Waymo/status/2025979468620128257"
     }
   ]
 }

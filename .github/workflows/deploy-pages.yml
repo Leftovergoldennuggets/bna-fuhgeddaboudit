@@ -30,6 +30,7 @@ on:
     paths:
       - "site/**"
       - "data/web/**"
+      - "data/static/**"
 
   # Manual trigger
   workflow_dispatch:
