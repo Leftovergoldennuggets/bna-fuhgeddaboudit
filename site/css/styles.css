@@ -2037,3 +2037,62 @@ a:hover {
     border-color: var(--color-accent);
     color: var(--color-accent);
 }
+
+/* ============================================
+   Centered composition (June 2026)
+   Headers, intros, and single charts sit on a
+   centered axis; the page reads as one column.
+   ============================================ */
+
+.section-title,
+.section-subtitle {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-intro,
+.stats-footnote,
+.waffle-block,
+.waffle-legend,
+.explore-freshness {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.waffle-legend {
+    justify-content: center;
+}
+
+.explore-freshness,
+.section-intro {
+    text-align: center;
+}
+
+/* A lone chart in a row gets a centered, bounded stage instead of
+   stretching across the whole container */
+.chart-row {
+    justify-content: center;
+}
+
+.chart-container:only-child {
+    max-width: 820px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.chart-title {
+    text-align: center;
+}
+
+.chart-note,
+.chart-source {
+    text-align: center;
+}
+
+/* Explore intro prompts: centered block, left-aligned list inside */
+.explore-prompts {
+    max-width: var(--content-width);
+    margin-left: auto;
+    margin-right: auto;
+}
