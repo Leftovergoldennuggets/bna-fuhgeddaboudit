@@ -46,6 +46,7 @@ const Explore = (function () {
         roadUser: null,             // null = "All" | "Pedestrian" | "Cyclist" | "Motorcycle"
         timeOfDay: null,            // null = "All" | "daytime" | "night" | "rush"
         zipCode: null,              // null = no zip filter | "94110" = filter by zip
+        includeSupervised: false,   // false = driverless only (the headline dataset)
     };
 
     // Muted color palette — severity drives the marker color (earth tones)
@@ -108,6 +109,16 @@ const Explore = (function () {
         }
         if (zipClearBtn) {
             zipClearBtn.addEventListener("click", clearZipSearch);
+        }
+
+        // Toggle for supervised test-driver crashes (off by default — the
+        // headline dataset covers driverless operations only)
+        const supervisedToggle = document.getElementById("supervised-toggle");
+        if (supervisedToggle) {
+            supervisedToggle.addEventListener("change", () => {
+                filters.includeSupervised = supervisedToggle.checked;
+                applyFilters();
+            });
         }
 
         console.log("[Explore] Initialized with", crashes.length, "crashes");
@@ -387,6 +398,11 @@ const Explore = (function () {
         allCrashes.forEach((crash, i) => {
             let show = true;  // Assume it passes until a filter rejects it
 
+            // Operation type: hide supervised test-driver crashes unless opted in
+            if (!filters.includeSupervised && crash.operation_type === "supervised") {
+                show = false;
+            }
+
             // City filter: if any cities are selected, only show crashes in those cities
             // .size = how many items are in the Set; .has() checks membership
             if (filters.cities.size > 0 && !filters.cities.has(crash.city)) {
@@ -408,9 +424,22 @@ const Explore = (function () {
                 show = false;
             }
 
-            // Road user filter: only show crashes involving the selected road user type
-            if (filters.roadUser && crash.crash_type !== filters.roadUser) {
-                show = false;
+            // Road user filter: match on the hub classification when present,
+            // otherwise fall back to NHTSA's "Crash With" (recent crashes
+            // aren't classified until Waymo's quarterly release).
+            if (filters.roadUser) {
+                const crashWithMap = {
+                    "Pedestrian": "Non-Motorist: Pedestrian",
+                    "Cyclist": "Non-Motorist: Cyclist",
+                    "Motorcycle": "Motorcycle",
+                };
+                const matchesType = crash.crash_type === filters.roadUser;
+                const matchesWith = !crash.crash_type || crash.crash_type === "Pending classification"
+                    ? crash.crash_with === crashWithMap[filters.roadUser]
+                    : false;
+                if (!matchesType && !matchesWith) {
+                    show = false;
+                }
             }
 
             // Zip code filter
@@ -418,7 +447,12 @@ const Explore = (function () {
                 show = false;
             }
 
-            // Time of day filter (derived from the crash hour)
+            // Time of day filter (derived from the crash hour).
+            // Crashes with no recorded time are excluded while a time
+            // filter is active — "daytime" shouldn't show unknown times.
+            if (filters.timeOfDay && crash.hour === null) {
+                show = false;
+            }
             if (filters.timeOfDay && crash.hour !== null) {
                 const h = crash.hour;  // Hour in 24-hour format (0–23)
                 // Daytime = 6am to 8pm
@@ -477,6 +511,9 @@ const Explore = (function () {
         filters.roadUser = null;
         filters.timeOfDay = null;
         filters.zipCode = null;
+        filters.includeSupervised = false;
+        const supervisedToggle = document.getElementById("supervised-toggle");
+        if (supervisedToggle) supervisedToggle.checked = false;
 
         // Reset zip code UI
         const zipInput = document.getElementById("zip-input");

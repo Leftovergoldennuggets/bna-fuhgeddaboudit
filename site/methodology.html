@@ -54,9 +54,15 @@
             <p>These files contain crashes from <em>all</em> AV companies (Waymo, Cruise, Zoox, Tesla FSD, etc.). We filter for Waymo-only crashes using the "Reporting Entity" field.</p>
 
             <h3>Waymo Safety Impact Data Hub</h3>
-            <p>Waymo publishes a curated dataset at their <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. This dataset (CSV2) includes crash type classifications, outcome group membership, and links to the corresponding SGO Report IDs.</p>
+            <p>Waymo publishes a curated dataset at their <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. This dataset (CSV2) covers crashes during driverless (rider-only) operation and includes exact incident dates, street-level addresses, and crash type classifications, linked to the corresponding SGO Report IDs.</p>
 
-            <p>The Hub data is updated approximately quarterly and currently covers <span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span>.</p>
+            <p>The Hub data is updated approximately quarterly with a lag of several months. It currently covers crashes through <strong><span data-stat="meta.hub_data_through_label">--</span></strong>, while the federal record runs through <strong><span data-stat="meta.federal_data_through_label">--</span></strong>.</p>
+
+            <h3>Which record do we trust as the base?</h3>
+            <p><strong>The federal record.</strong> An earlier version of this site built its dataset on top of Waymo's quarterly release, which meant crashes newer than that release were silently absent — at times nearly six months of incidents. We rebuilt the pipeline so that every NHTSA-reported crash enters the dataset the week it's published, and Waymo's release is used to <em>enrich</em> matched crashes with exact dates, street addresses, and classifications. Until that enrichment arrives, recent crashes carry month-precision dates and city-level map locations, and are labeled accordingly. As a transparency check, the two sources have historically matched nearly one-for-one for the periods both cover, and we re-verify the match on every update.</p>
+
+            <h3>Driverless vs. supervised operation</h3>
+            <p>NHTSA's data includes crashes from two different kinds of operation: <strong>driverless</strong> (no human behind the wheel — including vehicles with remote assistance, which still drive themselves) and <strong>supervised testing</strong> (a human safety driver in the driver's seat). All headline statistics on this site cover driverless operation only, for two reasons: it is the product the public actually rides in, and Waymo's published mileage — the denominator for any rate — covers only rider-only driving. The <span data-stat="overview.supervised_crashes">--</span> supervised-testing crashes on record are not discarded: they can be viewed in the Explore section via a dedicated toggle. We classify operation type from NHTSA's "Driver / Operator Type" field, treating any unrecognized value conservatively as supervised.</p>
 
             <!-- ========== PIPELINE ========== -->
             <h2>Data Processing Pipeline</h2>
@@ -74,7 +80,9 @@
                 <li><strong>Combine:</strong> The two NHTSA files are stacked into a single dataset.</li>
                 <li><strong>Deduplicate NHTSA:</strong> Some crashes have multiple report versions (updates filed over time). We keep only the latest version of each report, identified by the Report ID and Report Version fields.</li>
                 <li><strong>Deduplicate Hub:</strong> The Waymo Hub CSV occasionally contains duplicate rows for the same SGO Report ID. We keep the most complete record (prioritizing rows with the most boolean fields populated) and drop duplicates.</li>
-                <li><strong>Merge:</strong> We perform a left join of the Waymo Hub data with the NHTSA data, using the Hub's "SGO Report ID" column and NHTSA's "Report ID" column. The Hub is the base — all Hub rows are preserved, and NHTSA fields are added where a match exists.</li>
+                <li><strong>Merge:</strong> We perform a left join of the Waymo Hub data onto the NHTSA record, using NHTSA's "Report ID" and the Hub's "SGO Report ID". <em>NHTSA is the base</em> — every federal crash is preserved, and Hub fields (exact date, address, crash type) are added where a match exists. Two Hub-only crashes from 2020 (before SGO reporting began) are appended so they aren't lost.</li>
+                <li><strong>Classify operation:</strong> Each crash is labeled driverless or supervised-testing from NHTSA's "Driver / Operator Type" field.</li>
+                <li><strong>Resolve metro areas:</strong> Each crash is assigned to a metro using the Hub's county (when available) or NHTSA's city + state. The mapping covers every county and suburb in Waymo's operating areas (e.g., Tempe and Scottsdale → Phoenix; Mountain View and San Jose → San Francisco Bay Area; Glendale resolves by state, since both Arizona and California have one). Anything unrecognized lands in an "Other" bucket and triggers a loud warning in the pipeline log — crashes are never silently dropped.</li>
             </ol>
 
             <h3>Step 3: Compute Statistics</h3>
@@ -89,13 +97,13 @@
             </ul>
 
             <h3>Step 4: Generate Map Data</h3>
-            <p>Each crash record is geocoded and converted into a simplified JSON object for the Leaflet map. We use a multi-strategy geocoding approach with OpenStreetMap's Nominatim service:</p>
+            <p>Each crash record is geocoded and converted into a simplified JSON object for the Leaflet map. Every marker carries one of three location-precision tiers, flagged in its popup:</p>
             <ol>
-                <li><strong>Intersection parsing:</strong> Addresses like "7th Street &amp; Market Street" are split and geocoded as intersections.</li>
-                <li><strong>Street address lookup:</strong> Full addresses are geocoded directly.</li>
-                <li><strong>Fallback:</strong> If geocoding fails, the crash is placed at the city center and flagged as an approximate location.</li>
+                <li><strong>Street level:</strong> For crashes with a street address from Waymo's Hub release, we geocode with OpenStreetMap's Nominatim using multiple strategies (intersection parsing like "7th Street &amp; Market Street", then direct address lookup), sanity-checked against the expected metro.</li>
+                <li><strong>City level:</strong> Recent crashes not yet covered by the Hub have no public address (NHTSA redacts them), so they're placed near the centroid of the city NHTSA names, with a small random offset.</li>
+                <li><strong>Metro center:</strong> The rare last resort when even the city can't be geocoded.</li>
             </ol>
-            <p>Results are cached locally to avoid repeated API calls. The current geocoding success rate is <span data-stat="geocoding.accuracy_pct">--</span>% (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span> mapped crashes placed at their real street location). Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
+            <p>Results are cached locally to avoid repeated API calls. Currently <span data-stat="geocoding.accuracy_pct">--</span>% of mapped driverless crashes (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location; the share rises automatically each time a quarterly Hub release adds addresses for recent crashes. Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
 
             <h3>Step 5: Extract Serious Incidents</h3>
             <p>Crashes involving moderate, serious, or fatal injuries are extracted into a separate file with their full NHTSA narratives, enabling the detailed incident view on the map.</p>
@@ -119,7 +127,7 @@
 
             <h3>Crash Type Classification</h3>
 
-            <p>Crash types (e.g., "V2V F2R", "Pedestrian") come from Waymo's Safety Impact Data Hub, not from NHTSA. Waymo classifies each crash into one of 11 categories. We translate these codes into plain English for readability:</p>
+            <p>Crash types (e.g., "V2V F2R", "Pedestrian") come from Waymo's Safety Impact Data Hub, not from NHTSA, so they exist only for the <span data-stat="crash_types_meta.classified_count">--</span> crashes the Hub has covered so far; the most recent <span data-stat="crash_types_meta.unclassified_count">--</span> crashes are shown as "pending classification" until the next quarterly release. (For the vulnerable-road-user counts we additionally fall back to NHTSA's "Crash With" field so recent pedestrian/cyclist/motorcycle crashes aren't undercounted.) Waymo classifies each crash into one of 11 categories. We translate these codes into plain English for readability:</p>
 
             <ul>
                 <li><strong>V2V F2R</strong> → Rear-end collision</li>
@@ -139,11 +147,11 @@
             <h2>Limitations and Caveats</h2>
 
             <h3>Crash Locations and Geocoding</h3>
-            <p>NHTSA redacts GPS coordinates from public data, but provides street addresses for nearly all crashes in the "Location Address / Description" field. We geocode these addresses using OpenStreetMap's Nominatim service with a multi-strategy approach (intersection parsing, direct address lookup, city-bounded search).</p>
-            <p>Current accuracy: <strong><span data-stat="geocoding.accuracy_pct">--</span>% of crashes</strong> (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location. The remaining <span data-stat="geocoding.estimated">--</span> fall back to city-center placement and are flagged as approximate. Accuracy varies by city:</p>
+            <p>NHTSA redacts both GPS coordinates and street addresses from its public files. Street-level addresses come from Waymo's Safety Impact Data Hub release ("Location Address / Description"), which we geocode using OpenStreetMap's Nominatim service with a multi-strategy approach (intersection parsing, direct address lookup, metro sanity checks).</p>
+            <p>Current accuracy: <strong><span data-stat="geocoding.accuracy_pct">--</span>% of mapped driverless crashes</strong> (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location. The remaining <span data-stat="geocoding.estimated">--</span> — mostly recent crashes the Hub hasn't covered yet — are placed at city level and flagged as approximate, both on the map and in this statistic. Accuracy varies by city:</p>
             <ul>
                 <li>San Francisco: <span data-stat="geocoding.by_city.San Francisco">--</span>%, Los Angeles: <span data-stat="geocoding.by_city.Los Angeles">--</span>%, Austin: <span data-stat="geocoding.by_city.Austin">--</span>%</li>
-                <li>Atlanta: <span data-stat="geocoding.by_city.Atlanta">--</span>%, Phoenix: <span data-stat="geocoding.by_city.Phoenix">--</span>% (some reports have less detailed addresses)</li>
+                <li>Atlanta: <span data-stat="geocoding.by_city.Atlanta">--</span>%, Phoenix: <span data-stat="geocoding.by_city.Phoenix">--</span>% (some reports have less detailed addresses; newer metros are lower until the Hub covers them)</li>
             </ul>
             <p>Geocode results are cached in <code>geocode_cache.json</code> to ensure reproducibility and avoid repeated API calls.</p>
 
@@ -170,6 +178,7 @@
                 <li><strong>Serious injury:</strong> Whether a suspected serious injury was reported</li>
             </ul>
             <p>We deliberately avoid creating composite "severity scores" because the weighting of different factors would be arbitrary and potentially misleading.</p>
+            <p>One nuance: the four boolean indicators come from Waymo's Hub release, so they're unknown for the most recent crashes. Their percentages are therefore computed among crashes with a known value, not the full total. Injury-severity classifications (minor / moderate / serious / fatal), by contrast, come from NHTSA's own "Highest Injury Severity Alleged" field and cover essentially every crash.</p>
 
             <h3>A Note on Crash Types and Fault</h3>
             <p>The crash type classifications in this dataset (e.g., "rear-end collision," "side-impact collision") describe the physical dynamics of the collision — where and how contact occurred between vehicles. They do not indicate who was at fault. NHTSA Standing General Order reports do not assign legal fault or determine responsibility.</p>
@@ -192,7 +201,7 @@
             <p>Readers should interpret crash circumstances as descriptive — what happened — rather than prescriptive — who was responsible.</p>
 
             <h3>Dataset Coverage</h3>
-            <p>The Waymo Hub dataset does not include every NHTSA-reported crash. Some NHTSA crashes are excluded by Waymo's own methodology (e.g., incidents that don't meet their definition of a reportable crash). Our merge process preserves all Hub crashes and flags NHTSA-only crashes separately.</p>
+            <p>Our headline count (<span data-stat="overview.total_crashes">--</span> driverless crashes) is larger than the count on Waymo's own Hub for two reasons: we include the <span data-stat="overview.preliminary_count">--</span> recent federal reports the quarterly Hub release hasn't reached yet, and we count from the federal record rather than Waymo's curation. For the periods both sources cover, they match nearly one-for-one. The <span data-stat="overview.supervised_crashes">--</span> supervised-testing crashes are excluded from headline statistics (Waymo's published mileage doesn't cover them, so no meaningful rate can be computed) but remain explorable on the map.</p>
 
             <h3>Mileage Data</h3>
 
@@ -202,7 +211,7 @@
 
             <p>The full mileage milestone dataset, including source URLs for each data point, is publicly available as a <a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Google Sheets document</a>.</p>
 
-            <p>Mileage data for Atlanta is not yet published by Waymo on the Safety Impact Data Hub, so we cannot compute a crash rate for that city.</p>
+            <p>Waymo currently publishes per-city mileage only for its four longest-running markets (Phoenix, the San Francisco Bay Area, Los Angeles, and Austin). For newer markets — Atlanta, Miami, Dallas, Houston, San Antonio, Orlando, and Nashville — no mileage has been published yet, so we cannot compute crash rates there.</p>
 
             <h3>Temporal Limitations</h3>
             <p>Crash time data comes from the "Incident Time" field in the NHTSA reports. A small number of records have missing or unparseable times, which are excluded from time-of-day analyses. The overall coverage is high (typically &gt;99% of records have valid time data).</p>
@@ -210,17 +219,17 @@
             <!-- ========== AUTOMATION ========== -->
             <h2>Automated Updates</h2>
 
-            <p>This website is designed to be "evergreen" — every statistic is computed from data, and the entire pipeline can be re-run when new data becomes available.</p>
+            <p>This website is designed to be "evergreen" — every statistic is computed from data, and the entire pipeline re-runs automatically every Monday.</p>
 
-            <p>A GitHub Actions workflow is configured to:</p>
+            <p>The GitHub Actions workflow:</p>
             <ol>
-                <li>Download the latest data from NHTSA and Waymo</li>
-                <li>Run the full processing pipeline</li>
-                <li>Regenerate all JSON data files</li>
-                <li>Commit and push any changes to the repository</li>
+                <li>Runs the unit test suite (the pipeline never publishes from broken code)</li>
+                <li>Downloads the latest data from NHTSA and Waymo — the quarterly Waymo URL is auto-detected by probing recent quarter end-dates, so no manual URL updates are needed</li>
+                <li>Runs the full processing pipeline and validates the output (crash counts must never shrink or go backwards in time)</li>
+                <li>Commits and pushes any changes, which triggers a site deployment</li>
             </ol>
 
-            <p>This ensures the website stays current without manual intervention. However, the Waymo Hub URL changes quarterly (the filename includes a date range), so this URL may need periodic manual updates in the configuration file.</p>
+            <p>The one task that still requires editorial judgment: when Waymo announces a brand-new metro, it must be added to the metro registry in the configuration file. Until then, crashes from an unmapped city still appear in the totals and on the map under an "Other" bucket, and the pipeline log calls them out.</p>
 
             <!-- ========== REPRODUCIBILITY ========== -->
             <h2>Reproducibility</h2>
@@ -233,7 +242,7 @@
                 <li>View the results: <code>make serve</code></li>
             </ol>
 
-            <p>Geocoding results are cached in <code>geocode_cache.json</code> (committed to the repository), so map layouts are identical across runs without re-querying the geocoding service.</p>
+            <p>Geocoding results are cached in <code>geocode_cache.json</code> (committed to the repository), so map layouts are identical across runs without re-querying the geocoding service. The pipeline's core logic — metro mapping, operation classification, date parsing, merge behavior — is covered by a unit test suite (<code>pytest tests/</code>) that runs in CI on every change.</p>
         </div>
     </section>
 

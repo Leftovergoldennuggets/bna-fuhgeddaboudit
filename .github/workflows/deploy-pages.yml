@@ -17,12 +17,9 @@
 name: Deploy to GitHub Pages
 
 on:
-  # For this part we consulted Claude who recommended workflow chaining — making this
-  # deploy workflow trigger automatically after the data-update workflow finishes.
-  # Instead of manually deploying after every data update, GitHub Actions watches for
-  # the "Update Crash Data" workflow to complete and then kicks off this deployment.
-  # This creates a two-stage automated pipeline: (1) update data → (2) deploy site.
-  # Run after the data-update workflow completes
+  # Run after the data-update workflow completes (two-stage pipeline:
+  # update data → deploy site). A success guard on the job below prevents
+  # deploying when the data update failed.
   workflow_run:
     workflows: ["Update Crash Data"]
     types: [completed]
@@ -51,10 +48,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Don't deploy when triggered by a FAILED data-update run
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     steps:
-      # uses: actions/checkout@v4 downloads your repo (same as in update-data.yml)
+      # Check out the ref that includes any data commit the update run just
+      # pushed (a plain checkout of the workflow_run event can be stale)
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       # Build the deployable site structure:
       #   _site/

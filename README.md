@@ -2,17 +2,35 @@
 
 **Live site: [https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/](https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/)**
 
-An evergreen data journalism website analyzing every publicly reported crash involving a Waymo autonomous vehicle in the United States. Built for Stanford COMM277T: Building News Apps.
+An evergreen data journalism website analyzing every publicly reported crash
+involving a driverless Waymo vehicle in the United States. Originally built
+for Stanford COMM277T: Building News Apps; substantially overhauled in
+June 2026.
 
 ## About
 
-Self-driving cars are rapidly expanding across American cities. Every time a Waymo vehicle is involved in a crash, the company is required to report it to the National Highway Traffic Safety Administration. This project makes that federal data accessible — mapping every reported incident, analyzing the circumstances, and letting readers explore the data themselves.
+Self-driving cars are expanding rapidly across American cities — Waymo's
+driverless service is open to the public in eleven metros as of mid-2026.
+Every time a Waymo vehicle is involved in a crash, the company is required
+to report it to the National Highway Traffic Safety Administration. This
+project makes that federal data accessible: mapping every reported incident,
+analyzing the circumstances, and letting readers explore the data themselves.
 
 The site merges two public data sources:
-- **NHTSA Standing General Order reports** — federal crash reports filed by Waymo, including narratives, severity, and vehicle movements
-- **Waymo Safety Impact Data Hub** — Waymo's curated dataset with crash type classifications and street-level addresses
 
-All statistics are computed from data. The site updates automatically every quarter when new data is published.
+- **NHTSA Standing General Order reports** — the legally required federal
+  crash record, refreshed roughly monthly. **This is the base dataset**:
+  every reported crash enters the site within a week of publication.
+- **Waymo Safety Impact Data Hub** — Waymo's curated quarterly release,
+  used to *enrich* matched crashes with exact dates, street-level
+  addresses, and crash type classifications.
+
+Headline statistics cover **driverless operation only** (no human behind
+the wheel). Crashes from supervised testing with a safety driver are
+tracked separately and visible in the Explore section.
+
+All statistics are computed from data. The site updates automatically every
+week via GitHub Actions.
 
 ## Team
 
@@ -39,6 +57,17 @@ make serve
 # Visit http://localhost:8000/site/index.html
 ```
 
+## Testing
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest tests/ -q
+```
+
+The test suite covers the pipeline's core logic: metro mapping, operation
+classification, date/time parsing, severity levels, and merge behavior.
+Tests run in CI on every push and before every automated data update.
+
 ## Tech Stack
 
 - **Pipeline:** Python (pandas, requests, geopy)
@@ -46,7 +75,7 @@ make serve
 - **Maps:** Leaflet + MarkerCluster
 - **Charts:** Chart.js
 - **Hosting:** GitHub Pages
-- **Auto-updates:** GitHub Actions (quarterly)
+- **Auto-updates:** GitHub Actions (weekly)
 
 ## License
 
