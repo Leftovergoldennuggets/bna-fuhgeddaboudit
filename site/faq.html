@@ -46,7 +46,7 @@
                     <div class="faq-question">Where does this data come from?</div>
                     <div class="faq-answer">
                         <p>Two sources: <strong>NHTSA</strong> (the National Highway Traffic Safety Administration) and <strong>Waymo's Safety Impact Data Hub</strong>.</p>
-                        <p>NHTSA requires all autonomous vehicle companies to report crashes resulting in injury, airbag deployment, or property damage exceeding $1,000 through their Standing General Order program. Waymo publishes a curated dataset on their own website that adds crash type classifications and other context. We merge both datasets to create the most complete picture available.</p>
+                        <p>NHTSA requires all autonomous vehicle companies to report crashes resulting in injury, airbag deployment, or property damage exceeding $1,000 through their Standing General Order program. That federal record is the backbone of this site: every reported crash starts there. Waymo's quarterly data release then enriches matched crashes with exact dates, street addresses, and crash-type classifications. Because Waymo's release lags the federal data by a few months, the newest crashes appear here with city-level locations and month-level dates until the next quarterly drop fills in the details.</p>
                     </div>
                 </div>
 
@@ -54,15 +54,16 @@
                     <div class="faq-question">What time period does this cover?</div>
                     <div class="faq-answer">
                         <p>The dataset covers <strong><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> through <span data-stat="meta.date_range_end" data-format="yearmonth">--</span></strong>. However, the data is heavily concentrated in 2023–2025, reflecting Waymo's expansion from early commercial operations to large-scale service.</p>
-                        <p>In the earliest years of the dataset (2020–2022), only 9 crashes were reported total — Waymo's fleet was small and still operating with safety drivers in many cases. The data becomes substantial starting in 2023 when Waymo launched fully public, rider-only service in San Francisco, and accelerates through 2024 and 2025 as the company expanded to Phoenix, Los Angeles, Austin, and Atlanta.</p>
-                        <p>All crashes in this dataset involve <strong>fully autonomous driving</strong> — the Waymo vehicle was operating without a human driver (rider-only mode) at the time of the incident.</p>
+                        <p>In the earliest years of the dataset (2020–2022), only a handful of driverless crashes were reported — Waymo's fleet was small and still operating with safety drivers in many cases. The data becomes substantial starting in 2023 when Waymo launched fully public, rider-only service in San Francisco, accelerates through 2024 and 2025 (Los Angeles, Austin, Atlanta), and broadens again in 2026 as service opened in Miami, Dallas, Houston, San Antonio, Orlando, and Nashville.</p>
+                        <p>The headline numbers on this site cover <strong>fully driverless operation</strong> — no human behind the wheel. Crashes that happened during supervised testing with a safety driver (<span data-stat="overview.supervised_crashes">--</span> on record) are excluded from the totals but can be viewed in the Explore section with the "Include supervised-testing crashes" toggle.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">How often is this website updated?</div>
                     <div class="faq-answer">
-                        <p>The site is designed to update automatically every quarter. NHTSA data is continuously available, and Waymo updates their Safety Impact Data Hub approximately every three months (around March, June, September, and December). Our automated pipeline re-runs whenever new data is published.</p>
+                        <p>Automatically, every week. Our pipeline re-downloads the federal NHTSA data (which is refreshed roughly monthly) and checks for new Waymo quarterly releases (published around March, June, September, and December) every Monday. New crashes typically appear here within days of NHTSA publishing them — first as preliminary records with city-level locations, then with full detail once Waymo's quarterly release catches up.</p>
+                        <p>Right now: federal reports run through <strong><span data-stat="meta.federal_data_through_label">--</span></strong>, and Waymo's detailed data runs through <strong><span data-stat="meta.hub_data_through_label">--</span></strong>.</p>
                     </div>
                 </div>
 
@@ -106,7 +107,7 @@
                 <div class="faq-item">
                     <div class="faq-question">What was Waymo doing when these crashes happened?</div>
                     <div class="faq-answer">
-                        <p>In nearly two-thirds of reported crashes (<span data-stat="crash_circumstances.speed_distribution.0_mph.percentage">--</span>%), the Waymo vehicle was traveling at <strong>0 mph</strong> — completely stopped — at the time of contact. The median pre-crash speed across all incidents is <span data-stat="crash_circumstances.speed_stats.median_speed_mph">--</span> mph, and the mean is just <span data-stat="crash_circumstances.speed_stats.mean_speed_mph">--</span> mph.</p>
+                        <p>In <span data-stat="crash_circumstances.speed_distribution.0_mph.percentage">--</span>% of reported crashes with speed data, the Waymo vehicle was traveling at <strong>0 mph</strong> — completely stopped — at the time of contact. The median pre-crash speed across all incidents is <span data-stat="crash_circumstances.speed_stats.median_speed_mph">--</span> mph, and the mean is just <span data-stat="crash_circumstances.speed_stats.mean_speed_mph">--</span> mph.</p>
                         <p>The most common scenario is a stationary Waymo being hit by another vehicle that is backing up, changing lanes, or proceeding through an intersection. The most frequent crash types are rear-end collisions (<span data-stat="crash_circumstances.crash_type_plain.Rear-end collision.percentage">--</span>%), side-impact collisions (<span data-stat="crash_circumstances.crash_type_plain.Side-impact collision.percentage">--</span>%), and backing collisions (<span data-stat="crash_circumstances.crash_type_plain.Backing collision.percentage">--</span>%).</p>
                         <p>This doesn't mean the other driver is always at fault — crash reports describe circumstances, not legal responsibility. But it does mean that most reported "crashes" look very different from what the word typically implies.</p>
                     </div>
@@ -129,23 +130,19 @@
                 <div class="faq-item">
                     <div class="faq-question">Are the crash locations on the map exact?</div>
                     <div class="faq-answer">
-                        <p><strong>Most are accurate to the street level.</strong> NHTSA redacts GPS coordinates but provides street addresses for nearly all crashes. We geocode these addresses using OpenStreetMap's Nominatim service, achieving a <span data-stat="geocoding.accuracy_pct">--</span>% success rate (<span data-stat="geocoding.accurate">--</span> out of <span data-stat="geocoding.total_mapped">--</span> mapped crashes placed at their real street location).</p>
-                        <p>The remaining markers (<span data-stat="geocoding.estimated">--</span> total) use an approximate city-center location and are flagged as "approximate location" in their popups. Accuracy varies by city — San Francisco (<span data-stat="geocoding.by_city.San Francisco">--</span>%) and Los Angeles (<span data-stat="geocoding.by_city.Los Angeles">--</span>%) have the highest rates, while Phoenix (<span data-stat="geocoding.by_city.Phoenix">--</span>%) is lower due to less detailed address descriptions in some reports.</p>
+                        <p><strong>Most are accurate to the street level — <span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span> mapped driverless crashes (<span data-stat="geocoding.accuracy_pct">--</span>%).</strong> NHTSA redacts both GPS coordinates and street addresses in its public files; the street-level addresses come from Waymo's quarterly data release, which we geocode using OpenStreetMap's Nominatim service.</p>
+                        <p>The remaining markers (<span data-stat="geocoding.estimated">--</span>) are crashes Waymo's quarterly release hasn't covered yet, or addresses that couldn't be geocoded. They are placed near the center of the city where the crash occurred and flagged "approximate location" in their popups. As each quarterly release lands, recent markers automatically upgrade to street-level accuracy.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">In which cities does Waymo operate?</div>
                     <div class="faq-answer">
-                        <p>Based on the crash data, Waymo has reported incidents in <span data-stat="overview.cities_count">--</span> major cities:</p>
-                        <ul>
-                            <li><strong>San Francisco</strong> — <span data-stat="city_breakdown.San Francisco.count">--</span> crashes (<span data-stat="city_breakdown.San Francisco.percentage">--</span>%)</li>
-                            <li><strong>Phoenix</strong> — <span data-stat="city_breakdown.Phoenix.count">--</span> crashes (<span data-stat="city_breakdown.Phoenix.percentage">--</span>%)</li>
-                            <li><strong>Los Angeles</strong> — <span data-stat="city_breakdown.Los Angeles.count">--</span> crashes (<span data-stat="city_breakdown.Los Angeles.percentage">--</span>%)</li>
-                            <li><strong>Austin</strong> — <span data-stat="city_breakdown.Austin.count">--</span> crashes (<span data-stat="city_breakdown.Austin.percentage">--</span>%)</li>
-                            <li><strong>Atlanta</strong> — <span data-stat="city_breakdown.Atlanta.count">--</span> crashes (<span data-stat="city_breakdown.Atlanta.percentage">--</span>%)</li>
-                        </ul>
-                        <p>San Francisco has the most crashes because Waymo has operated there the longest and runs the most vehicles. A small number of crashes (2) occurred in Mountain View near Waymo's headquarters.</p>
+                        <p>As of mid-2026, Waymo's driverless service is open to the public in <span data-stat="overview.public_metros_count">--</span> metros: Phoenix, the San Francisco Bay Area, Los Angeles, Austin, Atlanta, Miami, Dallas, Houston, San Antonio, Orlando, and Nashville. It is also running driverless testing ahead of launch in Washington, D.C., Denver, and Philadelphia, and has announced more than a dozen further markets.</p>
+                        <p>Driverless crashes on record by metro area:</p>
+                        <!-- Built dynamically from site-data.json so new metros appear automatically -->
+                        <ul id="faq-city-list"></ul>
+                        <p>The San Francisco Bay Area (which includes Waymo's Peninsula and San Jose service area — crashes in Mountain View, Palo Alto, and San Jose count here) leads because Waymo has operated there longest and runs the most vehicles in its densest traffic. Raw counts alone don't indicate relative safety — see the per-mile rates below.</p>
                     </div>
                 </div>
 
@@ -158,9 +155,9 @@
                             <li><strong>San Francisco</strong> — <span data-stat="city_mileage.San Francisco.miles_millions">--</span> million miles</li>
                             <li><strong>Los Angeles</strong> — <span data-stat="city_mileage.Los Angeles.miles_millions">--</span> million miles</li>
                             <li><strong>Austin</strong> — <span data-stat="city_mileage.Austin.miles_millions">--</span> million miles</li>
-                            <li><strong>Atlanta</strong> — mileage not yet published by Waymo</li>
+                            <li><strong>Atlanta, Miami, Dallas, Houston, San Antonio, Orlando, Nashville</strong> — mileage not yet published by Waymo</li>
                         </ul>
-                        <p>These figures come from <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo's Safety Impact Data Hub</a>. The crash rate per million miles varies across cities — for example, San Francisco has roughly <span data-stat="city_mileage.San Francisco.crashes_per_million_miles">--</span> crashes per million miles compared to Phoenix's <span data-stat="city_mileage.Phoenix.crashes_per_million_miles">--</span>, likely reflecting differences in traffic density and road complexity.</p>
+                        <p>These figures come from <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo's Safety Impact Data Hub</a>, which currently breaks out mileage only for its four longest-running markets. The crash rate per million miles varies across cities — for example, San Francisco has roughly <span data-stat="city_mileage.San Francisco.crashes_per_million_miles">--</span> crashes per million miles compared to Phoenix's <span data-stat="city_mileage.Phoenix.crashes_per_million_miles">--</span>, likely reflecting differences in traffic density and road complexity.</p>
                     </div>
                 </div>
 
@@ -191,6 +188,28 @@
                     <div class="faq-answer">
                         <p>About <span data-stat="location_types.Parking.percentage">--</span>% of reported crashes occur in parking areas. This is consistent with industry research showing that parking lots account for a significant share of all vehicle collisions — the tight spaces, frequent reversing, and pedestrian traffic create more opportunities for minor contact.</p>
                         <p>Nearly all parking lot crashes in the dataset resulted in property damage only, with no injuries reported.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Why does this site count more crashes than Waymo's own data hub?</div>
+                    <div class="faq-answer">
+                        <p>Two reasons. First, <strong>freshness</strong>: Waymo's Safety Impact Data Hub is updated quarterly and lags a few months behind, while we ingest the federal NHTSA record weekly — so the most recent crashes appear here before they appear in Waymo's own dataset.</p>
+                        <p>Second, <strong>independence</strong>: we count from the federal record rather than from Waymo's curated release. In practice the two agree almost perfectly for the periods both cover — Waymo's hub has matched the federal driverless record nearly one-for-one — which is itself a useful transparency check, and we re-verify it on every update.</p>
+                        <p>Separately, NHTSA's data also contains <span data-stat="overview.supervised_crashes">--</span> Waymo crashes from supervised testing (a human safety driver behind the wheel), which Waymo's rider-only hub excludes by design. We keep those out of the headline numbers too, but unlike before, they're visible in the Explore section rather than silently dropped.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">Has Waymo been investigated or recalled?</div>
+                    <div class="faq-answer">
+                        <p>Yes — a few times, and it's useful context that crash counts alone don't capture:</p>
+                        <ul>
+                            <li><strong>School bus recall (December 2025).</strong> Waymo issued a software recall covering 3,000+ vehicles after federal regulators investigated its vehicles illegally passing stopped school buses with their stop arms extended. Austin's school district subsequently reported continued violations after the recall.</li>
+                            <li><strong>School-zone investigation (January 2026).</strong> NHTSA opened a preliminary investigation (PE26001) after a Waymo struck a child who ran into the street from behind a double-parked vehicle near a Santa Monica elementary school. The vehicle braked from 17 mph to under 6 mph before contact; the child's injuries were minor.</li>
+                            <li><strong>Floodwater recall (May 2026).</strong> Waymo recalled 3,791 robotaxis (fixed via software update) after an empty vehicle drove into a flooded San Antonio road and was swept into a creek. San Antonio service was paused for roughly two weeks.</li>
+                        </ul>
+                        <p>Recalls for autonomous fleets typically mean a software update pushed to all vehicles, not a physical return. We mention these because a fair safety picture includes regulatory scrutiny, not just crash statistics.</p>
                     </div>
                 </div>
 
@@ -261,6 +280,21 @@
             try {
                 const { stats } = await DataLoader.loadAll();
                 StatRenderer.renderAll(stats);
+
+                // Build the per-metro crash list dynamically so new metros
+                // appear automatically as Waymo expands
+                const listEl = document.getElementById('faq-city-list');
+                if (listEl && stats.city_breakdown) {
+                    Object.entries(stats.city_breakdown)
+                        .sort((a, b) => b[1].count - a[1].count)
+                        .forEach(([name, info]) => {
+                            const li = document.createElement('li');
+                            const note = info.status === 'testing' ? ' — driverless testing, service not yet open'
+                                : info.code === 'OTHER' ? ' — outside mapped metro areas' : '';
+                            li.innerHTML = `<strong>${name}</strong> — ${info.count.toLocaleString('en-US')} crashes (${info.percentage}%)${note}`;
+                            listEl.appendChild(li);
+                        });
+                }
             } catch (e) {
                 console.warn('FAQ: Could not load dynamic stats', e);
             }
