@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-06-09T22:30:02.148209",
+    "generated_at": "2026-06-15T12:03:10.441194",
     "pipeline_version": "2.0",
     "total_rows_in_merged": 1839,
     "date_range_start": 202009,
@@ -797,13 +797,13 @@
   },
   "geocoding": {
     "total_mapped": 1602,
-    "accurate": 1279,
-    "estimated": 323,
-    "accuracy_pct": 79.8,
+    "accurate": 1338,
+    "estimated": 264,
+    "accuracy_pct": 83.5,
     "by_city": {
-      "San Francisco": 87,
-      "Phoenix": 71,
-      "Los Angeles": 81,
+      "San Francisco": 88,
+      "Phoenix": 83,
+      "Los Angeles": 80,
       "Austin": 75,
       "Atlanta": 76,
       "Houston": 0,
@@ -813,6 +813,10 @@
       "Dallas": 0,
       "Miami": 0,
       "Washington, D.C.": 0
-    }
+    },
+    "zip_coverage": 1383,
+    "zip_coverage_pct": 86.3,
+    "zip_checked": 1183,
+    "zip_match_pct": 49.0
   }
 }
