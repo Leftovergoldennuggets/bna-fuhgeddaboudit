@@ -47,6 +47,21 @@
     },
     {
       "id": 8,
+      "lat": 37.790301,
+      "lon": -122.405753,
+      "city": "San Francisco",
+      "date": "April 2026",
+      "time": "21:24",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "San Francisco (exact location pending Waymo data)",
+      "narrative": "On April [REDACTED], 2026 at 9:24 PM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was traveling southbound on [REDACTED] when an SUV traveling northbound on [REDACTED], without activated headlights, maneuvered to the left and entered the Waymo AV's lane of travel. The Waymo AV began to slow to yield to the SUV as the SUV continued to approach, and the left side of the SUV made contact with the left side of the Waymo AV. As a result of this contact, the Waymo AV was pushed to the right and the front right tire of the Waymo AV made contact with the left side of a passenger car parked facing south on the west curb of 47th Avenue. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The Waymo AV and the SUV sustained damage. The passengers of the Waymo AV were transported to a hospital by an ambulance, alleging minor injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because individuals involved were transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 10,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -61,7 +76,7 @@
       "in_hub": true
     },
     {
-      "id": 10,
+      "id": 12,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -76,7 +91,7 @@
       "in_hub": true
     },
     {
-      "id": 11,
+      "id": 13,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -91,7 +106,7 @@
       "in_hub": true
     },
     {
-      "id": 14,
+      "id": 16,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -106,7 +121,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 18,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -229,6 +244,36 @@
     },
     {
       "id": 8,
+      "lat": 37.790301,
+      "lon": -122.405753,
+      "city": "San Francisco",
+      "date": "April 2026",
+      "time": "21:24",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "San Francisco (exact location pending Waymo data)",
+      "narrative": "On April [REDACTED], 2026 at 9:24 PM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was traveling southbound on [REDACTED] when an SUV traveling northbound on [REDACTED], without activated headlights, maneuvered to the left and entered the Waymo AV's lane of travel. The Waymo AV began to slow to yield to the SUV as the SUV continued to approach, and the left side of the SUV made contact with the left side of the Waymo AV. As a result of this contact, the Waymo AV was pushed to the right and the front right tire of the Waymo AV made contact with the left side of a passenger car parked facing south on the west curb of 47th Avenue. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The Waymo AV and the SUV sustained damage. The passengers of the Waymo AV were transported to a hospital by an ambulance, alleging minor injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because individuals involved were transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 9,
+      "lat": 33.758388,
+      "lon": -84.393946,
+      "city": "Atlanta",
+      "date": "April 2026",
+      "time": "20:16",
+      "crash_party": "Motorcyclist",
+      "severity": "Moderate W/O Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Atlanta (exact location pending Waymo data)",
+      "narrative": "On April [REDACTED], 2026 at 8:16 PM ET a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Atlanta, Georgia was in a collision involving a motorcycle on [REDACTED] at [REDACTED]. \n\nThe Waymo AV was stopped facing south in the second from the right lane on [REDACTED] for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, a motorcycle traveling southbound in the second from the right lane on [REDACTED] approached the Waymo AV from behind, and both the front of the motorcycle as well as its rider made contact with the rear of the stationary Waymo AV before falling to the ground. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage. The motorcyclist was treated at the scene for a moderate injury.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 10,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -243,7 +288,7 @@
       "in_hub": true
     },
     {
-      "id": 9,
+      "id": 11,
       "lat": 33.40914,
       "lon": -111.972736,
       "city": "Phoenix",
@@ -258,7 +303,7 @@
       "in_hub": true
     },
     {
-      "id": 10,
+      "id": 12,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -273,7 +318,7 @@
       "in_hub": true
     },
     {
-      "id": 11,
+      "id": 13,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -288,7 +333,7 @@
       "in_hub": true
     },
     {
-      "id": 12,
+      "id": 14,
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -303,7 +348,7 @@
       "in_hub": true
     },
     {
-      "id": 13,
+      "id": 15,
       "lat": 33.445872,
       "lon": -111.995488,
       "city": "Phoenix",
@@ -318,7 +363,7 @@
       "in_hub": true
     },
     {
-      "id": 14,
+      "id": 16,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -333,7 +378,7 @@
       "in_hub": true
     },
     {
-      "id": 15,
+      "id": 17,
       "lat": 34.015224,
       "lon": -118.279299,
       "city": "Los Angeles",
@@ -348,7 +393,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 18,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -363,7 +408,7 @@
       "in_hub": true
     },
     {
-      "id": 17,
+      "id": 19,
       "lat": 33.488982,
       "lon": -111.960478,
       "city": "Phoenix",
@@ -382,7 +427,7 @@
     "San Francisco": {
       "lat": 37.7749,
       "lon": -122.4194,
-      "count": 8
+      "count": 9
     },
     "Phoenix": {
       "lat": 33.4484,
@@ -397,8 +442,8 @@
     "Atlanta": {
       "lat": 33.749,
       "lon": -84.388,
-      "count": 1
+      "count": 2
     }
   },
-  "total_serious": 17
+  "total_serious": 19
 }
