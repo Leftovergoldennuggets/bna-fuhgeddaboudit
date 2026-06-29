@@ -1,23 +1,23 @@
 {
   "description": "Rider-only miles by city from the Waymo Safety Impact Data Hub. Updated automatically by the pipeline from CSV1.",
   "source_url": "https://waymo.com/safety/impact/#downloads",
-  "data_through": "December 2025",
-  "last_updated": "2026-06-22",
+  "data_through": "March 2026",
+  "last_updated": "2026-06-29",
   "cities": {
     "Phoenix": {
-      "miles_millions": 68.613,
+      "miles_millions": 80.551,
       "note": "Waymo's first commercial market. Waymo One launched December 2018."
     },
     "San Francisco": {
-      "miles_millions": 53.52,
+      "miles_millions": 67.078,
       "note": "Public launch 2023. Denser traffic environment than Phoenix."
     },
     "Los Angeles": {
-      "miles_millions": 37.857,
+      "miles_millions": 51.816,
       "note": "Public launch 2024."
     },
     "Austin": {
-      "miles_millions": 10.722,
+      "miles_millions": 15.789,
       "note": "Waymo's newest major market."
     },
     "Atlanta": {
@@ -25,5 +25,5 @@
       "note": "Mileage not yet published by Waymo on the Safety Impact Data Hub."
     }
   },
-  "total_miles_millions": 170.712
+  "total_miles_millions": 220.613
 }

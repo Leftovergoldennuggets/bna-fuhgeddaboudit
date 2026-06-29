@@ -7612,5 +7612,1471 @@
   "__rev__37.8084,-122.4153": "94133",
   "__rev__37.8092,-122.4166": "94133",
   "__rev__37.8220,-122.3699": "94130",
-  "__rev__37.8275,-122.3674": "94130"
+  "__rev__37.8275,-122.3674": "94130",
+  "v2|West Parking Lot off of Sky Harbor Circle at the Phoenix Sky Harbor International Airport|Phoenix|AZ": null,
+  "v2|Guerrero Street at 16th Street|San Francisco|CA": {
+    "lat": 37.7647,
+    "lon": -122.424426,
+    "precision": "street"
+  },
+  "v2|parking lot near 730 W. Mariposa Street|Phoenix|AZ": {
+    "lat": 33.508523,
+    "lon": -112.083002,
+    "precision": "street"
+  },
+  "v2|S. 1st Street near W. Oltorf Street|Austin|TX": {
+    "lat": 30.254496,
+    "lon": -97.752458,
+    "precision": "road"
+  },
+  "v2|Ellsworth Industrial Boulevard NW at Chattahoochee Avenue NW|Atlanta|GA": {
+    "lat": 33.79478,
+    "lon": -84.427035,
+    "precision": "road"
+  },
+  "v2|W. Olympic Boulevard at S. Highland Avenue|Los Angeles|CA": {
+    "lat": 34.058301,
+    "lon": -118.3648,
+    "precision": "road"
+  },
+  "v2|Fountain Avenue near N. Fairfax Avenue|Los Angeles|CA": {
+    "lat": 34.094628,
+    "lon": -118.344238,
+    "precision": "street"
+  },
+  "v2|S. I-35 Frontage Road near E. 51st Street|Austin|TX": {
+    "lat": 30.211062,
+    "lon": -97.757092,
+    "precision": "road"
+  },
+  "v2|N. La Jolla Avenue at Santa Monica Boulevard|Los Angeles|CA": {
+    "lat": 34.080698,
+    "lon": -118.368006,
+    "precision": "road"
+  },
+  "v2|entrance of a parking lot at 3002 N. 40th Street|Phoenix|AZ": {
+    "lat": 33.48247,
+    "lon": -111.9961,
+    "precision": "road"
+  },
+  "v2|Center Drive at S. Sepulveda Boulevard|Los Angeles|CA": {
+    "lat": 33.977743,
+    "lon": -118.392216,
+    "precision": "road"
+  },
+  "v2|State Route 202 Red Mountain Freeway near Exit 9|Mesa|AZ": null,
+  "v2|19th Street near Mission Street|San Francisco|CA": {
+    "lat": 37.760946,
+    "lon": -122.401149,
+    "precision": "street"
+  },
+  "v2|N. 38th Street at E. Van Buren Street|Phoenix|AZ": {
+    "lat": 33.629849,
+    "lon": -112.000406,
+    "precision": "road"
+  },
+  "v2|Sunset Boulevard near Seward Street|Los Angeles|CA": {
+    "lat": 34.087416,
+    "lon": -118.275814,
+    "precision": "road"
+  },
+  "v2|Deadwood Drive near Tallow Tree Drive|Austin|TX": {
+    "lat": 30.197912,
+    "lon": -97.753249,
+    "precision": "road"
+  },
+  "v2|N. 16th Street near E. Monroe Street|Phoenix|AZ": {
+    "lat": 33.450293,
+    "lon": -112.019406,
+    "precision": "street"
+  },
+  "v2|Westminster Avenue at Electric Avenue|Venice|CA": {
+    "lat": 33.99391,
+    "lon": -118.467686,
+    "precision": "road"
+  },
+  "v2|an alley between Potomac Avenue and Hillcrest Drive|Los Angeles|CA": {
+    "lat": 34.029264,
+    "lon": -118.342879,
+    "precision": "road"
+  },
+  "v2|Santa Monica Boulevard near N. Las Palmas Avenue|Los Angeles|CA": {
+    "lat": 34.090759,
+    "lon": -118.350906,
+    "precision": "road"
+  },
+  "v2|France Avenue at Vienna Street|San Francisco|CA": {
+    "lat": 37.718311,
+    "lon": -122.434758,
+    "precision": "road"
+  },
+  "v2|Colton Street at N. Bixel Street|Los Angeles|CA": {
+    "lat": 34.062721,
+    "lon": -118.256145,
+    "precision": "road"
+  },
+  "v2|W. Olympic Boulevard near S. Western Avenue|Los Angeles|CA": {
+    "lat": 34.058301,
+    "lon": -118.3648,
+    "precision": "road"
+  },
+  "v2|S. Sepulveda Boulevard near Wilshire Boulevard|Los Angeles|CA": {
+    "lat": 34.056071,
+    "lon": -118.451562,
+    "precision": "road"
+  },
+  "v2|parking lot at 2509 Pico Boulevard|Santa Monica|CA": {
+    "lat": 34.023198,
+    "lon": -118.463289,
+    "precision": "street"
+  },
+  "v2|The Embarcadero near Harrison Street|San Francisco|CA": {
+    "lat": 37.807439,
+    "lon": -122.407541,
+    "precision": "road"
+  },
+  "v2|Montopolis Drive at E. Ben White Boulevard|Austin|TX": {
+    "lat": 30.215578,
+    "lon": -97.709465,
+    "precision": "road"
+  },
+  "v2|Sacramento Street near Drumm Street|San Francisco|CA": {
+    "lat": 37.788999,
+    "lon": -122.440644,
+    "precision": "road"
+  },
+  "v2|6th Street near Brannan Street|San Francisco|CA": {
+    "lat": 37.782261,
+    "lon": -122.391576,
+    "precision": "street"
+  },
+  "v2|Guadalupe Street near W. 21st Street|Austin|TX": {
+    "lat": 30.286962,
+    "lon": -97.741639,
+    "precision": "road"
+  },
+  "v2|Brodie Lane at W. William Cannon Drive|Austin|TX": {
+    "lat": 30.21626,
+    "lon": -97.828841,
+    "precision": "road"
+  },
+  "v2|E. Southern Avenue near S. 38th Street|Phoenix|AZ": {
+    "lat": 33.393038,
+    "lon": -112.034636,
+    "precision": "road"
+  },
+  "v2|3rd Street near Minna Street|San Francisco|CA": {
+    "lat": 37.777053,
+    "lon": -122.390521,
+    "precision": "road"
+  },
+  "v2|a parking lot at 1301 Evans Avenue|San Francisco|CA": {
+    "lat": 37.739837,
+    "lon": -122.383621,
+    "precision": "road"
+  },
+  "v2|Sunset Boulevard at Fountain Avenue|Los Angeles|CA": {
+    "lat": 34.087416,
+    "lon": -118.275814,
+    "precision": "road"
+  },
+  "v2|N. 36th Street at McDowell Road|Phoenix|AZ": {
+    "lat": 33.465816,
+    "lon": -112.004852,
+    "precision": "street"
+  },
+  "v2|Normandie Avenue at Fountain Avenue|Los Angeles|CA": {
+    "lat": 34.09528,
+    "lon": -118.300835,
+    "precision": "street"
+  },
+  "v2|Mississippi Avenue near S. Barrington Avenue|Los Angeles|CA": {
+    "lat": 34.04555,
+    "lon": -118.432464,
+    "precision": "road"
+  },
+  "v2|McDowell Road at N. Scottsdale Road|Scottsdale|AZ": {
+    "lat": 33.466761,
+    "lon": -111.908686,
+    "precision": "street"
+  },
+  "v2|W. Olympic Boulevard at Francisco Street|Los Angeles|CA": {
+    "lat": 34.058301,
+    "lon": -118.3648,
+    "precision": "road"
+  },
+  "v2|Scott Street near Bay Street|San Francisco|CA": {
+    "lat": 37.78734,
+    "lon": -122.438598,
+    "precision": "road"
+  },
+  "v2|a parking lot at 291 E. Buckeye Road|Phoenix|AZ": {
+    "lat": 33.436731,
+    "lon": -112.070134,
+    "precision": "road"
+  },
+  "v2|parking lot at 2001 E. Apache Boulevard|Tempe|AZ": {
+    "lat": 33.414698,
+    "lon": -111.900338,
+    "precision": "street"
+  },
+  "v2|Gilmore Avenue near Lindblade Drive|Los Angeles|CA": {
+    "lat": 33.990581,
+    "lon": -118.426176,
+    "precision": "road"
+  },
+  "v2|Manor Road near Manorwood Road|Austin|TX": {
+    "lat": 30.312019,
+    "lon": -97.665707,
+    "precision": "road"
+  },
+  "v2|Greary Boulevard at Collins Street|San Francisco|CA": {
+    "lat": 37.783323,
+    "lon": -122.450353,
+    "precision": "road"
+  },
+  "v2|Beverly Boulevard at N. June Street|Los Angeles|CA": {
+    "lat": 34.07555,
+    "lon": -118.287193,
+    "precision": "road"
+  },
+  "v2|Horizon Avenue near Main Street|Venice|CA": {
+    "lat": 33.98853,
+    "lon": -118.47372,
+    "precision": "road"
+  },
+  "v2|Henderson Street near W. 9th Street|Austin|TX": {
+    "lat": 30.27237,
+    "lon": -97.752321,
+    "precision": "road"
+  },
+  "v2|Santa Monica Boulevard near N. Doheny Drive|Beverly Hills|CA": {
+    "lat": 34.06668,
+    "lon": -118.410967,
+    "precision": "road"
+  },
+  "v2|parking lot driveway entrance at 4125 N. 22nd Street|Phoenix|AZ": {
+    "lat": 33.496758,
+    "lon": -112.034455,
+    "precision": "road"
+  },
+  "v2|Oak Street at Franklin Street|San Francisco|CA": {
+    "lat": 37.775049,
+    "lon": -122.421794,
+    "precision": "street"
+  },
+  "v2|Franklin Avenue near N. New Hampshire Avenue|Los Angeles|CA": {
+    "lat": 34.105444,
+    "lon": -118.279556,
+    "precision": "road"
+  },
+  "v2|N. 24th Street at State Route 202 Red Mountain Freeway off-ramp|Phoenix|AZ": {
+    "lat": 33.507305,
+    "lon": -112.030366,
+    "precision": "road"
+  },
+  "v2|Rosewood Avenue near Laurel Avenue|Los Angeles|CA": {
+    "lat": 34.079003,
+    "lon": -118.303687,
+    "precision": "road"
+  },
+  "v2|Market Street near Noe Street|San Francisco|CA": {
+    "lat": 37.764621,
+    "lon": -122.432617,
+    "precision": "street"
+  },
+  "v2|Jefferson Street near Leavenworth Street|San Francisco|CA": {
+    "lat": 37.808122,
+    "lon": -122.416636,
+    "precision": "road"
+  },
+  "v2|W. Centinela Avenue at Alvern Street|Los Angeles|CA": {
+    "lat": 33.977276,
+    "lon": -118.369768,
+    "precision": "road"
+  },
+  "v2|Fair Oaks Avenue at E. Weddell Drive|Sunnyvale|CA": {
+    "lat": 37.385837,
+    "lon": -122.016712,
+    "precision": "road"
+  },
+  "v2|John Daly Boulevard near Lake Merced Boulevard|San Francisco|CA": {
+    "lat": 37.708406,
+    "lon": -122.485642,
+    "precision": "road"
+  },
+  "v2|W. Baseline Road at Priest Drive|Tempe|AZ": {
+    "lat": 33.378185,
+    "lon": -111.977899,
+    "precision": "road"
+  },
+  "v2|an alley behind 7955 W. 3rd Street|Los Angeles|CA": null,
+  "v2|Homestead near 25th Street|San Francisco|CA": {
+    "lat": 37.76041,
+    "lon": -122.414678,
+    "precision": "road"
+  },
+  "v2|Research Boulevard near Metric Boulevard|Austin|TX": {
+    "lat": 30.371045,
+    "lon": -97.722716,
+    "precision": "road"
+  },
+  "v2|parking lot at 1721 W. 10th Place|Tempe|AZ": {
+    "lat": 33.417043,
+    "lon": -111.96702,
+    "precision": "street"
+  },
+  "v2|exit of a parking lot at 3950 E. Indian School Road|Phoenix|AZ": {
+    "lat": 33.495356,
+    "lon": -111.995966,
+    "precision": "road"
+  },
+  "v2|McDowell Road at Hayden Road|Scottsdale|AZ": {
+    "lat": 33.464917,
+    "lon": -111.909094,
+    "precision": "street"
+  },
+  "v2|Masonic Avenue near Java Street|San Francisco|CA": {
+    "lat": 37.780583,
+    "lon": -122.447413,
+    "precision": "road"
+  },
+  "v2|Treat Avenue at Alameda Street|San Francisco|CA": {
+    "lat": 37.762995,
+    "lon": -122.413833,
+    "precision": "road"
+  },
+  "v2|24th Street near Pearl Place North|Santa Monica|CA": {
+    "lat": 34.04808,
+    "lon": -118.494216,
+    "precision": "road"
+  },
+  "v2|4th Street at Berry Street|San Francisco|CA": {
+    "lat": 37.775526,
+    "lon": -122.393203,
+    "precision": "street"
+  },
+  "v2|Kerley Drive near E. Rosemary Street|San Jose|CA": {
+    "lat": 37.363317,
+    "lon": -121.908681,
+    "precision": "road"
+  },
+  "v2|Masonic Avenue near O'Farrell Street|San Francisco|CA": {
+    "lat": 37.780583,
+    "lon": -122.447413,
+    "precision": "road"
+  },
+  "v2|S. 16th Street near E. Buckeye Road|Phoenix|AZ": {
+    "lat": 33.436612,
+    "lon": -112.047242,
+    "precision": "street"
+  },
+  "v2|W. 6th Street at Yale Street|Houston|TX": {
+    "lat": 29.781458,
+    "lon": -95.398235,
+    "precision": "road"
+  },
+  "v2|E. Southern Avenue near S. 39th Street|Phoenix|AZ": {
+    "lat": 33.393038,
+    "lon": -112.034636,
+    "precision": "road"
+  },
+  "v2|Santa Monica Boulevard at N. Stanley Avenue|Los Angeles|CA": {
+    "lat": 34.090759,
+    "lon": -118.350906,
+    "precision": "road"
+  },
+  "v2|Carroll Street near E. Washington Avenue|Sunnyvale|CA": {
+    "lat": 37.372268,
+    "lon": -122.029382,
+    "precision": "road"
+  },
+  "v2|Stanyan Street near Fulton Street|San Francisco|CA": {
+    "lat": 37.774377,
+    "lon": -122.454685,
+    "precision": "street"
+  },
+  "v2|9th Avenue near Lincoln Way|San Francisco|CA": {
+    "lat": 37.765724,
+    "lon": -122.466545,
+    "precision": "street"
+  },
+  "v2|W. Olympic Boulevard near S. Clark Drive|Beverly Hills|CA": {
+    "lat": 34.059483,
+    "lon": -118.410094,
+    "precision": "road"
+  },
+  "v2|W. Pico Boulevard near S. Sepulveda Boulevard|Los Angeles|CA": {
+    "lat": 34.048806,
+    "lon": -118.335936,
+    "precision": "road"
+  },
+  "v2|Oriente Street near Ottilia Street|Daly City|CA": {
+    "lat": 37.70357,
+    "lon": -122.415451,
+    "precision": "road"
+  },
+  "v2|Cochran Avenue near Washington Boulevard|Los Angeles|CA": {
+    "lat": 34.036934,
+    "lon": -118.356698,
+    "precision": "road"
+  },
+  "v2|Arizona State Route 101 near Exit 45|Scottsdale|AZ": null,
+  "v2|S. Western Avenue at W. 11th Street|Los Angeles|CA": {
+    "lat": 33.959438,
+    "lon": -118.309017,
+    "precision": "road"
+  },
+  "v2|5th Street at Howard Street|San Francisco|CA": {
+    "lat": 37.821995,
+    "lon": -122.369903,
+    "precision": "road"
+  },
+  "v2|Arizona State Route 51 near the Interstate 10 on-ramp|Phoenix|AZ": null,
+  "v2|Denker Avenue near W. Jefferson Boulevard|Los Angeles|CA": {
+    "lat": 33.982799,
+    "lon": -118.304592,
+    "precision": "road"
+  },
+  "v2|U.S. Route 441 at W. Wetherbee Road|Orlando|FL": null,
+  "v2|E. Middlefield Road near Logue Avenue|Mountain View|CA": {
+    "lat": 37.391483,
+    "lon": -122.048777,
+    "precision": "road"
+  },
+  "v2|Mansel Avenue near W. 111th Street|Lennox|CA": {
+    "lat": 33.93607,
+    "lon": -118.355916,
+    "precision": "road"
+  },
+  "v2|N. 1st Street at Adams Street|Phoenix|AZ": {
+    "lat": 33.653485,
+    "lon": -112.07366,
+    "precision": "road"
+  },
+  "v2|17th Street and Church Street|San Francisco|CA": {
+    "lat": 37.764693,
+    "lon": -122.404035,
+    "precision": "road"
+  },
+  "v2|Ulloa Street near 21st Avenue|San Francisco|CA": {
+    "lat": 37.741464,
+    "lon": -122.469353,
+    "precision": "road"
+  },
+  "v2|Anise Drive near Poppy Seed Lane|Austin|TX": {
+    "lat": 30.224231,
+    "lon": -97.693429,
+    "precision": "road"
+  },
+  "v2|S. Centinela Avenue at Washington Place|Los Angeles|CA": {
+    "lat": 33.976582,
+    "lon": -118.383826,
+    "precision": "road"
+  },
+  "v2|Sanchez Street at 15th Street|San Francisco|CA": {
+    "lat": 37.761965,
+    "lon": -122.430661,
+    "precision": "street"
+  },
+  "v2|W. Olympic Boulevard near Dewey Avenue|Los Angeles|CA": {
+    "lat": 34.058301,
+    "lon": -118.3648,
+    "precision": "road"
+  },
+  "v2|9th Street at Tehama Street|San Francisco|CA": {
+    "lat": 37.824437,
+    "lon": -122.372051,
+    "precision": "road"
+  },
+  "v2|E. Thomas Road near N. Scottsdale Road|Scottsdale|AZ": {
+    "lat": 33.479774,
+    "lon": -111.9264,
+    "precision": "street"
+  },
+  "v2|N. Scottsdale Road at E. Kierland Boulevard|Scottsdale|AZ": {
+    "lat": 33.723293,
+    "lon": -111.925307,
+    "precision": "road"
+  },
+  "v2|W. Vernon Avenue at 4th Avenue|Los Angeles|CA": {
+    "lat": 34.003696,
+    "lon": -118.297794,
+    "precision": "road"
+  },
+  "v2|Great Highway near Irving Street|San Francisco|CA": {
+    "lat": 37.770637,
+    "lon": -122.510908,
+    "precision": "road"
+  },
+  "v2|E. William Cannon Drive at Elm Creek Drive|Austin|TX": {
+    "lat": 30.167425,
+    "lon": -97.737433,
+    "precision": "road"
+  },
+  "v2|Jones Street near Union Street|San Francisco|CA": {
+    "lat": 37.799717,
+    "lon": -122.415656,
+    "precision": "street"
+  },
+  "v2|Summit Way near Brotherhood Way|San Francisco|CA": {
+    "lat": 37.713892,
+    "lon": -122.474729,
+    "precision": "street"
+  },
+  "v2|Indiana Street near 22nd Street|San Francisco|CA": {
+    "lat": 37.749009,
+    "lon": -122.390355,
+    "precision": "street"
+  },
+  "v2|S. 5th Street at Jewell Street|Austin|TX": {
+    "lat": 30.244172,
+    "lon": -97.764278,
+    "precision": "road"
+  },
+  "v2|Union Street at Jones Street|San Francisco|CA": {
+    "lat": 37.799717,
+    "lon": -122.415656,
+    "precision": "street"
+  },
+  "v2|N. Wells Fargo Avenue near E. Shoeman Lane|Scottsdale|AZ": {
+    "lat": 33.499834,
+    "lon": -111.922883,
+    "precision": "road"
+  },
+  "v2|Sanchez Street near 14th Street|San Francisco|CA": {
+    "lat": 37.767682,
+    "lon": -122.431043,
+    "precision": "street"
+  },
+  "v2|S. Figueroa Street at W. 23rd Street|Los Angeles|CA": {
+    "lat": 33.916685,
+    "lon": -118.282775,
+    "precision": "road"
+  },
+  "v2|Montgomery Street near Lincoln Boulevard|San Francisco|CA": {
+    "lat": 37.789228,
+    "lon": -122.401472,
+    "precision": "road"
+  },
+  "v2|Washington Boulevard near Redwood Avenue|Los Angeles|CA": {
+    "lat": 34.00706,
+    "lon": -118.413044,
+    "precision": "road"
+  },
+  "v2|Baker Street at Turk Boulevard|San Francisco|CA": {
+    "lat": 37.779164,
+    "lon": -122.442224,
+    "precision": "street"
+  },
+  "v2|Julian Avenue near 14th Street|San Francisco|CA": {
+    "lat": 37.766591,
+    "lon": -122.421056,
+    "precision": "street"
+  },
+  "v2|Apple Street near Ridgeley Drive|Los Angeles|CA": {
+    "lat": 34.034447,
+    "lon": -118.363655,
+    "precision": "road"
+  },
+  "v2|W. Martin Luther King Jr. Boulevard at Nueces Street|Austin|TX": {
+    "lat": 30.283719,
+    "lon": -97.751897,
+    "precision": "road"
+  },
+  "v2|Montgomery Street near Broadway|San Francisco|CA": {
+    "lat": 37.79813,
+    "lon": -122.404067,
+    "precision": "street"
+  },
+  "v2|Edgewood Avenue SE near Jesse Hill Jr. Drive NE|Atlanta|GA": {
+    "lat": 33.755824,
+    "lon": -84.380242,
+    "precision": "road"
+  },
+  "v2|Bryant Street at Zoe Street|San Francisco|CA": {
+    "lat": 37.758047,
+    "lon": -122.409657,
+    "precision": "road"
+  },
+  "v2|E. Monte Vista Road near N. 25th Street|Phoenix|AZ": {
+    "lat": 33.471687,
+    "lon": -112.027541,
+    "precision": "road"
+  },
+  "v2|Florida Street near 23rd Street|San Francisco|CA": {
+    "lat": 37.761682,
+    "lon": -122.411119,
+    "precision": "road"
+  },
+  "v2|North Avenue NE at Glen Iris Drive NE|Atlanta|GA": {
+    "lat": 33.771123,
+    "lon": -84.366664,
+    "precision": "road"
+  },
+  "v2|Rio Robles at the parking lot entrance at 121 Rio Robles|San Jose|CA": {
+    "lat": 37.404497,
+    "lon": -121.947238,
+    "precision": "road"
+  },
+  "v2|Pico Boulevard at 33rd Street|Santa Monica|CA": {
+    "lat": 34.027682,
+    "lon": -118.453849,
+    "precision": "road"
+  },
+  "v2|Masonic Avenue at Golden Gate Avenue|San Francisco|CA": {
+    "lat": 37.780583,
+    "lon": -122.447413,
+    "precision": "road"
+  },
+  "v2|California State Route 82 at University Avenue|Palo Alto|CA": {
+    "lat": 37.450245,
+    "lon": -122.15731,
+    "precision": "road"
+  },
+  "v2|Montana Avenue at Stanford Street|Los Angeles|CA": {
+    "lat": 34.051888,
+    "lon": -118.470912,
+    "precision": "road"
+  },
+  "v2|W. 5th Street at N. Lamar Boulevard|Austin|TX": {
+    "lat": 30.267323,
+    "lon": -97.743815,
+    "precision": "road"
+  },
+  "v2|S. Encanto Drive at E. Broadway Road|Tempe|AZ": {
+    "lat": 33.408015,
+    "lon": -111.938294,
+    "precision": "road"
+  },
+  "v2|S. Lamar Boulevard at Lamar Square Drive|Austin|TX": {
+    "lat": 30.265408,
+    "lon": -97.756746,
+    "precision": "road"
+  },
+  "v2|Guerrero Street at 17th Street|San Francisco|CA": {
+    "lat": 37.746609,
+    "lon": -122.422279,
+    "precision": "road"
+  },
+  "v2|Broadway near W. Adams Boulevard|Los Angeles|CA": {
+    "lat": 34.037117,
+    "lon": -118.466413,
+    "precision": "road"
+  },
+  "v2|Katy Freeway Service Road near Cortlandt Street|Houston|TX": {
+    "lat": 29.786179,
+    "lon": -95.395226,
+    "precision": "road"
+  },
+  "v2|Apple Street near S. Dunsmuir Avenue|Los Angeles|CA": {
+    "lat": 34.034447,
+    "lon": -118.363655,
+    "precision": "road"
+  },
+  "v2|E. Southern Avenue near S. 32nd Street|Phoenix|AZ": {
+    "lat": 33.393038,
+    "lon": -112.034636,
+    "precision": "road"
+  },
+  "v2|Geary Boulevard near Laguna Street|San Francisco|CA": {
+    "lat": 37.784766,
+    "lon": -122.428159,
+    "precision": "street"
+  },
+  "v2|Montopolis Drive near E. Ben White Boulevard|Austin|TX": {
+    "lat": 30.215578,
+    "lon": -97.709465,
+    "precision": "road"
+  },
+  "v2|W. 8th Street near S. Alvarado Street|Los Angeles|CA": {
+    "lat": 34.045741,
+    "lon": -118.257784,
+    "precision": "road"
+  },
+  "v2|Windsor Street at Hartford Street|Austin|TX": {
+    "lat": 30.255982,
+    "lon": -97.739515,
+    "precision": "road"
+  },
+  "v2|Napoleon Avenue at Gladstone Avenue|Nashville|TN": {
+    "lat": 36.128263,
+    "lon": -86.757182,
+    "precision": "road"
+  },
+  "v2|Folsom Street near 1st Street|San Francisco|CA": {
+    "lat": 37.787598,
+    "lon": -122.394063,
+    "precision": "street"
+  },
+  "v2|The Embarcadero near Market Street|San Francisco|CA": {
+    "lat": 37.796726,
+    "lon": -122.395459,
+    "precision": "street"
+  },
+  "v2|S. 32nd Street near E. Broadway Road|Phoenix|AZ": {
+    "lat": 33.445332,
+    "lon": -112.012917,
+    "precision": "road"
+  },
+  "v2|parking lot at 1980 W. Reservoir Street|Los Angeles|CA": null,
+  "v2|North Galvin Parkway near McDowell Road|Phoenix|AZ": {
+    "lat": 33.457065,
+    "lon": -111.951616,
+    "precision": "road"
+  },
+  "v2|Franklin Street near Larch Street|San Francisco|CA": {
+    "lat": 37.789222,
+    "lon": -122.4238,
+    "precision": "road"
+  },
+  "v2|parking structure at 1000 E. Apache Boulevard|Tempe|AZ": {
+    "lat": 33.415335,
+    "lon": -111.934028,
+    "precision": "road"
+  },
+  "v2|Florida Street near 25th Street|San Francisco|CA": {
+    "lat": 37.761682,
+    "lon": -122.411119,
+    "precision": "road"
+  },
+  "v2|Nolan Street at Live Oak Street|San Antonio|TX": {
+    "lat": 29.427629,
+    "lon": -98.479421,
+    "precision": "road"
+  },
+  "v2|W. Pico Boulevard at S. Union Avenue|Los Angeles|CA": {
+    "lat": 34.048806,
+    "lon": -118.335936,
+    "precision": "road"
+  },
+  "v2|Rengstorff Avenue at Central Expressway|Mountain View|CA": {
+    "lat": 37.420477,
+    "lon": -122.092826,
+    "precision": "road"
+  },
+  "v2|Sand Lake Road near Mandarin Drive|Orlando|FL": {
+    "lat": 28.450353,
+    "lon": -81.408948,
+    "precision": "road"
+  },
+  "v2|W. Centinela Avenue between S. Halm Avenue and S. Hold Avenue|Los Angeles|CA": null,
+  "v2|Venice Boulevard near Crenshaw Boulevard|Los Angeles|CA": {
+    "lat": 34.045106,
+    "lon": -118.328083,
+    "precision": "street"
+  },
+  "v2|Cherokee Avenue SE near Memorial Drive SE|Atlanta|GA": {
+    "lat": 33.742334,
+    "lon": -84.373365,
+    "precision": "road"
+  },
+  "v2|Dalton Avenue near W. 39th Street|Los Angeles|CA": {
+    "lat": 33.997569,
+    "lon": -118.303452,
+    "precision": "road"
+  },
+  "v2|W. 6th Street at West Avenue|Austin|TX": {
+    "lat": 30.268578,
+    "lon": -97.744616,
+    "precision": "road"
+  },
+  "v2|17th Street near Guerrero Street|San Francisco|CA": {
+    "lat": 37.764693,
+    "lon": -122.404035,
+    "precision": "road"
+  },
+  "v2|Salado Street near W. 28th Street|Austin|TX": {
+    "lat": 30.290947,
+    "lon": -97.745347,
+    "precision": "road"
+  },
+  "v2|S. Spring Street near 6th Street|Los Angeles|CA": {
+    "lat": 34.04551,
+    "lon": -118.251412,
+    "precision": "street"
+  },
+  "v2|N. 24th Street near Washington Street|Phoenix|AZ": {
+    "lat": 33.507305,
+    "lon": -112.030366,
+    "precision": "road"
+  },
+  "v2|Crescent Heights Boulevard near Rosewood Avenue|Los Angeles|CA": {
+    "lat": 34.063504,
+    "lon": -118.365026,
+    "precision": "road"
+  },
+  "v2|12th Court near Colorado Avenue|Santa Monica|CA": {
+    "lat": 34.019122,
+    "lon": -118.482679,
+    "precision": "road"
+  },
+  "v2|Leon Street at W. 25th Street|Austin|TX": {
+    "lat": 30.286028,
+    "lon": -97.749576,
+    "precision": "road"
+  },
+  "v2|Arizona State Route 202 Exit 1B off-ramp at N. 24th Street|Phoenix|AZ": {
+    "lat": 33.507305,
+    "lon": -112.030366,
+    "precision": "road"
+  },
+  "v2|W. 108th Street at Doty Avenue|Inglewood|CA": {
+    "lat": 33.938231,
+    "lon": -118.322173,
+    "precision": "road"
+  },
+  "v2|Venice Boulevard near La Fayette Road|Los Angeles|CA": {
+    "lat": 34.034966,
+    "lon": -118.264973,
+    "precision": "road"
+  },
+  "v2|Harriet Street near Bryant Street|San Francisco|CA": {
+    "lat": 37.774706,
+    "lon": -122.401931,
+    "precision": "road"
+  },
+  "v2|Oakwood Avenue at N. Genesee Avenue|Los Angeles|CA": {
+    "lat": 34.07769,
+    "lon": -118.294433,
+    "precision": "road"
+  },
+  "v2|Windsor Road at Hartford Road|Austin|TX": {
+    "lat": 30.281855,
+    "lon": -97.754008,
+    "precision": "road"
+  },
+  "v2|Cesar Chavez Street near Indiana Street|San Francisco|CA": {
+    "lat": 37.748304,
+    "lon": -122.408439,
+    "precision": "road"
+  },
+  "v2|a parking lot at 7014 E. Camelback Road|Scottsdale|AZ": {
+    "lat": 33.50294,
+    "lon": -111.9294,
+    "precision": "road"
+  },
+  "v2|S. McClintock Drive near E. Guadalupe Road|Tempe|AZ": {
+    "lat": 33.396863,
+    "lon": -111.90914,
+    "precision": "road"
+  },
+  "v2|N. Angier Avenue NE near North Avenue NE|Atlanta|GA": {
+    "lat": 33.768453,
+    "lon": -84.363179,
+    "precision": "road"
+  },
+  "v2|Lemmon Avenue near Turtle Creek Boulevard|Dallas|TX": {
+    "lat": 32.834605,
+    "lon": -96.830259,
+    "precision": "road"
+  },
+  "v2|Webster Street at Geary Boulevard|San Francisco|CA": {
+    "lat": 37.784843,
+    "lon": -122.430928,
+    "precision": "street"
+  },
+  "v2|Hopkins Avenue near El Camino Real|Redwood City|CA": {
+    "lat": 37.488374,
+    "lon": -122.237651,
+    "precision": "street"
+  },
+  "v2|E. Florence Avenue near N. Prairie Avenue|Inglewood|CA": {
+    "lat": 33.9723,
+    "lon": -118.341602,
+    "precision": "road"
+  },
+  "v2|Newcomb Avenue near Toland Street|San Francisco|CA": {
+    "lat": 37.732928,
+    "lon": -122.385231,
+    "precision": "road"
+  },
+  "v2|Arizona State Route 51 Exit 2 off-ramp near Thomas Road|Phoenix|AZ": {
+    "lat": 33.480309,
+    "lon": -112.217529,
+    "precision": "road"
+  },
+  "v2|E. Camelback Road near N. 31st Street|Phoenix|AZ": {
+    "lat": 33.509908,
+    "lon": -112.007686,
+    "precision": "road"
+  },
+  "v2|N. Fremont Avenue at W. 1st Street|Los Angeles|CA": {
+    "lat": 34.060792,
+    "lon": -118.249227,
+    "precision": "road"
+  },
+  "v2|W. Martin Luther King Jr. Boulevard near Guadalupe Street|Austin|TX": {
+    "lat": 30.283719,
+    "lon": -97.751897,
+    "precision": "road"
+  },
+  "v2|Pacific Avenue near Polk Street|San Francisco|CA": {
+    "lat": 37.79512,
+    "lon": -122.421442,
+    "precision": "street"
+  },
+  "v2|Divisadero Street near Oak Street|San Francisco|CA": {
+    "lat": 37.772869,
+    "lon": -122.4375,
+    "precision": "street"
+  },
+  "v2|North Point Street near Grant Avenue|San Francisco|CA": {
+    "lat": 37.807293,
+    "lon": -122.407965,
+    "precision": "road"
+  },
+  "v2|Capistrano Avenue at San Gabriel Avenue|San Francisco|CA": {
+    "lat": 37.727434,
+    "lon": -122.438317,
+    "precision": "road"
+  },
+  "v2|W. St. Johns Avenue near N. Lamar Boulevard|Austin|TX": {
+    "lat": 30.343155,
+    "lon": -97.727342,
+    "precision": "road"
+  },
+  "v2|Dockweiler Street at West Boulevard|Los Angeles|CA": {
+    "lat": 34.051178,
+    "lon": -118.338606,
+    "precision": "road"
+  },
+  "v2|S. 32nd Street near E. Mobile Lane|Phoenix|AZ": {
+    "lat": 33.445332,
+    "lon": -112.012917,
+    "precision": "road"
+  },
+  "v2|N. Shoreline Boulevard near Mountain Shadows Drive|Mountain View|CA": {
+    "lat": 37.418368,
+    "lon": -122.077921,
+    "precision": "road"
+  },
+  "v2|Sutter Street near Steiner Street|San Francisco|CA": {
+    "lat": 37.785978,
+    "lon": -122.434788,
+    "precision": "street"
+  },
+  "v2|Exline Street near S. Malcolm X Boulevard|Dallas|TX": {
+    "lat": 32.756344,
+    "lon": -96.759074,
+    "precision": "road"
+  },
+  "v2|parking lot near 350 Nita Avenue|Mountain View|CA": {
+    "lat": 37.410746,
+    "lon": -122.104065,
+    "precision": "street"
+  },
+  "v2|NE 27th Street near N. Miami Avenue|Miami|FL": {
+    "lat": 25.802908,
+    "lon": -80.187334,
+    "precision": "road"
+  },
+  "v2|Montgomery Street near Columbus Avenue|San Francisco|CA": {
+    "lat": 37.789228,
+    "lon": -122.401472,
+    "precision": "road"
+  },
+  "v2|Brazos Street near W. 3rd Street|Austin|TX": {
+    "lat": 30.26255,
+    "lon": -97.74339,
+    "precision": "road"
+  },
+  "v2|Bay Street near Stockton Street|San Francisco|CA": {
+    "lat": 37.805854,
+    "lon": -122.410125,
+    "precision": "street"
+  },
+  "v2|W. University Drive near S. Hardy Drive|Tempe|AZ": {
+    "lat": 33.421924,
+    "lon": -111.972697,
+    "precision": "road"
+  },
+  "v2|Woodward Street near Parker Lane|Austin|TX": {
+    "lat": 30.222663,
+    "lon": -97.746678,
+    "precision": "street"
+  },
+  "v2|W. Ridgewood Court near Neer Avenue|San Antonio|TX": {
+    "lat": 29.467228,
+    "lon": -98.504677,
+    "precision": "road"
+  },
+  "v2|S. Bentley Avenue near Santa Monica Boulevard|Los Angeles|CA": {
+    "lat": 34.025496,
+    "lon": -118.425243,
+    "precision": "road"
+  },
+  "v2|Gorham Place near Gorham Avenue|Los Angeles|CA": {
+    "lat": 34.054482,
+    "lon": -118.464613,
+    "precision": "road"
+  },
+  "v2|Leonard Tate Street SE near Decatur Street SE|Atlanta|GA": {
+    "lat": 33.752236,
+    "lon": -84.379547,
+    "precision": "road"
+  },
+  "v2|Castro Street near Market Street|San Francisco|CA": {
+    "lat": 37.76222,
+    "lon": -122.435256,
+    "precision": "street"
+  },
+  "v2|Fillmore Street near Ellis Street|San Francisco|CA": {
+    "lat": 37.788596,
+    "lon": -122.433793,
+    "precision": "road"
+  },
+  "v2|Sutter Street at Buchanan Street|San Francisco|CA": {
+    "lat": 37.786467,
+    "lon": -122.429787,
+    "precision": "street"
+  },
+  "v2|Brannan Street near Colin P. Kelly Jr. Street|San Francisco|CA": {
+    "lat": 37.77572,
+    "lon": -122.399866,
+    "precision": "road"
+  },
+  "v2|parking lot driveway at 1023 W. 24th Street|Austin|TX": {
+    "lat": 30.288003,
+    "lon": -97.749141,
+    "precision": "street"
+  },
+  "v2|parking lot exit at 1616 W. 5th Street|Austin|TX": {
+    "lat": 30.270994,
+    "lon": -97.744462,
+    "precision": "road"
+  },
+  "v2|Oakwood Avenue at N. Alfred Street|Los Angeles|CA": {
+    "lat": 34.07769,
+    "lon": -118.294433,
+    "precision": "road"
+  },
+  "v2|Overhill Drive near E. Fairview Boulevard|Inglewood|CA": {
+    "lat": 33.98151,
+    "lon": -118.355478,
+    "precision": "road"
+  },
+  "v2|Rose Avenue at Morningside Way|Los Angeles|CA": {
+    "lat": 34.017764,
+    "lon": -118.437097,
+    "precision": "road"
+  },
+  "v2|Alma Street near W. Meadow Drive|Palo Alto|CA": {
+    "lat": 37.439153,
+    "lon": -122.157172,
+    "precision": "road"
+  },
+  "v2|parking lot at 8201 S. Congress Avenue|Austin|TX": {
+    "lat": 30.175604,
+    "lon": -97.783328,
+    "precision": "street"
+  },
+  "v2|Lincoln Boulevard near Ocean Park Boulevard|Santa Monica|CA": {
+    "lat": 34.00678,
+    "lon": -118.476836,
+    "precision": "street"
+  },
+  "v2|Elm Street near N. Walton Street|Dallas|TX": {
+    "lat": 32.786051,
+    "lon": -96.776756,
+    "precision": "road"
+  },
+  "v2|W. 8th Street at Vermont Avenue|Los Angeles|CA": {
+    "lat": 34.045741,
+    "lon": -118.257784,
+    "precision": "road"
+  },
+  "v2|19th Street near Guerrero Street|San Francisco|CA": {
+    "lat": 37.760481,
+    "lon": -122.415282,
+    "precision": "road"
+  },
+  "v2|Kissling Street near 11th Street|San Francisco|CA": {
+    "lat": 37.772315,
+    "lon": -122.415376,
+    "precision": "road"
+  },
+  "v2|Channel Street near 4th Street|San Francisco|CA": {
+    "lat": 37.768864,
+    "lon": -122.399944,
+    "precision": "street"
+  },
+  "v2|4th Street near Frank Court|Los Angeles|CA": {
+    "lat": 34.048457,
+    "lon": -118.249504,
+    "precision": "street"
+  },
+  "v2|Fell Street near Baker Street|San Francisco|CA": {
+    "lat": 37.771853,
+    "lon": -122.453232,
+    "precision": "road"
+  },
+  "v2|Sea Harbor Drive near Florida Festival Drive|Orlando|FL": {
+    "lat": 28.409688,
+    "lon": -81.468784,
+    "precision": "road"
+  },
+  "v2|E. Southern Avenue near S. 17th Street|Phoenix|AZ": {
+    "lat": 33.393038,
+    "lon": -112.034636,
+    "precision": "road"
+  },
+  "v2|E. 4th Street near Concho Street|Austin|TX": {
+    "lat": 30.264262,
+    "lon": -97.736393,
+    "precision": "road"
+  },
+  "v2|W. 9th Street near S. Farmer Avenue|Tempe|AZ": {
+    "lat": 33.420459,
+    "lon": -111.943343,
+    "precision": "road"
+  },
+  "v2|Shepherd Drive near W. Dallas Street|Houston|TX": {
+    "lat": 29.765286,
+    "lon": -95.409581,
+    "precision": "road"
+  },
+  "v2|90th Street at Sullivan Avenue|Daly City|CA": {
+    "lat": 37.691108,
+    "lon": -122.473915,
+    "precision": "road"
+  },
+  "v2|Franklin Street at Eddy Street|San Francisco|CA": {
+    "lat": 37.789222,
+    "lon": -122.4238,
+    "precision": "road"
+  },
+  "v2|Sunset Boulevard near Western Avenue|Los Angeles|CA": {
+    "lat": 34.087416,
+    "lon": -118.275814,
+    "precision": "road"
+  },
+  "v2|Jefferson Street at Taylor Street|San Francisco|CA": {
+    "lat": 37.808326,
+    "lon": -122.415318,
+    "precision": "street"
+  },
+  "v2|Kirkham Street at 9th Avenue|San Francisco|CA": {
+    "lat": 37.760141,
+    "lon": -122.465981,
+    "precision": "street"
+  },
+  "v2|Hubert Street near Lewis Street|Dallas|TX": {
+    "lat": 32.810102,
+    "lon": -96.766915,
+    "precision": "road"
+  },
+  "v2|Reno Street at W. 3rd Street|Los Angeles|CA": {
+    "lat": 34.068004,
+    "lon": -118.283263,
+    "precision": "street"
+  },
+  "v2|W. Kelso Street near S. Cedar Avenue|Inglewood|CA": {
+    "lat": 33.95878,
+    "lon": -118.361543,
+    "precision": "road"
+  },
+  "v2|E. William Cannon Drive near Meadow Lake Boulevard|Austin|TX": {
+    "lat": 30.167425,
+    "lon": -97.737433,
+    "precision": "road"
+  },
+  "v2|Peters Street SW near Ted Turner Drive SW.|Atlanta|GA": {
+    "lat": 33.742943,
+    "lon": -84.409151,
+    "precision": "road"
+  },
+  "v2|E. University Drive near S. McClintock Drive|Tempe|AZ": {
+    "lat": 33.421822,
+    "lon": -111.978271,
+    "precision": "road"
+  },
+  "v2|N. 32nd Street at E. Oak Street|Phoenix|AZ": {
+    "lat": 33.620803,
+    "lon": -112.013325,
+    "precision": "road"
+  },
+  "v2|Lyon Street near Golden Gate Avenue|San Francisco|CA": {
+    "lat": 37.790128,
+    "lon": -122.445957,
+    "precision": "road"
+  },
+  "v2|an alley between Oldham Street and Medical Arts Square|Austin|TX": {
+    "lat": 30.28835,
+    "lon": -97.727717,
+    "precision": "road"
+  },
+  "v2|Chestnut Street near Richardson Avenue|San Francisco|CA": {
+    "lat": 37.803977,
+    "lon": -122.411485,
+    "precision": "road"
+  },
+  "v2|Interstate 280 Exit 49 off-ramp near John Daly Boulevard|Daly City|CA": {
+    "lat": 37.705097,
+    "lon": -122.471595,
+    "precision": "road"
+  },
+  "v2|N. Vermont Avenue near De Longpre Avenue|Los Angeles|CA": {
+    "lat": 34.085334,
+    "lon": -118.291776,
+    "precision": "road"
+  },
+  "v2|S. I-35 Frontage Road near E. Oltorf Street|Austin|TX": {
+    "lat": 30.211062,
+    "lon": -97.757092,
+    "precision": "road"
+  },
+  "v2|W. Jefferson Boulevard at 7th Avenue|Los Angeles|CA": {
+    "lat": 34.023378,
+    "lon": -118.283413,
+    "precision": "street"
+  },
+  "v2|Green Street near Mason Street|San Francisco|CA": {
+    "lat": 37.798992,
+    "lon": -122.41236,
+    "precision": "street"
+  },
+  "v2|E. Indian School Road near N. 14th Street|Phoenix|AZ": {
+    "lat": 33.488982,
+    "lon": -111.960478,
+    "precision": "road"
+  },
+  "v2|W. 8th Street at Guadalupe Street|Austin|TX": {
+    "lat": 30.283944,
+    "lon": -97.775201,
+    "precision": "road"
+  },
+  "v2|Ralph David Abernathy Boulevard SW near Cooper Street SW|Atlanta|GA": {
+    "lat": 33.737524,
+    "lon": -84.397047,
+    "precision": "road"
+  },
+  "v2|Biggers Street SE near Grant Street SE|Atlanta|GA": {
+    "lat": 33.748116,
+    "lon": -84.375904,
+    "precision": "road"
+  },
+  "v2|S. Western Avenue near the westbound Interstate 10 on and off-ramps|Los Angeles|CA": {
+    "lat": 33.959438,
+    "lon": -118.309017,
+    "precision": "road"
+  },
+  "v2|Silver Lake Boulevard at W. Temple Street|Los Angeles|CA": {
+    "lat": 34.100709,
+    "lon": -118.259971,
+    "precision": "road"
+  },
+  "v2|E. Curry Road near N. Stadem Drive|Tempe|AZ": {
+    "lat": 33.440469,
+    "lon": -111.921382,
+    "precision": "road"
+  },
+  "v2|Lincoln Court near Broadway|Santa Monica|CA": {
+    "lat": 34.019911,
+    "lon": -118.490947,
+    "precision": "road"
+  },
+  "v2|W. 17th Street near S. Burlington Avenue|Los Angeles|CA": {
+    "lat": 34.040055,
+    "lon": -118.278723,
+    "precision": "road"
+  },
+  "__rev__25.8029,-80.1873": "33137",
+  "__rev__28.4097,-81.4688": "32838",
+  "__rev__28.4504,-81.4089": "38209",
+  "__rev__29.4276,-98.4794": "78202",
+  "__rev__29.4672,-98.5047": "78212",
+  "__rev__29.7653,-95.4096": "77007",
+  "__rev__29.7815,-95.3982": "77007",
+  "__rev__29.7862,-95.3952": "77007",
+  "__rev__30.1674,-97.7374": "78744",
+  "__rev__30.1756,-97.7833": "78745",
+  "__rev__30.1979,-97.7532": "78744",
+  "__rev__30.2163,-97.8288": "78745",
+  "__rev__30.2227,-97.7467": "78704",
+  "__rev__30.2242,-97.6934": "78742",
+  "__rev__30.2442,-97.7643": "78704",
+  "__rev__30.2545,-97.7525": "78704",
+  "__rev__30.2560,-97.7395": "78701",
+  "__rev__30.2626,-97.7434": "78701",
+  "__rev__30.2643,-97.7364": "78767",
+  "__rev__30.2673,-97.7438": "78701",
+  "__rev__30.2686,-97.7446": "78701",
+  "__rev__30.2710,-97.7445": "78701",
+  "__rev__30.2724,-97.7523": "78703",
+  "__rev__30.2819,-97.7540": "78703",
+  "__rev__30.2837,-97.7519": "78703",
+  "__rev__30.2839,-97.7752": "78703",
+  "__rev__30.2860,-97.7496": "78705",
+  "__rev__30.2870,-97.7416": "78705",
+  "__rev__30.2880,-97.7491": "78705",
+  "__rev__30.2884,-97.7277": "78705",
+  "__rev__30.2909,-97.7453": "78705",
+  "__rev__30.3120,-97.6657": "78710",
+  "__rev__30.3432,-97.7273": "78757",
+  "__rev__30.3710,-97.7227": "78757",
+  "__rev__32.7563,-96.7591": "75215",
+  "__rev__32.7861,-96.7768": "75226",
+  "__rev__32.8101,-96.7669": "75206",
+  "__rev__32.8346,-96.8303": "75209",
+  "__rev__33.3782,-111.9779": "85283",
+  "__rev__33.3930,-112.0346": "85040",
+  "__rev__33.3969,-111.9091": "85287",
+  "__rev__33.4080,-111.9383": "85281",
+  "__rev__33.4147,-111.9003": "85288",
+  "__rev__33.4153,-111.9340": "85280",
+  "__rev__33.4170,-111.9670": "85281",
+  "__rev__33.4205,-111.9433": "85281",
+  "__rev__33.4218,-111.9783": "85034",
+  "__rev__33.4405,-111.9214": "85281",
+  "__rev__33.4503,-112.0194": "85034",
+  "__rev__33.4649,-111.9091": "85257",
+  "__rev__33.4658,-112.0049": "85008",
+  "__rev__33.4668,-111.9087": "85257",
+  "__rev__33.4717,-112.0275": "85008",
+  "__rev__33.4798,-111.9264": "85257",
+  "__rev__33.4803,-112.2175": "85033",
+  "__rev__33.4825,-111.9961": "85018",
+  "__rev__33.4954,-111.9960": "85018",
+  "__rev__33.4968,-112.0345": "85016",
+  "__rev__33.4998,-111.9229": "85251",
+  "__rev__33.5029,-111.9294": "85251",
+  "__rev__33.5085,-112.0830": "85013",
+  "__rev__33.5099,-112.0077": "85018",
+  "__rev__33.6208,-112.0133": "85032",
+  "__rev__33.6298,-112.0004": "85032",
+  "__rev__33.6535,-112.0737": "85022",
+  "__rev__33.7233,-111.9253": "85299",
+  "__rev__33.7375,-84.3970": "30312",
+  "__rev__33.7423,-84.3734": "30312",
+  "__rev__33.7429,-84.4092": "30313",
+  "__rev__33.7481,-84.3759": "30312",
+  "__rev__33.7522,-84.3795": "30312",
+  "__rev__33.7558,-84.3802": "30303",
+  "__rev__33.7685,-84.3632": "30308",
+  "__rev__33.7711,-84.3667": "30308",
+  "__rev__33.7948,-84.4270": "30318",
+  "__rev__33.9167,-118.2828": "90061",
+  "__rev__33.9361,-118.3559": "90304",
+  "__rev__33.9382,-118.3222": "90303",
+  "__rev__33.9588,-118.3615": "90301",
+  "__rev__33.9594,-118.3090": "90047",
+  "__rev__33.9723,-118.3416": "90302",
+  "__rev__33.9766,-118.3838": "90056",
+  "__rev__33.9773,-118.3698": "90045",
+  "__rev__33.9777,-118.3922": "90045",
+  "__rev__33.9815,-118.3555": "90302",
+  "__rev__33.9828,-118.3046": "90047",
+  "__rev__33.9885,-118.4737": "90291",
+  "__rev__33.9906,-118.4262": "90066",
+  "__rev__33.9939,-118.4677": "90291",
+  "__rev__33.9976,-118.3035": "90062",
+  "__rev__34.0037,-118.2978": "90008",
+  "__rev__34.0068,-118.4768": "90405",
+  "__rev__34.0071,-118.4130": "90066",
+  "__rev__34.0178,-118.4371": "90066",
+  "__rev__34.0191,-118.4827": "90404",
+  "__rev__34.0199,-118.4909": "90401",
+  "__rev__34.0232,-118.4633": "90405",
+  "__rev__34.0234,-118.2834": "90089",
+  "__rev__34.0255,-118.4252": "90034",
+  "__rev__34.0277,-118.4538": "90025",
+  "__rev__34.0293,-118.3429": "90016",
+  "__rev__34.0344,-118.3637": "90016",
+  "__rev__34.0350,-118.2650": "90015",
+  "__rev__34.0369,-118.3567": "90016",
+  "__rev__34.0401,-118.2787": "90015",
+  "__rev__34.0451,-118.3281": "90505",
+  "__rev__34.0455,-118.2514": "90014",
+  "__rev__34.0455,-118.4325": "90025",
+  "__rev__34.0457,-118.2578": "90017",
+  "__rev__34.0481,-118.4942": "90402",
+  "__rev__34.0485,-118.2495": "90013",
+  "__rev__34.0488,-118.3359": "90019",
+  "__rev__34.0512,-118.3386": "90019",
+  "__rev__34.0519,-118.4709": "90049",
+  "__rev__34.0545,-118.4646": "90049",
+  "__rev__34.0561,-118.4516": "90073",
+  "__rev__34.0583,-118.3648": "90048",
+  "__rev__34.0595,-118.4101": "90067",
+  "__rev__34.0608,-118.2492": "90012",
+  "__rev__34.0627,-118.2561": "90026",
+  "__rev__34.0667,-118.4110": "90212",
+  "__rev__34.0680,-118.2833": "90057",
+  "__rev__34.0755,-118.2872": "90004",
+  "__rev__34.0777,-118.2944": "90004",
+  "__rev__34.0790,-118.3037": "90004",
+  "__rev__34.0807,-118.3680": "90048",
+  "__rev__34.0853,-118.2918": "90029",
+  "__rev__34.0874,-118.2758": "90026",
+  "__rev__34.0908,-118.3509": "90046",
+  "__rev__34.0946,-118.3442": "90038",
+  "__rev__34.0953,-118.3008": "90027",
+  "__rev__34.1007,-118.2600": "90039",
+  "__rev__34.1054,-118.2796": "90227",
+  "__rev__36.1283,-86.7572": "37211",
+  "__rev__37.3633,-121.9087": "95112",
+  "__rev__37.3723,-122.0294": "94086",
+  "__rev__37.3858,-122.0167": "94085",
+  "__rev__37.3915,-122.0488": "94043",
+  "__rev__37.4045,-121.9472": "95134",
+  "__rev__37.4107,-122.1041": "94043",
+  "__rev__37.4205,-122.0928": "94043",
+  "__rev__37.4392,-122.1572": "94301",
+  "__rev__37.4502,-122.1573": "94301",
+  "__rev__37.4884,-122.2377": "94063",
+  "__rev__37.6911,-122.4739": "94015",
+  "__rev__37.7036,-122.4155": "94014",
+  "__rev__37.7051,-122.4716": "94014",
+  "__rev__37.7084,-122.4856": "94132",
+  "__rev__37.7139,-122.4747": "94132",
+  "__rev__37.7183,-122.4348": "94112",
+  "__rev__37.7274,-122.4383": "94112",
+  "__rev__37.7329,-122.3852": "94188",
+  "__rev__37.7398,-122.3836": "94188",
+  "__rev__37.7415,-122.4694": "94116",
+  "__rev__37.7466,-122.4223": "94110",
+  "__rev__37.7483,-122.4084": "94110",
+  "__rev__37.7580,-122.4097": "94110",
+  "__rev__37.7601,-122.4660": "94122",
+  "__rev__37.7604,-122.4147": "94110",
+  "__rev__37.7605,-122.4153": "94110",
+  "__rev__37.7609,-122.4011": "94107",
+  "__rev__37.7620,-122.4307": "94143",
+  "__rev__37.7622,-122.4353": "94114",
+  "__rev__37.7630,-122.4138": "94110",
+  "__rev__37.7646,-122.4326": "94114",
+  "__rev__37.7647,-122.4040": "94107",
+  "__rev__37.7647,-122.4244": "94143",
+  "__rev__37.7657,-122.4665": "94122",
+  "__rev__37.7666,-122.4211": "94143",
+  "__rev__37.7677,-122.4310": "94114",
+  "__rev__37.7689,-122.3999": "94107",
+  "__rev__37.7706,-122.5109": "94121",
+  "__rev__37.7719,-122.4532": "94117",
+  "__rev__37.7723,-122.4154": "94103",
+  "__rev__37.7744,-122.4547": "94118",
+  "__rev__37.7750,-122.4218": "94102",
+  "__rev__37.7755,-122.3932": "94107",
+  "__rev__37.7757,-122.3999": "94107",
+  "__rev__37.7771,-122.3905": "94124",
+  "__rev__37.7792,-122.4422": "94115",
+  "__rev__37.7806,-122.4474": "94118",
+  "__rev__37.7833,-122.4504": "94118",
+  "__rev__37.7848,-122.4309": "95115",
+  "__rev__37.7860,-122.4348": "94115",
+  "__rev__37.7865,-122.4298": "95115",
+  "__rev__37.7873,-122.4386": "94115",
+  "__rev__37.7886,-122.4338": "94115",
+  "__rev__37.7890,-122.4406": "94115",
+  "__rev__37.7892,-122.4238": "94164",
+  "__rev__37.7901,-122.4460": "94118",
+  "__rev__37.7967,-122.3955": "94111",
+  "__rev__37.7990,-122.4124": "94133",
+  "__rev__37.7997,-122.4157": "94133",
+  "__rev__37.8040,-122.4115": "94133",
+  "__rev__37.8059,-122.4101": "94133",
+  "__rev__37.8073,-122.4080": "94133",
+  "__rev__37.8074,-122.4075": "94133",
+  "__rev__37.8244,-122.3721": "94130"
 }
