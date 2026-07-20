@@ -61,7 +61,7 @@
       "in_hub": false
     },
     {
-      "id": 10,
+      "id": 12,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -76,7 +76,7 @@
       "in_hub": true
     },
     {
-      "id": 12,
+      "id": 14,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -91,7 +91,7 @@
       "in_hub": true
     },
     {
-      "id": 13,
+      "id": 15,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -106,7 +106,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 18,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -121,7 +121,7 @@
       "in_hub": true
     },
     {
-      "id": 18,
+      "id": 20,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -274,6 +274,36 @@
     },
     {
       "id": 10,
+      "lat": 33.452359,
+      "lon": -112.078272,
+      "city": "Phoenix",
+      "date": "May 2026",
+      "time": "15:59",
+      "crash_party": "Vehicle (Pickup Truck)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Phoenix (exact location pending Waymo data)",
+      "narrative": "On May [REDACTED], 2026 at 3:59 PM MT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Phoenix, Arizona was in a collision involving a pickup truck on [REDACTED] at [REDACTED].\n\nThe Waymo AV was traveling westbound in the second to the right lane on [REDACTED] and proceeding straight at a green light at the intersection with [REDACTED]. As the Waymo AV began to cross the intersection, a pickup truck traveling northbound in the designated right turn lane on [REDACTED]t proceeded to enter the intersection against a red light and began to maneuver to the left. The Waymo AV braked and maneuvered to the right as the pickup truck continued to proceed forward, and the front of the pickup truck made contact with the left side of the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage. Two passengers in the Waymo AV were not belted at the time of the collision. Two passengers in the Waymo AV were transported to a hospital by an ambulance with moderate injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because individuals involved were transported from the scene to a hospital for medical treatment and a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 11,
+      "lat": 34.05291,
+      "lon": -118.247468,
+      "city": "Los Angeles",
+      "date": "May 2026",
+      "time": "17:43",
+      "crash_party": "Vehicle (Passenger Car)",
+      "severity": "Moderate W/O Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Los Angeles (exact location pending Waymo data)",
+      "narrative": "On May [REDACTED], 2026 at 5:43 PM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Los Angeles, California was in a collision involving a passenger car on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was traveling northeastbound in the second from the right lane on [REDACTED], slowing to yield to a queue of traffic ahead. While the Waymo AV was slowing, a passenger car traveling southeastbound on [REDACTED] proceeded straight to cross the intersection with [REDACTED]. As the passenger car approached the exit of the intersection, the front of the passenger car made contact with the left side of a second passenger car traveling northeastbound in the rightmost lane on [REDACTED]. As a result of the contact, the second passenger car rotated counterclockwise as it continued northeastbound, and while rotating, the front left side of the passenger car made contact with the front right side of an SUV stopped directly behind the stopped Waymo AV. The second passenger car continued northeastbound as the Waymo AV began to proceed forward, and the front right side of the second passenger car then made contact with the rear of the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both passenger cars and the SUV sustained damage. The driver of the first passenger car alleged minor injuries and the driver of the second passenger car sedan alleged moderate injuries. \n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 12,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -288,7 +318,7 @@
       "in_hub": true
     },
     {
-      "id": 11,
+      "id": 13,
       "lat": 33.40914,
       "lon": -111.972736,
       "city": "Phoenix",
@@ -303,7 +333,7 @@
       "in_hub": true
     },
     {
-      "id": 12,
+      "id": 14,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -318,7 +348,7 @@
       "in_hub": true
     },
     {
-      "id": 13,
+      "id": 15,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -333,7 +363,7 @@
       "in_hub": true
     },
     {
-      "id": 14,
+      "id": 16,
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -348,7 +378,7 @@
       "in_hub": true
     },
     {
-      "id": 15,
+      "id": 17,
       "lat": 33.445872,
       "lon": -111.995488,
       "city": "Phoenix",
@@ -363,7 +393,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 18,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -378,7 +408,7 @@
       "in_hub": true
     },
     {
-      "id": 17,
+      "id": 19,
       "lat": 34.015224,
       "lon": -118.279299,
       "city": "Los Angeles",
@@ -393,7 +423,7 @@
       "in_hub": true
     },
     {
-      "id": 18,
+      "id": 20,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -408,7 +438,7 @@
       "in_hub": true
     },
     {
-      "id": 19,
+      "id": 21,
       "lat": 33.488982,
       "lon": -111.960478,
       "city": "Phoenix",
@@ -432,12 +462,12 @@
     "Phoenix": {
       "lat": 33.4484,
       "lon": -112.074,
-      "count": 7
+      "count": 8
     },
     "Los Angeles": {
       "lat": 34.0522,
       "lon": -118.2437,
-      "count": 1
+      "count": 2
     },
     "Atlanta": {
       "lat": 33.749,
@@ -445,5 +475,5 @@
       "count": 2
     }
   },
-  "total_serious": 19
+  "total_serious": 21
 }
