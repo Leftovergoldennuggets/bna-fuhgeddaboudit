@@ -61,7 +61,7 @@
       "in_hub": false
     },
     {
-      "id": 12,
+      "id": 13,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -76,7 +76,7 @@
       "in_hub": true
     },
     {
-      "id": 14,
+      "id": 15,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -91,7 +91,7 @@
       "in_hub": true
     },
     {
-      "id": 15,
+      "id": 16,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -106,7 +106,7 @@
       "in_hub": true
     },
     {
-      "id": 18,
+      "id": 19,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -121,7 +121,7 @@
       "in_hub": true
     },
     {
-      "id": 20,
+      "id": 21,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -304,6 +304,21 @@
     },
     {
       "id": 12,
+      "lat": 33.491405,
+      "lon": -111.925964,
+      "city": "Phoenix",
+      "date": "June 2026",
+      "time": "02:53",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Serious W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Scottsdale (exact location pending Waymo data)",
+      "narrative": "On June [REDACTED], 2026 at 2:53 AM MT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Scottsdale, California was in a collision involving an SUV on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was stopped facing east in the rightmost of two designated left turn only lanes on [REDACTED], for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, an SUV traveling eastbound at a high rate of speed on [REDACTED] traversed to the left across two lanes, and into the Waymo AV's lane of travel. The SUV maneuvered to the right as it approached the Waymo AV from behind, and the front left side of the SUV made contact with the rear right side of the stopped Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage. The driver of the SUV was transported from the scene to the hospital by ambulance with serious injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 13,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -318,7 +333,7 @@
       "in_hub": true
     },
     {
-      "id": 13,
+      "id": 14,
       "lat": 33.40914,
       "lon": -111.972736,
       "city": "Phoenix",
@@ -333,7 +348,7 @@
       "in_hub": true
     },
     {
-      "id": 14,
+      "id": 15,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -348,7 +363,7 @@
       "in_hub": true
     },
     {
-      "id": 15,
+      "id": 16,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -363,7 +378,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 17,
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -378,7 +393,7 @@
       "in_hub": true
     },
     {
-      "id": 17,
+      "id": 18,
       "lat": 33.445872,
       "lon": -111.995488,
       "city": "Phoenix",
@@ -393,7 +408,7 @@
       "in_hub": true
     },
     {
-      "id": 18,
+      "id": 19,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -408,7 +423,7 @@
       "in_hub": true
     },
     {
-      "id": 19,
+      "id": 20,
       "lat": 34.015224,
       "lon": -118.279299,
       "city": "Los Angeles",
@@ -423,7 +438,7 @@
       "in_hub": true
     },
     {
-      "id": 20,
+      "id": 21,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -438,7 +453,7 @@
       "in_hub": true
     },
     {
-      "id": 21,
+      "id": 22,
       "lat": 33.488982,
       "lon": -111.960478,
       "city": "Phoenix",
@@ -462,7 +477,7 @@
     "Phoenix": {
       "lat": 33.4484,
       "lon": -112.074,
-      "count": 8
+      "count": 9
     },
     "Los Angeles": {
       "lat": 34.0522,
@@ -475,5 +490,5 @@
       "count": 2
     }
   },
-  "total_serious": 21
+  "total_serious": 22
 }

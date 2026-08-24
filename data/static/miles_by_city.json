@@ -2,7 +2,7 @@
   "description": "Rider-only miles by city from the Waymo Safety Impact Data Hub. Updated automatically by the pipeline from CSV1.",
   "source_url": "https://waymo.com/safety/impact/#downloads",
   "data_through": "March 2026",
-  "last_updated": "2026-08-17",
+  "last_updated": "2026-08-24",
   "cities": {
     "Phoenix": {
       "miles_millions": 80.551,

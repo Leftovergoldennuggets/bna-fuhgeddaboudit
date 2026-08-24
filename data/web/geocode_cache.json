@@ -9082,5 +9082,9 @@
   "__city__Menlo Park|CA": {
     "lat": 37.451967,
     "lon": -122.177992
+  },
+  "__city__Emeryville|CA": {
+    "lat": 37.831409,
+    "lon": -122.286527
   }
 }

@@ -1,20 +1,20 @@
 {
   "meta": {
-    "generated_at": "2026-08-17T10:26:00.684283",
+    "generated_at": "2026-08-24T10:31:50.056613",
     "pipeline_version": "2.0",
-    "total_rows_in_merged": 2132,
+    "total_rows_in_merged": 2235,
     "date_range_start": 202009,
-    "date_range_end": 202606,
-    "federal_data_through": 202606,
-    "federal_data_through_label": "June 2026",
+    "date_range_end": 202607,
+    "federal_data_through": 202607,
+    "federal_data_through_label": "July 2026",
     "hub_data_through": 202603,
     "hub_data_through_label": "March 2026"
   },
   "overview": {
-    "total_crashes": 1887,
-    "supervised_crashes": 245,
-    "total_all_operations": 2132,
-    "preliminary_count": 228,
+    "total_crashes": 1984,
+    "supervised_crashes": 251,
+    "total_all_operations": 2235,
+    "preliminary_count": 325,
     "cities_count": 12,
     "public_metros_count": 11,
     "cities_list": [
@@ -31,60 +31,60 @@
       "San Francisco",
       "Washington, D.C."
     ],
-    "total_with_time_data": 1885
+    "total_with_time_data": 1982
   },
   "city_breakdown": {
     "San Francisco": {
       "code": "SAN_FRANCISCO",
-      "count": 793,
-      "percentage": 42.0,
+      "count": 824,
+      "percentage": 41.5,
       "status": "public"
     },
     "Phoenix": {
       "code": "PHOENIX",
-      "count": 435,
-      "percentage": 23.1,
+      "count": 451,
+      "percentage": 22.7,
       "status": "public"
     },
     "Los Angeles": {
       "code": "LOS_ANGELES",
-      "count": 417,
-      "percentage": 22.1,
+      "count": 442,
+      "percentage": 22.3,
       "status": "public"
     },
     "Austin": {
       "code": "AUSTIN",
-      "count": 150,
-      "percentage": 7.9,
+      "count": 163,
+      "percentage": 8.2,
       "status": "public"
     },
     "Atlanta": {
       "code": "ATLANTA",
-      "count": 57,
-      "percentage": 3.0,
+      "count": 62,
+      "percentage": 3.1,
       "status": "public"
     },
     "Miami": {
       "code": "MIAMI",
-      "count": 8,
-      "percentage": 0.4,
+      "count": 13,
+      "percentage": 0.7,
       "status": "public"
     },
     "Houston": {
       "code": "HOUSTON",
-      "count": 7,
+      "count": 8,
       "percentage": 0.4,
+      "status": "public"
+    },
+    "Orlando": {
+      "code": "ORLANDO",
+      "count": 6,
+      "percentage": 0.3,
       "status": "public"
     },
     "Dallas": {
       "code": "DALLAS",
       "count": 6,
-      "percentage": 0.3,
-      "status": "public"
-    },
-    "Orlando": {
-      "code": "ORLANDO",
-      "count": 5,
       "percentage": 0.3,
       "status": "public"
     },
@@ -115,7 +115,7 @@
       "lon": -122.4194,
       "status": "public",
       "public_since": "2023",
-      "count": 793
+      "count": 824
     },
     "PHOENIX": {
       "name": "Phoenix",
@@ -124,7 +124,7 @@
       "lon": -112.074,
       "status": "public",
       "public_since": "2020",
-      "count": 435
+      "count": 451
     },
     "LOS_ANGELES": {
       "name": "Los Angeles",
@@ -133,7 +133,7 @@
       "lon": -118.2437,
       "status": "public",
       "public_since": "2024",
-      "count": 417
+      "count": 442
     },
     "AUSTIN": {
       "name": "Austin",
@@ -142,7 +142,7 @@
       "lon": -97.7431,
       "status": "public",
       "public_since": "2025",
-      "count": 150
+      "count": 163
     },
     "ATLANTA": {
       "name": "Atlanta",
@@ -151,7 +151,7 @@
       "lon": -84.388,
       "status": "public",
       "public_since": "2025",
-      "count": 57
+      "count": 62
     },
     "MIAMI": {
       "name": "Miami",
@@ -160,7 +160,7 @@
       "lon": -80.1918,
       "status": "public",
       "public_since": "2026",
-      "count": 8
+      "count": 13
     },
     "ORLANDO": {
       "name": "Orlando",
@@ -169,7 +169,7 @@
       "lon": -81.3792,
       "status": "public",
       "public_since": "2026",
-      "count": 5
+      "count": 6
     },
     "DALLAS": {
       "name": "Dallas",
@@ -187,7 +187,7 @@
       "lon": -95.3698,
       "status": "public",
       "public_since": "2026",
-      "count": 7
+      "count": 8
     },
     "SAN_ANTONIO": {
       "name": "San Antonio",
@@ -360,7 +360,7 @@
       "percentage": 0
     },
     "moderate_plus": {
-      "count": 21,
+      "count": 22,
       "percentage": 1.1
     },
     "fatality": {
@@ -420,7 +420,7 @@
   },
   "crash_types_meta": {
     "classified_count": 1659,
-    "unclassified_count": 228
+    "unclassified_count": 325
   },
   "monthly_trend": {
     "202009": 1,
@@ -471,76 +471,77 @@
     "202603": 111,
     "202604": 110,
     "202605": 98,
-    "202606": 16
+    "202606": 102,
+    "202607": 11
   },
   "time_periods": {
     "Early Morning": {
-      "count": 73,
+      "count": 77,
       "percentage": 3.9
     },
     "Morning Rush": {
-      "count": 250,
-      "percentage": 13.3
+      "count": 265,
+      "percentage": 13.4
     },
     "Late Morning": {
-      "count": 173,
-      "percentage": 9.2
+      "count": 178,
+      "percentage": 9.0
     },
     "Midday": {
-      "count": 213,
+      "count": 223,
       "percentage": 11.3
     },
     "Afternoon": {
-      "count": 302,
-      "percentage": 16.0
+      "count": 314,
+      "percentage": 15.8
     },
     "Evening Rush": {
-      "count": 287,
-      "percentage": 15.2
+      "count": 300,
+      "percentage": 15.1
     },
     "Night": {
-      "count": 263,
-      "percentage": 14.0
+      "count": 282,
+      "percentage": 14.2
     },
     "Late Night": {
-      "count": 324,
-      "percentage": 17.2
+      "count": 343,
+      "percentage": 17.3
     }
   },
   "temporal": {
-    "rush_hour_count": 537,
+    "rush_hour_count": 565,
     "rush_hour_percentage": 28.5,
-    "late_night_count": 324,
-    "late_night_percentage": 17.2,
-    "daytime_count": 1266,
-    "daytime_percentage": 67.2,
-    "nighttime_count": 619,
-    "nighttime_percentage": 32.8,
+    "late_night_count": 343,
+    "late_night_percentage": 17.3,
+    "daytime_count": 1323,
+    "daytime_percentage": 66.8,
+    "nighttime_count": 659,
+    "nighttime_percentage": 33.2,
     "hourly_distribution": {
-      "0": 79,
-      "1": 61,
-      "2": 65,
-      "3": 29,
-      "4": 20,
-      "5": 32,
-      "6": 41,
-      "7": 79,
-      "8": 76,
-      "9": 95,
-      "10": 80,
-      "11": 93,
-      "12": 106,
-      "13": 107,
-      "14": 82,
-      "15": 117,
-      "16": 103,
-      "17": 102,
-      "18": 111,
-      "19": 74,
-      "20": 80,
-      "21": 90,
-      "22": 93,
-      "23": 70
+      "0": 82,
+      "1": 63,
+      "2": 69,
+      "3": 30,
+      "4": 23,
+      "5": 34,
+      "6": 43,
+      "7": 82,
+      "8": 83,
+      "9": 100,
+      "10": 81,
+      "11": 97,
+      "12": 113,
+      "13": 110,
+      "14": 86,
+      "15": 121,
+      "16": 107,
+      "17": 107,
+      "18": 116,
+      "19": 77,
+      "20": 85,
+      "21": 99,
+      "22": 98,
+      "23": 76
     },
     "weekend_count": 487,
     "weekday_count": 1170,
@@ -587,86 +588,91 @@
   },
   "city_peaks": {
     "San Francisco": {
-      "peak_hour": 13,
-      "peak_label": "1:00 PM",
-      "total_crashes": 793
+      "peak_hour": 18,
+      "peak_label": "6:00 PM",
+      "total_crashes": 824
     },
     "Phoenix": {
       "peak_hour": 15,
       "peak_label": "3:00 PM",
-      "total_crashes": 433
+      "total_crashes": 449
     },
     "Los Angeles": {
-      "peak_hour": 0,
-      "peak_label": "Midnight",
-      "total_crashes": 417
+      "peak_hour": 22,
+      "peak_label": "10:00 PM",
+      "total_crashes": 442
     },
     "Austin": {
-      "peak_hour": 0,
-      "peak_label": "Midnight",
-      "total_crashes": 150
+      "peak_hour": 18,
+      "peak_label": "6:00 PM",
+      "total_crashes": 163
     },
     "Atlanta": {
-      "peak_hour": 16,
-      "peak_label": "4:00 PM",
-      "total_crashes": 57
+      "peak_hour": 23,
+      "peak_label": "11:00 PM",
+      "total_crashes": 62
+    },
+    "Miami": {
+      "peak_hour": 6,
+      "peak_label": "6:00 AM",
+      "total_crashes": 13
     }
   },
   "location_types": {
     "Intersection": {
-      "count": 837,
-      "percentage": 44.4
+      "count": 881,
+      "percentage": 44.5
     },
     "Street/Road": {
-      "count": 527,
-      "percentage": 28.0
+      "count": 544,
+      "percentage": 27.4
     },
     "Parking": {
-      "count": 490,
-      "percentage": 26.0
+      "count": 523,
+      "percentage": 26.4
     },
     "Highway/Freeway": {
       "count": 19,
       "percentage": 1.0
     },
     "Other/Unknown": {
-      "count": 12,
-      "percentage": 0.6
+      "count": 15,
+      "percentage": 0.8
     }
   },
   "crash_circumstances": {
     "speed_distribution": {
       "0_mph": {
-        "count": 1177,
-        "percentage": 62.5
+        "count": 1231,
+        "percentage": 62.2
       },
       "1_5_mph": {
-        "count": 264,
-        "percentage": 14.0
+        "count": 280,
+        "percentage": 14.1
       },
       "6_15_mph": {
-        "count": 216,
-        "percentage": 11.5
+        "count": 229,
+        "percentage": 11.6
       },
       "16_25_mph": {
-        "count": 139,
+        "count": 146,
         "percentage": 7.4
       },
       "26_35_mph": {
-        "count": 60,
-        "percentage": 3.2
+        "count": 66,
+        "percentage": 3.3
       },
       "36_plus_mph": {
-        "count": 27,
+        "count": 28,
         "percentage": 1.4
       }
     },
     "speed_stats": {
-      "total_with_speed_data": 1883,
+      "total_with_speed_data": 1980,
       "median_speed_mph": 0.0,
-      "mean_speed_mph": 4.6,
-      "stopped_pct": 62.5,
-      "under_5mph_pct": 76.5
+      "mean_speed_mph": 4.7,
+      "stopped_pct": 62.2,
+      "under_5mph_pct": 76.3
     },
     "crash_type_plain": {
       "Rear-end collision": {
@@ -715,9 +721,9 @@
       }
     },
     "vulnerable_road_users": {
-      "total": 54,
-      "percentage": 2.9,
-      "pedestrian": 10,
+      "total": 55,
+      "percentage": 2.8,
+      "pedestrian": 11,
       "cyclist": 19,
       "motorcycle": 25
     }
@@ -725,19 +731,19 @@
   "city_mileage": {
     "San Francisco": {
       "miles_millions": 67.078,
-      "crashes_per_million_miles": 11.8
+      "crashes_per_million_miles": 12.3
     },
     "Phoenix": {
       "miles_millions": 80.551,
-      "crashes_per_million_miles": 5.4
+      "crashes_per_million_miles": 5.6
     },
     "Los Angeles": {
       "miles_millions": 51.816,
-      "crashes_per_million_miles": 8.0
+      "crashes_per_million_miles": 8.5
     },
     "Austin": {
       "miles_millions": 15.789,
-      "crashes_per_million_miles": 9.5
+      "crashes_per_million_miles": 10.3
     },
     "Atlanta": {
       "miles_millions": null,
@@ -798,26 +804,26 @@
     "data_through": "March 2026"
   },
   "geocoding": {
-    "total_mapped": 1887,
+    "total_mapped": 1984,
     "accurate": 1603,
-    "estimated": 284,
-    "accuracy_pct": 84.9,
+    "estimated": 381,
+    "accuracy_pct": 80.8,
     "by_city": {
-      "San Francisco": 90,
-      "Phoenix": 87,
-      "Los Angeles": 82,
-      "Austin": 79,
-      "Atlanta": 61,
-      "Houston": 43,
-      "Orlando": 40,
+      "San Francisco": 87,
+      "Phoenix": 84,
+      "Los Angeles": 78,
+      "Austin": 73,
+      "Atlanta": 56,
+      "Houston": 38,
+      "Orlando": 33,
       "Nashville": 25,
       "San Antonio": 50,
       "Dallas": 67,
-      "Miami": 12,
+      "Miami": 8,
       "Washington, D.C.": 0
     },
     "zip_coverage": 1655,
-    "zip_coverage_pct": 87.7,
+    "zip_coverage_pct": 83.4,
     "zip_checked": 1448,
     "zip_match_pct": 49.2
   }
