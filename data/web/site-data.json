@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-09-07T15:26:47.751414",
+    "generated_at": "2026-09-14T16:06:47.295952",
     "pipeline_version": "2.0",
     "total_rows_in_merged": 2235,
     "date_range_start": 202009,
@@ -730,20 +730,20 @@
   },
   "city_mileage": {
     "San Francisco": {
-      "miles_millions": 67.078,
-      "crashes_per_million_miles": 12.3
+      "miles_millions": 82.421,
+      "crashes_per_million_miles": 10.0
     },
     "Phoenix": {
-      "miles_millions": 80.551,
-      "crashes_per_million_miles": 5.6
+      "miles_millions": 92.121,
+      "crashes_per_million_miles": 4.9
     },
     "Los Angeles": {
-      "miles_millions": 51.816,
-      "crashes_per_million_miles": 8.5
+      "miles_millions": 67.098,
+      "crashes_per_million_miles": 6.6
     },
     "Austin": {
-      "miles_millions": 15.789,
-      "crashes_per_million_miles": 10.3
+      "miles_millions": 21.064,
+      "crashes_per_million_miles": 7.7
     },
     "Atlanta": {
       "miles_millions": null,
@@ -800,7 +800,7 @@
     "motorcycle_injury_reduction_pct": 81,
     "source_url": "https://waymo.com/safety/impact/",
     "study_url": "https://doi.org/10.1080/15389588.2025.2499887",
-    "total_rider_only_miles": 220613000,
+    "total_rider_only_miles": 271329000,
     "data_through": "March 2026"
   },
   "geocoding": {
