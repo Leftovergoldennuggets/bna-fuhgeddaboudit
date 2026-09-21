@@ -9086,5 +9086,21 @@
   "__city__Emeryville|CA": {
     "lat": 37.831409,
     "lon": -122.286527
+  },
+  "__city__Carson|CA": {
+    "lat": 33.832204,
+    "lon": -118.251755
+  },
+  "__city__Harbor City|CA": {
+    "lat": 33.791101,
+    "lon": -118.30126
+  },
+  "__city__Las Vegas|NV": {
+    "lat": 36.167426,
+    "lon": -115.148413
+  },
+  "__city__San Diego|CA": {
+    "lat": 32.715706,
+    "lon": -117.163828
   }
 }

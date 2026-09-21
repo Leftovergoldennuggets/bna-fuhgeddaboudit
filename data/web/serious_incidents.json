@@ -61,7 +61,22 @@
       "in_hub": false
     },
     {
-      "id": 13,
+      "id": 16,
+      "lat": 37.79103,
+      "lon": -122.412455,
+      "city": "San Francisco",
+      "date": "July 2026",
+      "time": "12:20",
+      "crash_party": "Vehicle (Bus)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "San Francisco (exact location pending Waymo data)",
+      "narrative": "On July [REDACTED], 2026 at 12:20 PM PDT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving a bus on [REDACTED] near [REDACTED].\n\nThe Waymo AV was traveling northwestbound in the rightmost lane on [REDACTED]. As the Waymo AV approached a queue of traffic ahead for a red light at the intersection with [REDACTED], the Waymo AV activated its left turn signal and slowed to a stop in-lane in preparation for a lane change to the adjacent left lane. The Waymo AV initiated the lane change to the left adjacent lane in front of a bus stopped facing northwestbound in that lane, and slowed to a stop in front of and to the right of the bus, partially in the rightmost lane and partially in the adjacent left lane. As the light turned green and traffic ahead advanced, the bus proceeded forward and the front right side of the bus made contact with the left side of the stationary Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The Waymo AV sustained damage. The driver of the bus was transported from the scene to a hospital for medical treatment with unknown injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 19,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -76,7 +91,7 @@
       "in_hub": true
     },
     {
-      "id": 15,
+      "id": 21,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -91,7 +106,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 22,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -106,7 +121,7 @@
       "in_hub": true
     },
     {
-      "id": 19,
+      "id": 25,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -121,7 +136,7 @@
       "in_hub": true
     },
     {
-      "id": 21,
+      "id": 27,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -319,6 +334,96 @@
     },
     {
       "id": 13,
+      "lat": 25.788185,
+      "lon": -80.138313,
+      "city": "Miami",
+      "date": "July 2026",
+      "time": "20:56",
+      "crash_party": "Cyclist",
+      "severity": "Serious W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Miami Beach (exact location pending Waymo data)",
+      "narrative": "On July [REDACTED], 2026 at 8:56 PM ET a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Miami Beach, Florida was in a collision involving a bicycle on [REDACTED] near [REDACTED].\n\nThe Waymo AV was traveling northbound on [REDACTED] at a low rate of speed, yielding to a pedestrian walking southbound along the east curb in the parking lane. A passenger car, initially stopped facing southeast in the parking lane along the west curb of [REDACTED], proceeded to enter the roadway in their lane of travel, and the Waymo AV slowed to a stop. The passenger car then initiated a U-turn, and the front left side of the passenger car made contact with a cyclist traveling southbound in the left lane on [REDACTED]. The cyclist and bicycle fell to the ground and the bicycle was propelled forward towards the Waymo AV, making contact with the front of the stationary Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. No damages were reported. The cyclist was transported from the scene to a hospital for medical treatment with serious injuries. \n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 14,
+      "lat": 36.168925,
+      "lon": -115.147964,
+      "city": "Other",
+      "date": "July 2026",
+      "time": "09:40",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Serious W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Las Vegas (exact location pending Waymo data)",
+      "narrative": "On July [REDACTED], 2026 at 9:40 AM PDT, a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Las Vegas, Nevada, was in a collision involving an SUV on [REDACTED] near [REDACTED].\n\nThe Waymo AV was traveling southbound on [REDACTED] with its right turn signal activated and slowing to yield for a stop sign at the intersection with [REDACTED]. As the Waymo AV was slowing, an SUV traveling southbound on [REDACTED] began to maneuver to the right as it approached the Waymo AV from the rear and the front left side of the SUV made contact with the rear right side of the Waymo AV. The SUV then proceeded to the right and the front of the SUV made contact with a utility pole on the west curb of [REDACTED], at which point the SUV  traveled backwards towards the Waymo AV, and the rear left side of the SUV made secondary contact with the right side of the stationary Waymo AV. At the time of the impacts, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage. The driver of the SUV was transported from the scene to a hospital for medical treatment with serious injuries, and the passenger of the SUV was transported from the scene to a hospital for medical treatment with unknown injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 15,
+      "lat": 33.75167,
+      "lon": -84.388922,
+      "city": "Atlanta",
+      "date": "July 2026",
+      "time": "20:55",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Atlanta (exact location pending Waymo data)",
+      "narrative": "On July [REDACTED], 2026 at 8:55 PM EDT, a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Atlanta, Georgia, was in a collision involving an SUV on [REDACTED] at the T-intersection with [REDACTED].\n\nThe Waymo AV was traveling northeastbound in the left lane on [REDACTED], with its left turn signal activated in preparation for an unprotected left turn onto [REDACTED], when it slowed to a stop in-lane at the T-intersection with [REDACTED] to yield to oncoming southwestbound traffic. While the Waymo AV was stopped, an SUV traveling northeastbound on [REDACTED] in the left lane approached the Waymo AV from behind, and the front of the SUV made contact with the rear of the stationary Waymo AV. The collision resulted in a fire. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The driver of the SUV and a  passenger in the SUV were transported from the scene to a hospital for medical treatment with unknown injuries. Both vehicles sustained damage.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 16,
+      "lat": 37.79103,
+      "lon": -122.412455,
+      "city": "San Francisco",
+      "date": "July 2026",
+      "time": "12:20",
+      "crash_party": "Vehicle (Bus)",
+      "severity": "Moderate W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "San Francisco (exact location pending Waymo data)",
+      "narrative": "On July [REDACTED], 2026 at 12:20 PM PDT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in San Francisco, California was in a collision involving a bus on [REDACTED] near [REDACTED].\n\nThe Waymo AV was traveling northwestbound in the rightmost lane on [REDACTED]. As the Waymo AV approached a queue of traffic ahead for a red light at the intersection with [REDACTED], the Waymo AV activated its left turn signal and slowed to a stop in-lane in preparation for a lane change to the adjacent left lane. The Waymo AV initiated the lane change to the left adjacent lane in front of a bus stopped facing northwestbound in that lane, and slowed to a stop in front of and to the right of the bus, partially in the rightmost lane and partially in the adjacent left lane. As the light turned green and traffic ahead advanced, the bus proceeded forward and the front right side of the bus made contact with the left side of the stationary Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The Waymo AV sustained damage. The driver of the bus was transported from the scene to a hospital for medical treatment with unknown injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 17,
+      "lat": 34.056749,
+      "lon": -118.240785,
+      "city": "Los Angeles",
+      "date": "July 2026",
+      "time": "5:41",
+      "crash_party": "Vehicle (Passenger Car)",
+      "severity": "Serious W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Los Angeles (exact location pending Waymo data)",
+      "narrative": "On July [REDACTED], 2026 at 5:41 AM PDT a Waymo Autonomous Vehicle (\"Waymo AC\") operating in Los Angeles, California was involved in a collision involving a passenger car on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was traveling southeastbound in the second from the right lane on [REDACTED] when a passenger car traveling northwestbound on [REDACTED] made contact with a pedestrian walking in the northwestbound lane of [REDACTED]. After this initial contact, the passenger car continued to proceed forward and maneuvered to the left, crossing the double yellow lines into the Waymo AV's lane of travel, and the front of the passenger car made contact with the front left of the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The passenger car and Waymo AV sustained damage. One rider of the Waymo AV alleged a moderate injury and was transported from the scene to a hospital for medical treatment. A second rider of the Waymo AV alleged a minor injury and was not transported to a hospital. The pedestrian struck by the passenger car sustained a serious injury and was transported from the scene to a hospital for medical treatment. \n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 18,
+      "lat": 32.774675,
+      "lon": -96.800301,
+      "city": "Dallas",
+      "date": "August 2026",
+      "time": "23:31",
+      "crash_party": "Pedestrian",
+      "severity": "Fatality",
+      "crash_type": "Pending classification",
+      "address": "Dallas (exact location pending Waymo data)",
+      "narrative": "On August [REDACTED], 2026 at 11:31 PM CDT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Dallas, Texas was in a collision involving a pedestrian and an SUV on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was traveling northwestbound in the second lane from the right curb on [REDACTED] when it began slowing to yield to a pedestrian walking in the roadway ahead, within the southeastbound lanes of traffic. As the Waymo AV was slowing, an SUV traveling southeastbound in the second lane from the right curb struck the pedestrian, sending the pedestrian towards the Waymo AV. After contacting the ground, the pedestrian made contact with the rear left of the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The pedestrian involved in the collision sustained a fatal injury. \n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because of a fatality. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 19,
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -333,7 +438,7 @@
       "in_hub": true
     },
     {
-      "id": 14,
+      "id": 20,
       "lat": 33.40914,
       "lon": -111.972736,
       "city": "Phoenix",
@@ -348,7 +453,7 @@
       "in_hub": true
     },
     {
-      "id": 15,
+      "id": 21,
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -363,7 +468,7 @@
       "in_hub": true
     },
     {
-      "id": 16,
+      "id": 22,
       "lat": 37.774598,
       "lon": -122.433494,
       "city": "San Francisco",
@@ -378,7 +483,7 @@
       "in_hub": true
     },
     {
-      "id": 17,
+      "id": 23,
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -393,7 +498,7 @@
       "in_hub": true
     },
     {
-      "id": 18,
+      "id": 24,
       "lat": 33.445872,
       "lon": -111.995488,
       "city": "Phoenix",
@@ -408,7 +513,7 @@
       "in_hub": true
     },
     {
-      "id": 19,
+      "id": 25,
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -423,7 +528,7 @@
       "in_hub": true
     },
     {
-      "id": 20,
+      "id": 26,
       "lat": 34.015224,
       "lon": -118.279299,
       "city": "Los Angeles",
@@ -438,7 +543,7 @@
       "in_hub": true
     },
     {
-      "id": 21,
+      "id": 27,
       "lat": 37.777498,
       "lon": -122.408788,
       "city": "San Francisco",
@@ -453,7 +558,7 @@
       "in_hub": true
     },
     {
-      "id": 22,
+      "id": 28,
       "lat": 33.488982,
       "lon": -111.960478,
       "city": "Phoenix",
@@ -472,7 +577,7 @@
     "San Francisco": {
       "lat": 37.7749,
       "lon": -122.4194,
-      "count": 9
+      "count": 10
     },
     "Phoenix": {
       "lat": 33.4484,
@@ -482,13 +587,23 @@
     "Los Angeles": {
       "lat": 34.0522,
       "lon": -118.2437,
-      "count": 2
+      "count": 3
     },
     "Atlanta": {
       "lat": 33.749,
       "lon": -84.388,
-      "count": 2
+      "count": 3
+    },
+    "Miami": {
+      "lat": 25.7617,
+      "lon": -80.1918,
+      "count": 1
+    },
+    "Dallas": {
+      "lat": 32.7767,
+      "lon": -96.797,
+      "count": 1
     }
   },
-  "total_serious": 22
+  "total_serious": 28
 }
