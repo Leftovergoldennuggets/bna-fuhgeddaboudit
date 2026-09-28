@@ -1,20 +1,20 @@
 {
   "meta": {
-    "generated_at": "2026-09-21T16:09:00.633348",
+    "generated_at": "2026-09-28T17:55:23.142668",
     "pipeline_version": "2.0",
     "total_rows_in_merged": 2329,
     "date_range_start": 202009,
     "date_range_end": 202608,
     "federal_data_through": 202608,
     "federal_data_through_label": "August 2026",
-    "hub_data_through": 202603,
-    "hub_data_through_label": "March 2026"
+    "hub_data_through": 202606,
+    "hub_data_through_label": "June 2026"
   },
   "overview": {
     "total_crashes": 2070,
     "supervised_crashes": 259,
     "total_all_operations": 2329,
-    "preliminary_count": 411,
+    "preliminary_count": 100,
     "cities_count": 12,
     "public_metros_count": 11,
     "cities_list": [
@@ -36,7 +36,7 @@
   "city_breakdown": {
     "San Francisco": {
       "code": "SAN_FRANCISCO",
-      "count": 856,
+      "count": 857,
       "percentage": 41.4,
       "status": "public"
     },
@@ -60,8 +60,8 @@
     },
     "Atlanta": {
       "code": "ATLANTA",
-      "count": 70,
-      "percentage": 3.4,
+      "count": 69,
+      "percentage": 3.3,
       "status": "public"
     },
     "Miami": {
@@ -121,7 +121,7 @@
       "lon": -122.4194,
       "status": "public",
       "public_since": "2023",
-      "count": 856
+      "count": 857
     },
     "PHOENIX": {
       "name": "Phoenix",
@@ -157,7 +157,7 @@
       "lon": -84.388,
       "status": "public",
       "public_since": "2025",
-      "count": 70
+      "count": 69
     },
     "MIAMI": {
       "name": "Miami",
@@ -341,29 +341,29 @@
   ],
   "severity": {
     "police_reported": {
-      "count": 349,
-      "known_base": 1659,
-      "percentage": 21.0
+      "count": 403,
+      "known_base": 1970,
+      "percentage": 20.5
     },
     "injury_reported": {
-      "count": 156,
-      "known_base": 1659,
-      "percentage": 9.4
+      "count": 184,
+      "known_base": 1970,
+      "percentage": 9.3
     },
     "airbag_any_vehicle": {
-      "count": 67,
-      "known_base": 1659,
-      "percentage": 4.0
+      "count": 82,
+      "known_base": 1970,
+      "percentage": 4.2
     },
     "airbag_ego_vehicle": {
-      "count": 12,
-      "known_base": 1659,
+      "count": 13,
+      "known_base": 1970,
       "percentage": 0.7
     },
     "serious_injury": {
-      "count": 0,
-      "known_base": 0,
-      "percentage": 0
+      "count": 3,
+      "known_base": 1970,
+      "percentage": 0.2
     },
     "moderate_plus": {
       "count": 28,
@@ -380,53 +380,53 @@
   },
   "crash_types": {
     "V2V F2R": {
-      "count": 452,
-      "percentage": 27.2
+      "count": 542,
+      "percentage": 27.5
     },
     "V2V Lateral": {
-      "count": 332,
-      "percentage": 20.0
+      "count": 395,
+      "percentage": 20.1
     },
     "V2V Backing": {
-      "count": 256,
-      "percentage": 15.4
+      "count": 295,
+      "percentage": 15.0
     },
     "V2V Head-on": {
-      "count": 159,
-      "percentage": 9.6
+      "count": 182,
+      "percentage": 9.2
     },
     "Single Vehicle": {
-      "count": 145,
-      "percentage": 8.7
+      "count": 175,
+      "percentage": 8.9
     },
     "V2V Intersection": {
-      "count": 135,
-      "percentage": 8.1
+      "count": 166,
+      "percentage": 8.4
     },
     "All Others": {
-      "count": 82,
-      "percentage": 4.9
+      "count": 98,
+      "percentage": 5.0
     },
     "Secondary Crash": {
-      "count": 49,
-      "percentage": 3.0
+      "count": 62,
+      "percentage": 3.1
     },
     "Motorcycle": {
-      "count": 21,
+      "count": 25,
       "percentage": 1.3
     },
     "Cyclist": {
       "count": 18,
-      "percentage": 1.1
+      "percentage": 0.9
     },
     "Pedestrian": {
-      "count": 10,
+      "count": 12,
       "percentage": 0.6
     }
   },
   "crash_types_meta": {
-    "classified_count": 1659,
-    "unclassified_count": 411
+    "classified_count": 1970,
+    "unclassified_count": 100
   },
   "monthly_trend": {
     "202009": 1,
@@ -474,9 +474,9 @@
     "202512": 90,
     "202601": 91,
     "202602": 72,
-    "202603": 111,
-    "202604": 110,
-    "202605": 98,
+    "202603": 110,
+    "202604": 109,
+    "202605": 100,
     "202606": 102,
     "202607": 87,
     "202608": 10
@@ -550,54 +550,54 @@
       "22": 101,
       "23": 78
     },
-    "weekend_count": 487,
-    "weekday_count": 1170,
-    "weekend_percentage": 29.4,
+    "weekend_count": 574,
+    "weekday_count": 1394,
+    "weekend_percentage": 29.2,
     "peak_by_day": {
       "Monday": {
         "peak_hour": 18,
-        "total": 226
+        "total": 270
       },
       "Tuesday": {
         "peak_hour": 15,
-        "total": 205
+        "total": 245
       },
       "Wednesday": {
         "peak_hour": 9,
-        "total": 220
+        "total": 278
       },
       "Thursday": {
         "peak_hour": 16,
-        "total": 236
+        "total": 276
       },
       "Friday": {
         "peak_hour": 18,
-        "total": 283
+        "total": 325
       },
       "Saturday": {
         "peak_hour": 22,
-        "total": 263
+        "total": 316
       },
       "Sunday": {
         "peak_hour": 2,
-        "total": 224
+        "total": 258
       }
     }
   },
   "day_of_week": {
-    "Monday": 226,
-    "Tuesday": 205,
-    "Wednesday": 220,
-    "Thursday": 236,
-    "Friday": 283,
-    "Saturday": 263,
-    "Sunday": 224
+    "Monday": 270,
+    "Tuesday": 245,
+    "Wednesday": 278,
+    "Thursday": 276,
+    "Friday": 325,
+    "Saturday": 316,
+    "Sunday": 258
   },
   "city_peaks": {
     "San Francisco": {
       "peak_hour": 17,
       "peak_label": "5:00 PM",
-      "total_crashes": 856
+      "total_crashes": 857
     },
     "Phoenix": {
       "peak_hour": 15,
@@ -617,7 +617,7 @@
     "Atlanta": {
       "peak_hour": 13,
       "peak_label": "1:00 PM",
-      "total_crashes": 70
+      "total_crashes": 69
     },
     "Dallas": {
       "peak_hour": 11,
@@ -636,20 +636,20 @@
       "percentage": 44.9
     },
     "Street/Road": {
-      "count": 556,
-      "percentage": 26.9
+      "count": 562,
+      "percentage": 27.2
     },
     "Parking": {
-      "count": 544,
-      "percentage": 26.3
+      "count": 542,
+      "percentage": 26.2
     },
     "Highway/Freeway": {
-      "count": 21,
-      "percentage": 1.0
+      "count": 24,
+      "percentage": 1.2
     },
     "Other/Unknown": {
-      "count": 18,
-      "percentage": 0.9
+      "count": 11,
+      "percentage": 0.5
     }
   },
   "crash_circumstances": {
@@ -688,55 +688,55 @@
     },
     "crash_type_plain": {
       "Rear-end collision": {
-        "count": 452,
-        "percentage": 27.2
+        "count": 542,
+        "percentage": 27.5
       },
       "Side-impact collision": {
-        "count": 332,
-        "percentage": 20.0
+        "count": 395,
+        "percentage": 20.1
       },
       "Backing collision": {
-        "count": 256,
-        "percentage": 15.4
+        "count": 295,
+        "percentage": 15.0
       },
       "Head-on collision": {
-        "count": 159,
-        "percentage": 9.6
+        "count": 182,
+        "percentage": 9.2
       },
       "Single vehicle": {
-        "count": 145,
-        "percentage": 8.7
+        "count": 175,
+        "percentage": 8.9
       },
       "Intersection collision": {
-        "count": 135,
-        "percentage": 8.1
+        "count": 166,
+        "percentage": 8.4
       },
       "Other": {
-        "count": 82,
-        "percentage": 4.9
+        "count": 98,
+        "percentage": 5.0
       },
       "Secondary crash": {
-        "count": 49,
-        "percentage": 3.0
+        "count": 62,
+        "percentage": 3.1
       },
       "Motorcycle": {
-        "count": 21,
+        "count": 25,
         "percentage": 1.3
       },
       "Cyclist": {
         "count": 18,
-        "percentage": 1.1
+        "percentage": 0.9
       },
       "Pedestrian": {
-        "count": 10,
+        "count": 12,
         "percentage": 0.6
       }
     },
     "vulnerable_road_users": {
       "total": 58,
       "percentage": 2.8,
-      "pedestrian": 12,
-      "cyclist": 21,
+      "pedestrian": 13,
+      "cyclist": 20,
       "motorcycle": 25
     }
   },
@@ -799,7 +799,7 @@
     }
   },
   "city_mileage_meta": {
-    "data_through": "March 2026",
+    "data_through": "June 2026",
     "source_url": "https://waymo.com/safety/impact/#downloads"
   },
   "waymo_context": {
@@ -813,31 +813,31 @@
     "source_url": "https://waymo.com/safety/impact/",
     "study_url": "https://doi.org/10.1080/15389588.2025.2499887",
     "total_rider_only_miles": 271329000,
-    "data_through": "March 2026"
+    "data_through": "June 2026"
   },
   "geocoding": {
     "total_mapped": 2070,
-    "accurate": 1603,
-    "estimated": 467,
-    "accuracy_pct": 77.4,
+    "accurate": 1907,
+    "estimated": 163,
+    "accuracy_pct": 92.1,
     "by_city": {
-      "San Francisco": 83,
-      "Phoenix": 82,
-      "Los Angeles": 75,
-      "Austin": 69,
-      "Atlanta": 50,
-      "Houston": 33,
-      "Orlando": 29,
-      "Nashville": 14,
-      "San Antonio": 50,
-      "Dallas": 36,
-      "Miami": 7,
+      "San Francisco": 94,
+      "Phoenix": 91,
+      "Los Angeles": 95,
+      "Austin": 92,
+      "Atlanta": 83,
+      "Houston": 89,
+      "Orlando": 71,
+      "Nashville": 57,
+      "San Antonio": 100,
+      "Dallas": 55,
+      "Miami": 73,
       "Washington, D.C.": 0,
       "OTHER": 0
     },
-    "zip_coverage": 1655,
-    "zip_coverage_pct": 80.0,
-    "zip_checked": 1448,
+    "zip_coverage": 1966,
+    "zip_coverage_pct": 95.0,
+    "zip_checked": 1752,
     "zip_match_pct": 49.2
   }
 }
