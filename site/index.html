@@ -124,6 +124,7 @@
                     </div>
                     <p class="hero-meta">By Anders Eidesvik and Kate Li<br><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> – <span data-stat="meta.date_range_end" data-format="yearmonth">--</span> &middot; Updated <span data-stat="meta.generated_at" data-format="date">--</span></p>
                     <p class="hero-datanote"><span class="pulse-dot" aria-hidden="true"></span>Living dataset, updates weekly &middot; <a href="methodology.html">How it works</a></p>
+                    <p class="hero-latest" id="hero-latest"></p>
                 </div>
             </div>
 
@@ -172,6 +173,37 @@
                         <span class="stat-callout-label">crashes involved a moderate or worse injury to someone &mdash; <span data-stat="severity.sf_moderate_plus.count">--</span> of them here</span>
                     </div>
                     <p class="step-note">Each red marker is one of them. Click to read the full narrative Waymo filed with federal regulators. An injury on this list doesn't mean the Waymo caused the crash.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- WHAT WE FOUND — the findings up front; numbers filled by app.js  -->
+    <!-- ================================================================ -->
+    <section id="findings" class="findings-section">
+        <div class="section-container">
+            <h2 class="section-title">What We Found</h2>
+            <div class="findings-grid">
+                <div class="finding">
+                    <span class="finding-number"><span data-stat="crash_circumstances.stationary.percentage">--</span>%</span>
+                    <p><strong>of crashes happened while the Waymo was stopped or parked.</strong> Most are minor: <span data-stat="severity.moderate_plus.count">--</span> of <span data-stat="overview.total_crashes">--</span> involved a moderate or worse injury.</p>
+                    <a href="#crash-circumstances">What happens in these crashes</a>
+                </div>
+                <div class="finding">
+                    <span class="finding-number"><span data-stat="benchmarks.overall.any_injury.reduction_pct" data-format="round">--</span>% fewer</span>
+                    <p><strong>injury crashes per mile than human drivers,</strong> by Waymo's own analysis. An independent study found a smaller but still large gap.</p>
+                    <a href="#safety">Compared with human drivers</a>
+                </div>
+                <div class="finding">
+                    <span class="finding-number" id="finding-rule-change">½</span>
+                    <p><strong>The apparent halving of Waymo's crash rate in 2025 is mostly paperwork:</strong> new federal rules stopped requiring reports of many minor bumps. The injury-crash rate barely moved.</p>
+                    <a href="#safety">Crash rates over time</a>
+                </div>
+                <div class="finding">
+                    <span class="finding-number"><span data-stat="severity.fatality.count">--</span> deaths</span>
+                    <p id="finding-fatal"><strong>In each, another road user hit the Waymo or was thrown into it;</strong> no Waymo has been found at fault.</p>
+                    <a href="#fatal-box">The fatal crashes</a>
                 </div>
             </div>
         </div>
@@ -373,6 +405,13 @@
                 <!-- Filter sidebar -->
                 <div class="explore-filters" id="explore-filters">
                     <h3>Filters</h3>
+
+                    <!-- Free-text search of the crash reports -->
+                    <div class="filter-group">
+                        <label for="text-search">Search the reports</label>
+                        <input type="search" id="text-search" placeholder="e.g. school bus, flood, scooter" autocomplete="off">
+                        <p class="zip-note">Searches the narrative Waymo filed for each crash, plus city and other party.</p>
+                    </div>
 
                     <!-- Zip code search -->
                     <div class="filter-group">

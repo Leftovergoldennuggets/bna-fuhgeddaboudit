@@ -552,8 +552,12 @@ const MapController = (function () {
         // Header: crash type + severity badge
         html += `<div class="popup-header">`;
         html += `<strong>${formatCrashType(crash.crash_type)}</strong>`;
-        if (crash.is_serious) {
-            html += ` <span class="popup-badge popup-badge-serious">Serious</span>`;
+        if (crash.severity_level === "fatal") {
+            html += ` <span class="popup-badge popup-badge-serious">Fatal</span>`;
+        } else if (crash.severity_level === "serious") {
+            html += ` <span class="popup-badge popup-badge-serious">Serious injury</span>`;
+        } else if (crash.is_serious) {
+            html += ` <span class="popup-badge popup-badge-serious">Moderate injury</span>`;
         } else if (crash.has_injury) {
             html += ` <span class="popup-badge popup-badge-injury">Injury</span>`;
         }
@@ -626,7 +630,7 @@ const MapController = (function () {
             html += `<br><em class="popup-estimated">Occurred during supervised testing (human safety driver on board)</em>`;
         }
         if (crash.report_id) {
-            html += `<br><span class="popup-id">NHTSA report ${crash.report_id}</span>`;
+            html += `<br><a class="popup-id" href="#crash=${crash.report_id}" title="Link to this crash">NHTSA report ${crash.report_id} &middot; link</a>`;
         }
 
         html += `</div>`;

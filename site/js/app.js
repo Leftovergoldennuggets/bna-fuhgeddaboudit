@@ -39,6 +39,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         buildFatalList(data.stats);
         buildBenchmarkRows(data.stats);
         fillSafetyNumbers(data.stats);
+        fillFindings(data.stats);
+        showLatestUpdate();
         buildSeverityWaffle(data.crashes);
 
         // Step 4: Initialize the scrollytelling map
@@ -319,6 +321,46 @@ function buildBenchmarkRows(stats) {
             </div>`;
     }).join("") + `
         <div class="bench-axis" aria-hidden="true"><span>0%</span><span>50%</span><span>100% fewer</span></div>`;
+}
+
+/**
+ * "What we found": the rule-change finding shows the before/after rates
+ * from the data, and the fatal finding falls back to neutral wording if
+ * a fatal crash hasn't been reviewed by an editor yet (see buildFatalList).
+ */
+function fillFindings(stats) {
+    const rule = document.getElementById("finding-rule-change");
+    const qr = stats.quarterly_rates;
+    const rows = qr && qr.series && qr.series["All metros"];
+    if (rule && rows && rows.length) {
+        const before = rows.filter((r) => r.quarter <= qr.amendment_3_quarter);
+        const after = rows.filter((r) => r.quarter > qr.amendment_3_quarter);
+        const avg = (list) => list.reduce((sum, r) => sum + r.crashes_per_million, 0) / list.length;
+        if (before.length && after.length) {
+            rule.textContent = `${avg(before).toFixed(1)} → ${avg(after).toFixed(1)}`;
+            rule.title = "Reported crashes per million miles, average per quarter before and after June 16, 2025";
+        }
+    }
+    const fatal = document.getElementById("finding-fatal");
+    const list = document.getElementById("fatal-list");
+    if (fatal && list && list.querySelector(".fatal-pending")) {
+        fatal.innerHTML = "<strong>The newest is still under review;</strong> in the earlier ones, another road user hit the Waymo or was thrown into it.";
+    }
+}
+
+/** Hero line: what the latest weekly update added (from update_history.json). */
+async function showLatestUpdate() {
+    const el = document.getElementById("hero-latest");
+    if (!el) return;
+    try {
+        const history = await DataLoader.fetchJSON("update_history.json");
+        const last = [...history].reverse().find((h) => h.new_crashes > 0);
+        if (!last) return;
+        const date = new Date(last.date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        el.textContent = `Latest update (${date}): +${last.new_crashes} crashes`;
+    } catch (e) {
+        /* optional — the hero works without it */
+    }
 }
 
 /** Numbers in the safety section that need a little arithmetic. */
