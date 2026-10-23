@@ -73,7 +73,7 @@
             <h2 id="completeness">How Complete Is the Record?</h2>
             <ul>
                 <li><strong>The newest months are still filling in.</strong> Companies have until the 15th of the month after a crash to report most crashes, and NHTSA publishes with a further lag. NHTSA's own "report submission date" field shows that 99.5% of Waymo's reports arrive within one month of the crash month, and that each file only partly covers the latest submission month. We therefore treat the two most recent incident months as incomplete: the record is currently considered complete through <strong><span data-stat="meta.federal_complete_through_label">--</span></strong>. Charts shade later months.</li>
-                <li><strong>The June 2025 rule change breaks trends.</strong> Monthly counts and per-mile rates before and after June 16, 2025 are not like-for-like. Across that date, Waymo's rate of all reported crashes per mile roughly halved in every city at once, while its rate of injury crashes — which are reported under both rules — barely changed. Nearly all of the drop is in crashes with a change in speed under 1 mph, the kind the new rules stopped requiring. We show both rates side by side so this is visible.</li>
+                <li><strong>The June 2025 rule change breaks trends.</strong> Monthly counts and per-mile rates before and after June 16, 2025 are not like-for-like. Across that date, Waymo's rate of all reported crashes per mile fell from about 10 to about 5.5 per million miles, across Waymo's cities at the same time, while its rate of injury crashes — which are reported under both rules — barely changed. More than half of the drop is in contacts with a change in speed under 1 mph, the lightest kind of bump; the rest is consistent with other minor crashes the new rules no longer require, though some of it could be real improvement. We show both rates side by side so this is visible.</li>
                 <li><strong>Reports are filed by Waymo.</strong> The narratives and fields (speed, movement, injuries) are Waymo's account, sometimes based on what it was told by police or others. Injury levels are what was "alleged", for anyone involved.</li>
                 <li><strong>Duplicates.</strong> A crash involving two Waymo vehicles can produce two reports; this affects two pairs of reports in the data.</li>
             </ul>
@@ -135,7 +135,7 @@
             <table class="data-table">
                 <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
                 <tbody>
-                    <tr><td><code>report_id</code></td><td>NHTSA report ID (blank for two 2020 crashes that predate federal reporting)</td></tr>
+                    <tr><td><code>report_id</code></td><td>NHTSA report ID (blank for two 2020–21 crashes that predate federal reporting)</td></tr>
                     <tr><td><code>operation</code></td><td><code>driverless</code> or <code>supervised</code></td></tr>
                     <tr><td><code>date</code>, <code>date_precision</code></td><td>Exact date (<code>day</code>) from Waymo's file, or month only (<code>month</code>) from the federal report</td></tr>
                     <tr><td><code>hour</code></td><td>Hour of day (0–23), local time</td></tr>

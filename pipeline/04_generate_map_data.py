@@ -291,12 +291,13 @@ def geocode_addresses_in_zip(df, cache, zip_ref):
         zlat, zlon, radius = zentry
         pad = max(radius * 2, 1.0) / 111.0  # degrees, roughly
         viewbox = [(zlat - pad, zlon - pad * 1.3), (zlat + pad, zlon + pad * 1.3)]
-        result = None
+        result, errored = None, False
         for query, precision in build_geocode_queries(address, row.get("City"), row.get("State"), city_code):
             try:
                 hit = geocoder.geocode(query, viewbox=viewbox, bounded=True)
                 time.sleep(1.1)  # Nominatim usage policy: max 1 request/second
             except (GeocoderTimedOut, GeocoderServiceError):
+                errored = True
                 time.sleep(2.0)
                 continue
             if hit and zip_fit(hit.latitude, hit.longitude, zentry) <= ZIP_FIT_MAX:
@@ -304,6 +305,10 @@ def geocode_addresses_in_zip(df, cache, zip_ref):
                 break
         if result:
             queried += 1
+        elif errored:
+            # A timeout or rate limit isn't an answer: leave it uncached so
+            # the next run tries again (the row falls back to v2/city for now).
+            continue
         else:
             result = {"lat": zlat, "lon": zlon, "precision": "zip"}
             fallback += 1

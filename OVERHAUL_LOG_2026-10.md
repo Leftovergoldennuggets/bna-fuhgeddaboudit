@@ -44,7 +44,7 @@ addressed.
 | # | Finding | Evidence | Fix |
 |---|---------|----------|-----|
 | M1 | **Waymo-vs-human figures are stale and mislabeled.** Hardcoded 92% / 82% from the 56.7M-mile Kusano et al. (2025) paper, but the page says they cover "271M+ rider-only miles". Waymo publishes current comparisons with confidence intervals in **CSV3** each quarter (through June 2026: serious-injury+ −95% [CI −83 to −99%], any-injury −82%, airbag −82%, police-reported −74%). | Hub CSV3 202009-202606 + release notes 2026-10-02. | §2.8 |
-| M2 | **June 2025 reporting-rule break is not shown in trends.** Hub crashes per million RO miles fall from ~10 (Q4'24–Q2'25) to ~5–6 (Q3'25 on) in every metro at once. Over the same break the injury-crash rate is flat (0.5–0.7) and police-reported barely moves; the drop is almost entirely sub-1-mph contacts (≈4.8 → ≈1.7 per M mi). This is NHTSA's Third Amended SGO (effective June 16, 2025) raising the reporting threshold — not a safety change. | Quarterly rates computed from CSV1 history + CSV2 flags. | §2.9, §3 |
+| M2 | **June 2025 reporting-rule break is not shown in trends.** Hub crashes per million RO miles fall from ~10 (Q4'24–Q2'25) to ~5–6 (Q3'25 on) in every metro at once. Over the same break the injury-crash rate is flat (0.5–0.7) and police-reported barely moves. *Corrected after review:* more than half (≈56%) of the drop is sub-1-mph contacts (4.3 → 1.8 per M mi); other crashes fell 5.7 → 3.7, consistent with other minor crashes the new rules exempt (but some could be real change). LA's rate was already falling before the rule. This is NHTSA's Third Amended SGO (effective June 16, 2025) raising the reporting threshold — not a safety change. | Quarterly rates computed from CSV1 history + CSV2 flags. | §2.9, §3 |
 | M3 | Mileage chart is hand-maintained and ends at Feb 2026 (200M) while the site's own hero says 271M. Waymo's historical CSV1 files (back to Sept 2024) give a quarterly, per-metro mileage series automatically. | Probed CSV1 URLs 202409…202606 — all HTTP 200. | §2.9 |
 | M4 | Hero: "must report **every** crash" and "the **complete** public record" — overclaims (threshold-based reporting since June 2025). | index.html | §3 |
 | M5 | "crashes **caused** moderate or worse injuries" — NHTSA field is injury *alleged*, to anyone involved, not causation. | index.html | §3 |
@@ -69,7 +69,7 @@ Axios San Antonio Sept 17; NHTSA recall 26E-035; NBC DFW/Fox 4 Dallas).
 | X2 | "Driverless testing in D.C., Denver, Philadelphia" | Wrong | Denver is public; D.C. and Philadelphia are supervised-only (law/permit requires a driver); **Detroit** is in driverless testing (Oct 2026) |
 | X3 | San Antonio "paused for roughly two weeks" | Wrong | Paused Apr 20 → mid-Sept 2026 (~5 months) |
 | X4 | Recall list complete | Incomplete | Missing: construction-zone recall 26E-035 (3,871 vehicles, June 2026, 13 freeway work-zone entries); NTSB investigations of the Austin school-bus passes and the Santa Monica child strike |
-| X5 | Fatalities "in both cases" | Wrong | Three: SF Jan 19 2025 (stopped, Tesla driver charged); Tempe Sept 14 2025 (motorcycle hit Waymo from behind, hit-and-run driver charged); Dallas Aug 7 2026 (pedestrian struck by SUV and thrown into the Waymo; police reportedly found no fault on the Waymo's part) |
+| X5 | Fatalities "in both cases" | Wrong | Three: SF Jan 19 2025 (stopped, Tesla driver charged); Tempe Sept 14 2025 (motorcycle hit Waymo from behind, hit-and-run driver charged); Dallas Aug 7 2026 (pedestrian struck by SUV and thrown into an unoccupied Waymo; one report says police found nobody at fault, others that fault was not yet assigned — the site uses the more cautious "had not publicly assigned fault") |
 | X6 | 92/82% "over 271M miles" (Kusano 2025) | Mislabeled | Those exact values are the Dec 2025 hub release; Kusano 2025 covered 56.7M miles. Now read live from CSV3 |
 | X7 | SGO threshold "injury, airbag, or damage > $1,000" | Imprecise | Since June 16 2025: 5-day reports for fatality, hospital transport, airbag, vulnerable road user, (ADS) tow-away; monthly reports for other crashes with damage expected > $1,000 **or** where the ADS vehicle struck something / was the only vehicle. So a Waymo **being hit** with < $1,000 damage is no longer reported (Federal Register 2026-10363) |
 | X8 | "Tesla FSD" is in the ADS file | Wrong | FSD (Supervised) is Level 2 → ADAS file; Tesla's robotaxi crashes are in the ADS file |
@@ -283,6 +283,22 @@ confirm*).
 crashes are in the same NHTSA file, but neither publishes miles, so only
 misleading raw counts are possible); a full visual redesign (the existing
 editorial look works; the problems were broken maps and missing context).
+
+## 4b. Independent code review
+
+A separate review agent read the whole diff with fresh eyes. All
+findings were verified and fixed:
+
+| Severity | Finding | Fix |
+|---|---|---|
+| High | Merging would break deploy (`cp *.csv` with no CSV committed) and the editorial check had no baseline, so every run would re-flag everything; the issue would get a comment every week | CSV, update history and baseline committed; CSV copy made non-fatal; issue only edited when alerts change |
+| Med-high | "All metros" quarterly rate divided all hub crashes by a mileage total that omits newer cities (and Atlanta in some quarters) — up to 9.5% too high; fed the headline before/after number | Rate now uses only metros with mileage in both releases, for miles and crashes alike. Before/after: 10.1 → 5.4 (was shown as 10.2 → 5.7) |
+| Medium | "Nearly all of the drop is sub-1-mph crashes" (it's ~56%); "halved in every city at once" too strong | Reworded: "more than half"; "fell sharply across its cities at the same time"; "Much of that drop is a paperwork change" |
+| Medium | Fatal-crash lead-ins would assert "no Waymo found at fault" about a future, unreviewed fatal crash | Lead-ins scoped to "the crashes summarized below"; unreviewed items styled as pending on both pages; findings card switches wording |
+| Low-med | Geocoder timeouts/rate limits were cached forever as ZIP-centre markers | Errored lookups are not cached and retry next run; ZIP-centre entries from the first run re-checked |
+| Low | A fatal crash with a blank city would write `NaN` into site-data.json and break every page | Guarded |
+| Low | Per-metro benchmark could show one county's sample for a metro split across counties | Such metros are skipped unless Waymo publishes an aggregate row |
+| Low | Small text issues (two pre-SGO crashes are 2020–21; panel note said "city-level"; "N deaths" counts crashes; regex would match "no safety driver was present") | Fixed; tests added (85 passing) |
 
 ## 5. Verification
 

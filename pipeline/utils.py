@@ -151,7 +151,7 @@ def classify_operation(operator_type):
 
 
 _TEST_DRIVER_PATTERN = re.compile(
-    r"(test|safety) driver was present|in the driver'?s seating position",
+    r"(?<!\bno )(test|safety) driver was present|in the driver'?s seating position",
     re.IGNORECASE,
 )
 
@@ -529,10 +529,16 @@ def benchmark_summary(csv3, outcomes, metro_names=None):
         overall = rows[rows["County Name"] == CSV1_TOTAL_LABEL]
         if len(overall):
             result["overall"][key] = _benchmark_row(overall.iloc[0])
-        for name, code in metro_names.items():
+        # A metro covered by several county rows and no aggregate row can't
+        # be represented by any single row — leave it out rather than show
+        # one county's (possibly tiny) sample as the whole metro.
+        present = [(n, c) for n, c in metro_names.items() if (rows["County Name"] == n).any()]
+        codes = [c for _, c in present]
+        for name, code in present:
+            if codes.count(code) > 1 and name not in CSV1_AGGREGATES:
+                continue
             metro = rows[rows["County Name"] == name]
-            if len(metro):
-                result["by_metro"].setdefault(code, {})[key] = _benchmark_row(metro.iloc[0])
+            result["by_metro"].setdefault(code, {})[key] = _benchmark_row(metro.iloc[0])
 
         partners = csv3[
             (csv3["Grouping Type"] == "Aggregate Crash Type")

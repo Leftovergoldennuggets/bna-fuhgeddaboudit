@@ -65,7 +65,7 @@
                     <div class="faq-question">Did the reporting rules change?</div>
                     <div class="faq-answer">
                         <p>Yes. On June 16, 2025, NHTSA's Third Amended Standing General Order took effect. It stopped requiring reports for many minor crashes (roughly: the self-driving car was hit and damage stayed under $1,000), extended the deadline for the most serious reports from one day to five, and stopped requiring every company involved in the same crash to file.</p>
-                        <p>The effect is visible in the data: Waymo's rate of <em>all</em> reported crashes per mile roughly halved in every city at once, while its rate of injury crashes — reportable under both rules — barely changed. Comparisons across June 2025 are not like-for-like.</p>
+                        <p>The effect is visible in the data: Waymo's rate of <em>all</em> reported crashes per mile fell sharply across its cities at the same time, while its rate of injury crashes — reportable under both rules — barely changed. Comparisons across June 2025 are not like-for-like.</p>
                     </div>
                 </div>
 
@@ -82,7 +82,7 @@
                     <div class="faq-question">How serious are these crashes?</div>
                     <div class="faq-answer">
                         <p>Most are minor. Of <span data-stat="overview.total_crashes">--</span> reported driverless crashes, <span data-stat="severity.moderate_plus.count">--</span> involved a moderate, serious or fatal injury to someone, and <span data-stat="severity.fatality.count">--</span> involved a death. Among crashes Waymo's detailed data covers, <span data-stat="severity.injury_reported.percentage">--</span>% involved any injury.</p>
-                        <p>According to the reports Waymo filed and to police accounts, in each fatal crash the Waymo was stopped or slowing and was hit as a result of another road user's actions; no Waymo has been found at fault:</p>
+                        <p>According to the reports Waymo filed and to police accounts, in each fatal crash summarized below the Waymo was stopped or slowing and was hit as a result of another road user's actions; no Waymo has been found at fault:</p>
                         <!-- EDITORIAL: each fatal crash is summarized by hand (fault needs judgment).
                              The script below appends any fatal crash in the data that isn't listed
                              here, and the weekly pipeline opens a GitHub issue when one appears.
@@ -113,7 +113,7 @@
                 <div class="faq-item">
                     <div class="faq-question">Are Waymos getting safer over time?</div>
                     <div class="faq-answer">
-                        <p>Hard to say yet. Waymo's rate of all reported crashes per mile fell by about half in mid-2025 — but that coincides exactly with the reporting-rule change and shows up in every city at once, so it says more about paperwork than driving. Its rate of injury crashes, which is unaffected by the change, has stayed roughly flat at well under one per million miles. See the charts on the <a href="index.html#safety">home page</a>.</p>
+                        <p>Hard to say yet. Waymo's rate of all reported crashes per mile fell by almost half in mid-2025 — but that coincides exactly with the reporting-rule change and appears across its cities at once, so much of it reflects paperwork rather than driving. Its rate of injury crashes, which is unaffected by the change, has stayed roughly flat at well under one per million miles. See the charts on the <a href="index.html#safety">home page</a>.</p>
                     </div>
                 </div>
 
@@ -284,6 +284,7 @@
                     const done = new Set([...fatalEl.querySelectorAll('li[data-report-id]')].map(li => li.dataset.reportId));
                     stats.fatal_crashes.filter(c => !done.has(c.report_id)).forEach(c => {
                         const li = document.createElement('li');
+                        li.className = 'fatal-pending';
                         li.innerHTML = `<strong>${c.city || c.metro}, ${c.month_label}:</strong> newly reported, details under review (federal report ${c.report_id}).`;
                         fatalEl.appendChild(li);
                     });

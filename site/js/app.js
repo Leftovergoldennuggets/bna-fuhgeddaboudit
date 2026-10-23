@@ -83,13 +83,13 @@ const CITY_ART = {
         <path d="M8 26 Q19 14 30 14 M38 14 Q56 24 72 32"/>
         <path d="M88 40 L95 11 L102 40 M95 11 V6 M91 28 H99"/>`,
     PHOENIX: `
-        <circle cx="98" cy="13" r="6"/>
-        <path d="M32 40 V13 M32 25 H25 V16 M32 29 H39 V20"/>
-        <path d="M56 40 L61 31 H77 L82 40 M64 31 V26 H74 V31"/>`,
+        <circle cx="100" cy="12" r="5"/>
+        <path d="M24 40 V13 M24 25 H17 V16 M24 29 H31 V20"/>
+        <path d="M40 40 Q48 30 54 31 Q58 32 60 27 Q66 15 76 19 Q84 23 90 40"/>`,
     LOS_ANGELES: `
-        <path d="M28 40 C26 30 27 23 30 16"/>
-        <path d="M30 16 C24 13 18 13 14 17 M30 16 C27 10 22 7 17 8 M30 16 C35 10 40 8 44 10 M30 16 C36 13 42 14 45 18"/>
-        <path d="M66 40 V28 H76 V40 M82 40 V20 H92 V40 M98 40 V30 H106 V40"/>`,
+        <path d="M24 40 C22 30 23 23 26 16"/>
+        <path d="M26 16 C20 13 14 13 10 17 M26 16 C23 10 18 7 13 8 M26 16 C31 10 36 8 40 10 M26 16 C32 13 38 14 41 18"/>
+        <path d="M54 40 V30 H104 V40 M68 30 Q79 14 90 30 M79 22 V18 M56 30 Q60 23 64 30 M94 30 Q98 23 102 30"/>`,
     AUSTIN: `
         <path d="M26 40 V31 H52 V40 M30 31 Q39 17 48 31 M39 19 V11"/>
         <path d="M70 40 V18 L77 11 L84 18 V40 M77 11 V6"/>`,
@@ -97,16 +97,17 @@ const CITY_ART = {
         <path d="M38 40 V17 L45 10 L52 17 V40 M45 10 V3"/>
         <path d="M62 40 V25 H72 V40 M78 40 V29 H88 V40"/>`,
     MIAMI: `
-        <path d="M24 40 C22 31 23 25 26 19"/>
-        <path d="M26 19 C21 16 16 16 12 19 M26 19 C23 13 19 11 15 12 M26 19 C31 13 36 12 39 14"/>
-        <path d="M56 40 V25 H61 V17 H69 V25 H74 V40 M65 17 V10"/>
-        <path d="M84 35 Q90 29 96 35 Q102 41 108 35"/>`,
+        <path d="M22 40 C20 31 21 25 24 19"/>
+        <path d="M24 19 C19 16 14 16 10 19 M24 19 C21 13 17 11 13 12 M24 19 C29 13 34 12 37 14"/>
+        <path d="M50 40 V24 H82 V40 M60 24 V14 H72 V24 M66 14 V8 M50 30 H82 M50 35 H82"/>
+        <path d="M88 35 Q94 29 100 35 Q106 41 112 35"/>`,
     DALLAS: `
         <path d="M34 40 V19"/>
         <circle cx="34" cy="13" r="5.5"/>
         <path d="M64 40 V16 L88 24 V40 M72 40 V19 M80 40 V21"/>`,
     HOUSTON: `
-        <path d="M28 40 V23 H38 V40 M44 40 V12 H56 V40 M48 12 V7 M62 40 V26 H72 V40 M78 40 V18 H88 V40"/>`,
+        <path d="M30 38 V16 L34 7 L38 16 V38 M30 38 L26 40 M38 38 L42 40 M30 24 H38 M30 31 H38"/>
+        <path d="M60 40 V18 H70 V40 M74 40 V24 L79 19 L84 24 V40 M88 40 V28 H96 V40"/>`,
     SAN_ANTONIO: `
         <path d="M36 40 V26 H45 Q48 26 49 21 Q52 15 60 15 Q68 15 71 21 Q72 26 75 26 H84 V40"/>
         <path d="M55 40 V33 Q60 27 65 33 V40"/>`,
@@ -131,29 +132,52 @@ const CITY_ART = {
         <path d="M8 34 Q36 14 64 34 M18 27 V40 M32 21 V40 M46 21 V40 M58 28 V40"/>
         <path d="M88 40 C86 31 87 25 90 19 M90 19 C85 16 80 16 76 19 M90 19 C94 13 99 12 103 14"/>`,
     TAMPA: `
-        <path d="M30 40 V24 H44 V40 M37 24 V18 M33 18 Q37 10 41 18 M37 10 V6"/>
-        <path d="M54 40 V28 H64 V40 M59 28 Q59 22 59 22 M56 22 Q59 16 62 22"/>
-        <path d="M80 35 Q86 29 92 35 Q98 41 104 35"/>`,
+        <path d="M38 40 V28 H82 V40 M44 28 V19 M60 28 V13 M76 28 V19"/>
+        <path d="M41 19 Q44 13 47 19 Z M57 13 Q60 6 63 13 Z M73 19 Q76 13 79 19 Z M44 13 V10 M60 6 V2 M76 13 V10"/>
+        <path d="M88 35 Q94 29 100 35 Q106 41 112 35"/>`,
     LAS_VEGAS: `
-        <path d="M30 40 V24 M44 40 V24 M24 24 L37 12 L50 24 Z"/>
-        <path d="M78 40 V12 M74 12 H82 M75 16 H81 M76 8 Q78 2 80 8"/>
-        <path d="M92 40 V28 H102 V40"/>`,
+        <path d="M14 26 L32 18 L50 26 L32 34 Z M26 31 V40 M38 31 V40 M32 9 V15 M29 12 H35"/>
+        <path d="M82 40 L84 17 M90 40 L88 17 M80 17 H92 V12 H80 Z M86 12 V3"/>`,
     DETROIT: `
-        <path d="M52 40 V12 H62 V40 M57 12 V7"/>
-        <path d="M38 40 V20 H48 V40 M66 40 V20 H76 V40"/>
-        <path d="M24 40 V30 H32 V40 M82 40 V30 H90 V40"/>`,
+        <path d="M54 40 V8 H66 V40 M54 14 H66"/>
+        <path d="M42 40 V16 H52 V40 M68 40 V16 H78 V40"/>
+        <path d="M32 40 V22 H40 V40 M80 40 V22 H88 V40"/>`,
     OTHER: `
         <path d="M28 37 H38 M48 37 H58 M68 37 H78"/>
         <circle cx="96" cy="19" r="5"/>
         <path d="M96 24 V32"/>`,
 };
 
+/** What each drawing shows — captioned on the card for readers who don't know the city. */
+const CITY_LANDMARKS = {
+    SAN_FRANCISCO: "Golden Gate Bridge · Transamerica Pyramid",
+    PHOENIX: "Saguaro cactus · Camelback Mountain",
+    LOS_ANGELES: "Palm tree · Griffith Observatory",
+    AUSTIN: "Texas State Capitol · Frost Bank Tower",
+    ATLANTA: "Bank of America Plaza",
+    MIAMI: "Palm tree · Art Deco hotel · the ocean",
+    DALLAS: "Reunion Tower · Fountain Place",
+    HOUSTON: "Saturn V rocket (\u201cSpace City\u201d) · downtown towers",
+    SAN_ANTONIO: "The Alamo",
+    NASHVILLE: "AT&T Building (\u201cBatman Building\u201d)",
+    WASHINGTON_DC: "Washington Monument · U.S. Capitol",
+    DENVER: "Rocky Mountains",
+    PHILADELPHIA: "City Hall",
+    ORLANDO: "The Wheel at ICON Park · palm tree",
+    SAN_DIEGO: "Coronado Bridge · palm tree",
+    TAMPA: "Minarets of Plant Hall, University of Tampa",
+    LAS_VEGAS: "\u201cWelcome to Fabulous Las Vegas\u201d sign · the STRAT tower",
+    DETROIT: "Renaissance Center",
+};
+
 /** Wrap a metro's art paths in a consistently-styled SVG. */
 function cityArtSVG(code) {
     const art = CITY_ART[code] || CITY_ART.OTHER;
+    const label = CITY_LANDMARKS[code];
     return `<svg viewBox="0 0 120 44" fill="none" stroke="currentColor"
         stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
-        aria-hidden="true"><path d="M8 40 H112" opacity="0.45"/>${art}</svg>`;
+        ${label ? `role="img" aria-label="Line drawing: ${label}"` : 'aria-hidden="true"'}>
+        ${label ? `<title>${label}</title>` : ""}<path d="M8 40 H112" opacity="0.45"/>${art}</svg>`;
 }
 
 // ============================================
@@ -210,6 +234,7 @@ function buildCityCards(stats) {
         card.className = "city-card";
         card.innerHTML = `
             <div class="city-card-art">${cityArtSVG(info.code)}</div>
+            ${CITY_LANDMARKS[info.code] ? `<div class="city-card-landmark">${CITY_LANDMARKS[info.code]}</div>` : ""}
             <h3 class="city-card-name">${cityName}</h3>
             ${launched ? `<div class="city-card-since">Public since ${launched}</div>` : ""}
             <div class="city-card-count">${info.count.toLocaleString("en-US")}</div>
@@ -344,7 +369,7 @@ function fillFindings(stats) {
     const fatal = document.getElementById("finding-fatal");
     const list = document.getElementById("fatal-list");
     if (fatal && list && list.querySelector(".fatal-pending")) {
-        fatal.innerHTML = "<strong>The newest is still under review;</strong> in the earlier ones, another road user hit the Waymo or was thrown into it.";
+        fatal.innerHTML = "<strong>crashes involved a death. The newest is still under review;</strong> in the earlier ones, another road user hit the Waymo or was thrown into it.";
     }
 }
 

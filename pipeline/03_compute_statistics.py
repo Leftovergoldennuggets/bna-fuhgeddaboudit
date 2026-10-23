@@ -143,10 +143,13 @@ def compute_quarterly_rates(df):
     series = {"All metros": []}
     for prev, cur in zip(quarters, quarters[1:]):
         q = cur["through"]
-        if prev["total_miles_millions"] and cur["total_miles_millions"]:
-            miles = cur["total_miles_millions"] - prev["total_miles_millions"]
-            if miles > 0:
-                series["All metros"].append(row_for(q, miles, pd.Series(True, index=hub.index)))
+        # "All metros" = only metros with mileage in BOTH releases, so the
+        # crashes and the miles cover the same places. (Waymo's blended
+        # total omits newer cities whose crashes are already in CSV2.)
+        both = [c for c in cur["metros"] if c in prev["metros"] and c in CITIES]
+        miles = sum(cur["metros"][c] - prev["metros"][c] for c in both)
+        if miles > 0:
+            series["All metros"].append(row_for(q, miles, hub["Location"].isin(both)))
         for code, cum in cur["metros"].items():
             before = prev["metros"].get(code)
             if before is None or code not in CITIES:
@@ -639,7 +642,7 @@ def compute_all_statistics(df_all):
             "year_month": int(row["Year Month"]),
             "month_label": year_month_label(row["Year Month"]),
             "metro": metro_display_name(row["Location"]),
-            "city": row.get("City") or None,
+            "city": row["City"] if pd.notna(row.get("City")) and row.get("City") else None,
             "sv_movement": row.get("SV Pre-Crash Movement") if pd.notna(row.get("SV Pre-Crash Movement")) else None,
             "speed_mph": float(row["SV Precrash Speed (MPH)"]) if pd.notna(row.get("SV Precrash Speed (MPH)")) else None,
             "crash_with": row.get("Crash With") if pd.notna(row.get("Crash With")) else None,

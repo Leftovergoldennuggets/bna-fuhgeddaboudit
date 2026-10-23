@@ -118,8 +118,12 @@ jobs:
             --description "Data change needs an editor's review" 2>/dev/null || true
           EXISTING=$(gh issue list --label editorial-alert --state open --json number --jq '.[0].number')
           if [ -n "$EXISTING" ]; then
-            gh issue edit "$EXISTING" --body-file "$ALERTS"
-            gh issue comment "$EXISTING" --body "Alerts refreshed by the $(date -u +%Y-%m-%d) data update."
+            # Only touch the issue when the alerts actually changed
+            gh issue view "$EXISTING" --json body --jq '.body' > /tmp/current_body.md
+            if ! diff -q <(sed -e '$a\' /tmp/current_body.md) <(sed -e '$a\' "$ALERTS") >/dev/null; then
+              gh issue edit "$EXISTING" --body-file "$ALERTS"
+              gh issue comment "$EXISTING" --body "Alerts changed in the $(date -u +%Y-%m-%d) data update."
+            fi
           else
             gh issue create --title "Editorial review needed (automated data check)" \
               --label editorial-alert --body-file "$ALERTS"

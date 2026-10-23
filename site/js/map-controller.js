@@ -480,7 +480,7 @@ const MapController = (function () {
             ` : ""}
 
             ${incident.is_estimated_location ? `
-            <p class="panel-note"><em>Note: Location is approximate (city-level estimate).</em></p>
+            <p class="panel-note"><em>Note: Location is approximate (ZIP code or city level).</em></p>
             ` : ""}
         `;
 

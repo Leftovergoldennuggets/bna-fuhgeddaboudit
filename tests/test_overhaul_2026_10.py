@@ -226,3 +226,16 @@ class TestEditorialAlerts:
             {"fatal_report_ids": [], "hub_data_through": 202606})
         titles = " ".join(t for _, t, _ in alerts)
         assert "not mapped" in titles and "Hub release" in titles
+
+
+def test_narrative_negated_test_driver_not_matched():
+    assert not narrative_says_test_driver("no safety driver was present in the vehicle")
+
+
+def test_benchmark_skips_metro_split_across_counties():
+    csv3 = pd.DataFrame([
+        _csv3_row("Suspected Serious Injury+", "Suspected Serious Injury+", "Travis", -0.9, -0.99, -0.5),
+        _csv3_row("Suspected Serious Injury+", "Suspected Serious Injury+", "Williamson", -0.2, -0.9, 0.5),
+    ])
+    out = benchmark_summary(csv3, TestBenchmarkSummary.OUTCOMES)
+    assert "AUSTIN" not in out["by_metro"]

@@ -47,7 +47,7 @@ def build_snapshot():
         return [{
             "report_id": r["Report ID"],
             "month_label": f"{int(r['Year Month']) // 100}-{int(r['Year Month']) % 100:02d}",
-            "city": r.get("City") or r.get("Location"),
+            "city": r["City"] if pd.notna(r.get("City")) and r.get("City") else r.get("Location"),
             "severity": r["Highest Injury Severity Alleged"],
         } for _, r in rows.iterrows() if pd.notna(r["Report ID"])]
 
