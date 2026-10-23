@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         Charts.buildCrashTypeChart(data.stats);       // Similar to above
         Charts.buildHourlyChart(data.stats);           // Similar to above
         Charts.buildDayOfWeekChart(data.stats);        // Similar to above
-        Charts.buildLocationTypeChart(data.stats);     // Similar to above
+        buildRoadwayStrip(data.stats);                 // One 100% bar: street / intersection / parking lot …
         Charts.buildMileageChart(data.stats);          // Line chart: rider-only miles over time
         Charts.buildRateCharts(data.stats);            // Quarterly crash rates per million miles
         Charts.buildTrendChart(data.stats);            // Bar chart: crashes per month over time
@@ -386,6 +386,26 @@ async function showLatestUpdate() {
     } catch (e) {
         /* optional — the hero works without it */
     }
+}
+
+/**
+ * Roadway type as a single 100% strip with a legend — the shares matter,
+ * and one dominant category doesn't need a full bar chart.
+ */
+function buildRoadwayStrip(stats) {
+    const strip = document.getElementById("roadway-strip");
+    if (!strip || !stats.location_types) return;
+    const SHADES = ["#8b6f47", "#b39b77", "#d6c7ae", "#5c4a2e", "#e8e0d4", "#cfc8bd"];
+    const entries = Object.entries(stats.location_types).sort((a, b) => b[1].count - a[1].count);
+    const bar = entries.map(([name, info], i) =>
+        `<span class="strip-seg" style="width:${info.percentage}%;background:${SHADES[i % SHADES.length]}" title="${name}: ${info.count.toLocaleString("en-US")} crashes (${info.percentage}%)"></span>`
+    ).join("");
+    const legend = entries.map(([name, info], i) =>
+        `<span class="strip-key"><i style="background:${SHADES[i % SHADES.length]}"></i>${name} <strong>${info.percentage < 1 ? "&lt;1" : Math.round(info.percentage)}%</strong></span>`
+    ).join("");
+    strip.innerHTML = `<div class="strip-bar">${bar}</div><div class="strip-legend">${legend}</div>`;
+    strip.setAttribute("aria-label", "Share of crashes by roadway type: " +
+        entries.map(([name, info]) => `${name} ${info.percentage}%`).join(", "));
 }
 
 /** Numbers in the safety section that need a little arithmetic. */

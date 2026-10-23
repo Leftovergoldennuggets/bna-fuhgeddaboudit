@@ -241,86 +241,6 @@ const Charts = (function () {
     // ============================================
 
     /**
-     * Build a horizontal bar chart showing crashes by location type.
-     *
-     * @param {Object} stats — The parsed site-data.json object
-     */
-    function buildLocationTypeChart(stats) {
-        const canvas = document.getElementById("location-chart");
-        if (!canvas || !stats.location_types) return;
-
-        // Sort location types by count, highest first
-        // Object.entries() converts {key: value} into [[key, value], ...] array
-        const sorted = Object.entries(stats.location_types)
-            .sort((a, b) => b[1].count - a[1].count);
-
-        // Destructuring: [name] grabs the first element (key), [, info] skips the first and grabs the second
-        const labels = sorted.map(([name]) => name);
-        const values = sorted.map(([, info]) => info.count);
-        const pcts = sorted.map(([, info]) => info.percentage);
-
-        // Highlight the top category — same pattern as above
-        const maxVal = Math.max(...values);
-        const colors = values.map(v => v === maxVal ? ACCENT : GREY);
-
-        // Same pattern as buildDayOfWeekChart (horizontal bar)
-        new Chart(canvas, {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: colors,
-                    borderWidth: 0,
-                    borderRadius: 0,
-                }],
-            },
-            options: {
-                ...getDefaults(),
-                indexAxis: "y",  // Horizontal bar chart
-                scales: {
-                    x: {
-                        grid: {
-                            color: BORDER_COLOR,
-                            drawTicks: false,
-                        },
-                        ticks: {
-                            font: { family: MONO_FONT, size: 11 },
-                            color: TEXT_COLOR,
-                            padding: 8,
-                        },
-                        border: { display: false },
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { family: MONO_FONT, size: 11 },
-                            color: TEXT_DARK,
-                        },
-                        border: { color: BORDER_COLOR },
-                    },
-                },
-                plugins: {
-                    ...getDefaults().plugins,
-                    tooltip: {
-                        ...getDefaults().plugins.tooltip,
-                        callbacks: {
-                            // Show count AND percentage in tooltip
-                            label: function(item) {
-                                return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
-                            },
-                        },
-                    },
-                },
-            },
-        });
-    }
-
-    // ============================================
-    // Chart 4: Speed Distribution (horizontal bar)
-    // ============================================
-
-    /**
      * Build a horizontal bar chart showing Waymo vehicle speed
      * at the time of crash. The 0 mph bar is highlighted to
      * emphasize that most crashes happen while stationary.
@@ -346,7 +266,7 @@ const Charts = (function () {
         // Highlight the 0 mph bar specifically — it's the key finding
         const colors = bucketOrder.map(k => k === "0_mph" ? ACCENT : GREY);
 
-        // Same horizontal bar pattern as buildLocationTypeChart
+        // Same horizontal bar pattern as buildSpeedChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -388,7 +308,7 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
-                            // Similar to buildLocationTypeChart tooltip
+                            // Similar to buildSpeedChart tooltip
                             label: function(item) {
                                 return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
                             },
@@ -429,7 +349,7 @@ const Charts = (function () {
         const canvas = document.getElementById("crash-type-chart");
         if (!canvas || !stats.crash_circumstances || !stats.crash_circumstances.crash_type_plain) return;
 
-        // Sort by count descending — same pattern as buildLocationTypeChart
+        // Sort by count descending — same pattern as buildSpeedChart
         const sorted = Object.entries(stats.crash_circumstances.crash_type_plain)
             .sort((a, b) => b[1].count - a[1].count);
 
@@ -441,7 +361,7 @@ const Charts = (function () {
         const maxVal = Math.max(...values);
         const colors = values.map(v => v === maxVal ? ACCENT : GREY);
 
-        // Same horizontal bar pattern as buildLocationTypeChart
+        // Same horizontal bar pattern as buildSpeedChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -577,6 +497,8 @@ const Charts = (function () {
                 scales: {
                     x: {
                         type: "linear",
+                        min: Math.floor(points[0].x),
+                        max: points[points.length - 1].x + 0.15,
                         grid: { display: false },
                         border: { color: BORDER_COLOR },
                         ticks: {
@@ -832,7 +754,6 @@ const Charts = (function () {
     return {
         buildHourlyChart,
         buildDayOfWeekChart,
-        buildLocationTypeChart,
         buildSpeedChart,
         buildCrashTypeChart,
         buildMileageChart,
