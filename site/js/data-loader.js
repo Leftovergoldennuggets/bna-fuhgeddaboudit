@@ -88,6 +88,7 @@ const DataLoader = (function () {
         // all results are back. If any fetch fails, the `.catch(() => null)` on each
         // individual fetch prevents the whole group from failing — it just returns null
         // for that file so the site can still work with partial data.
+        wireDownloadLinks();
         const [stats, crashes, incidents, mileageMilestones, milesByCity] = await Promise.all([
             fetchJSON("site-data.json"),
             fetchJSON("crash_data.json"),
@@ -174,5 +175,15 @@ const DataLoader = (function () {
     }
 
     // Public API — only these three functions are accessible outside the module
-    return { loadAll, resolve, fetchJSON };
+    /**
+     * Point every <a data-download="file.csv"> at the right data folder
+     * (the folder differs between local development and GitHub Pages).
+     */
+    function wireDownloadLinks() {
+        document.querySelectorAll("a[data-download]").forEach((link) => {
+            link.href = DATA_BASE + link.dataset.download;
+        });
+    }
+
+    return { loadAll, resolve, fetchJSON, wireDownloadLinks };
 })();

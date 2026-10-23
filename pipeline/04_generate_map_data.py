@@ -672,6 +672,14 @@ def main():
         "zip_coverage_pct": round(dl_with_zip / total_mapped * 100, 1) if total_mapped else 0,
         "zip_checked": zip_checked,
         "zip_match_pct": round(zip_matched / zip_checked * 100, 1) if zip_checked else 0,
+        # Markers per precision tier: street = the intersection/address
+        # itself (or NHTSA coordinates); road = on the right street, exact
+        # point approximate; zip / city / metro = centre of that area.
+        "tiers": {
+            tier: sum(1 for r in driverless
+                      if r["location_precision"] == tier or (tier == "street" and r["location_precision"] == "exact"))
+            for tier in ("street", "road", "zip", "city", "metro")
+        },
     }
 
     print()

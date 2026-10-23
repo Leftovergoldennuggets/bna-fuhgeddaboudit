@@ -253,6 +253,8 @@ def compute_all_statistics(df_all):
             "lon": info["lon"],
             "status": info["status"],
             "public_since": info["public_since"],
+            "launched": info.get("launched"),
+            "testing": info.get("testing"),
             "count": int(city_counts.get(code, 0)),
         }
         for code, info in CITIES.items()

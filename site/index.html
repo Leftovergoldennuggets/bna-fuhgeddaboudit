@@ -9,17 +9,19 @@
     <title>Every Waymo Crash, Mapped | Autonomous Vehicle Crash Analysis</title>
 
     <!-- SEO + social sharing -->
-    <meta name="description" content="An interactive map and analysis of every federally reported crash involving a driverless Waymo vehicle in the United States — built from NHTSA Standing General Order data and Waymo's Safety Impact Data Hub, updated automatically.">
+    <meta name="description" content="An interactive map and analysis of every crash Waymo has reported to federal regulators for its driverless cars in the United States — with crash rates per mile, how they compare with human drivers, and the data to download. Built from NHTSA Standing General Order data and Waymo's Safety Impact Data Hub; updated weekly.">
     <link rel="canonical" href="https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Every Waymo Crash, Mapped">
-    <meta property="og:description" content="Interactive map and analysis of every federally reported driverless Waymo crash in the U.S., from federal crash data. Updated automatically.">
+    <meta property="og:description" content="Every crash Waymo has reported to federal regulators for its driverless cars, mapped and put in context. Updated weekly from federal data.">
     <meta property="og:url" content="https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/">
     <meta property="og:image" content="https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/assets/images/waymo-kid-bike.jpg">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Every Waymo Crash, Mapped">
-    <meta name="twitter:description" content="Interactive map and analysis of every federally reported driverless Waymo crash in the U.S.">
+    <meta name="twitter:description" content="Every crash Waymo has reported to federal regulators for its driverless cars, mapped and put in context.">
     <meta name="twitter:image" content="https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/assets/images/waymo-kid-bike.jpg">
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 
     <!-- Fonts -->
     <!-- "preconnect" tells the browser to start connecting to Google Fonts early, so fonts load faster -->
@@ -34,6 +36,8 @@
     <!-- CDN link: MarkerCluster plugin groups nearby map markers into numbered circles -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <!-- MapLibre GL draws the OpenFreeMap background map (see js/basemap.js) -->
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
 
     <!-- Our styles -->
     <link rel="stylesheet" href="css/styles.css">
@@ -102,7 +106,7 @@
                 <div class="step-content step-hero">
                     <span class="step-tag">Autonomous Vehicles</span>
                     <h1>Every Waymo Crash, Mapped</h1>
-                    <p class="step-dek">Self-driving cars must report every crash to federal regulators — from parking-lot taps to fatal collisions. This is the complete public record of Waymo's driverless miles.</p>
+                    <p class="step-dek">Companies running self-driving cars must report their crashes to federal regulators — from low-speed bumps to fatal collisions. Here is every one Waymo has reported for its driverless cars, mapped and put in context.</p>
                     <!-- Compact stat strip: the three numbers that frame the story -->
                     <div class="hero-stats">
                         <div class="hero-stat">
@@ -110,12 +114,12 @@
                             <span class="hero-stat-label">reported crashes</span>
                         </div>
                         <div class="hero-stat">
-                            <span class="hero-stat-number" data-stat="overview.cities_count">--</span>
-                            <span class="hero-stat-label">metro areas</span>
+                            <span class="hero-stat-number" data-stat="overview.public_metros_count">--</span>
+                            <span class="hero-stat-label">cities with public service</span>
                         </div>
                         <div class="hero-stat">
                             <span class="hero-stat-number" data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span>
-                            <span class="hero-stat-label">driverless miles</span>
+                            <span class="hero-stat-label">driverless miles<br>(through <span data-stat="waymo_context.data_through">--</span>)</span>
                         </div>
                     </div>
                     <p class="hero-meta">By Anders Eidesvik and Kate Li<br><span data-stat="meta.date_range_start" data-format="yearmonth">--</span> – <span data-stat="meta.date_range_end" data-format="yearmonth">--</span> &middot; Updated <span data-stat="meta.generated_at" data-format="date">--</span></p>
@@ -131,7 +135,7 @@
                         <span class="stat-callout-number" data-stat="overview.public_metros_count">--</span>
                         <span class="stat-callout-label">metros with public driverless service</span>
                     </div>
-                    <p>Filled circles are sized by crash count. Hollow circles mark the next wave — cities where Waymo is preparing to launch.</p>
+                    <p>Filled circles are sized by crash count. Hollow circles mark cities where Waymo has announced plans but doesn't yet carry public riders.</p>
                 </div>
             </div>
 
@@ -143,7 +147,7 @@
                         <span class="stat-callout-number"><span data-stat="city_breakdown.San Francisco.percentage">--</span>%</span>
                         <span class="stat-callout-label">of all crashes are in the San Francisco Bay Area</span>
                     </div>
-                    <p>Waymo's densest, longest-running urban market. More miles in harder traffic means more reports — that's exposure, not necessarily risk.</p>
+                    <p>One of Waymo's two biggest markets by miles, and its densest. More miles in harder traffic means more reports — that's exposure, not necessarily risk. Per mile, the Bay Area records about <span data-stat="city_mileage.San Francisco.crashes_per_million_miles">--</span> reported crashes per million miles, against <span data-stat="city_mileage.Phoenix.crashes_per_million_miles">--</span> in Phoenix.</p>
                 </div>
             </div>
 
@@ -165,113 +169,162 @@
                     <span class="step-kicker">04 &middot; The serious ones</span>
                     <div class="stat-callout">
                         <span class="stat-callout-number" data-stat="severity.moderate_plus.count">--</span>
-                        <span class="stat-callout-label">crashes caused moderate or worse injuries &mdash; <span data-stat="severity.sf_moderate_plus.count">--</span> of them here</span>
+                        <span class="stat-callout-label">crashes involved a moderate or worse injury to someone &mdash; <span data-stat="severity.sf_moderate_plus.count">--</span> of them here</span>
                     </div>
-                    <p class="step-note">Each red marker is one of them. Click to read the full federal crash narrative.</p>
+                    <p class="step-note">Each red marker is one of them. Click to read the full narrative Waymo filed with federal regulators. An injury on this list doesn't mean the Waymo caused the crash.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ================================================================ -->
-    <!-- SECTION 2: SPATIAL ANALYSIS (readers ask "is my city on here?")  -->
-    <!-- Where do crashes happen? City breakdowns.                       -->
+    <!-- SECTION 2: WHERE (readers ask "is my city on here?")              -->
     <!-- ================================================================ -->
     <section id="spatial" class="analysis-section alt-bg">
         <div class="section-container">
             <h2 class="section-title">Where Do Crashes Happen?</h2>
-            <p class="section-subtitle">Geographic distribution across Waymo's operating cities</p>
+            <p class="section-subtitle">Crash counts and per-mile rates across Waymo's cities</p>
+            <p class="section-intro">Raw counts mostly track how much Waymo drives in each city. Where Waymo publishes its mileage — <span id="mileage-metro-count">--</span> of its <span data-stat="overview.public_metros_count">--</span> cities so far — the cards also show crashes per million miles and how often its cars are in an injury crash compared with human drivers in the same area.</p>
 
-            <!-- City cards — dynamically generated from site-data.json -->
-            <div class="city-cards" id="city-cards-container">
-                <!-- Populated by JavaScript from site-data.json city_breakdown -->
-            </div>
+            <!-- City cards — built by app.js from site-data.json -->
+            <div class="city-cards" id="city-cards-container"></div>
+            <p class="city-also" id="city-also"></p>
+            <p class="chart-note">Rates count crashes through <span data-stat="city_mileage_meta.data_through">--</span>, the period Waymo's published mileage covers. Human comparisons are Waymo's own analysis (see <a href="#safety">below</a>); the range is a 95% confidence interval.</p>
 
-            <!-- Interactive chart -->
             <div class="chart-row">
                 <div class="chart-container">
-                    <h3 class="chart-title">Crashes by Location Type</h3>
-                    <canvas id="location-chart" role="img" aria-label="Bar chart of crashes by location type: intersections and streets account for most crashes"></canvas>
+                    <h3 class="chart-title">What Kind of Road?</h3>
+                    <canvas id="location-chart" role="img" aria-label="Bar chart of crashes by roadway type: most on ordinary streets, about a fifth at intersections, under a tenth in parking lots"></canvas>
+                    <p class="chart-note">From the "Roadway Type" field the company fills in on each federal report.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ================================================================ -->
-    <!-- SECTION 2B: CRASH CIRCUMSTANCES                                 -->
-    <!-- What happens in these crashes? Speed, type, vulnerable users.   -->
+    <!-- SECTION 3: CRASH CIRCUMSTANCES                                  -->
     <!-- ================================================================ -->
     <section id="crash-circumstances" class="analysis-section">
         <div class="section-container">
             <h2 class="section-title">What Happens in These Crashes?</h2>
-            <p class="section-subtitle">Understanding the circumstances behind <span data-stat="overview.total_crashes">--</span> reported incidents</p>
+            <p class="section-subtitle">The circumstances behind <span data-stat="overview.total_crashes">--</span> reported crashes</p>
 
-            <p class="section-intro">The word "crash" conjures images of high-speed collisions. The reality in this dataset is very different. Here is every crash — one square each, colored by the worst injury reported:</p>
+            <p class="section-intro">The word "crash" conjures images of high-speed collisions. Most of this dataset looks very different. Here is every crash — one square each, colored by the worst injury reported to anyone involved:</p>
 
-            <!-- Waffle: one square per crash, built by app.js from crash_data.json -->
             <div class="waffle-block">
                 <div class="waffle-grid" id="severity-waffle" role="img" aria-label="Grid showing every reported crash as one square, colored by worst injury: the vast majority caused no injury, a small share caused minor injuries, and a handful caused moderate, serious, or fatal injuries"></div>
                 <div class="waffle-legend" id="severity-waffle-legend"></div>
             </div>
+            <p class="stats-footnote">Injury levels are what the reporting company was told or alleged ("Highest Injury Severity Alleged"); they cover everyone involved, not only Waymo passengers. Crashes from supervised testing with a safety driver — <span data-stat="overview.supervised_crashes">--</span> on record — are excluded from all figures here; see the <a href="methodology.html#operation">methodology</a>.</p>
 
-            <p class="stats-footnote">Among crashes with a known status, <strong><span data-stat="severity.injury_reported.percentage">--</span>%</strong> reported any injury and <strong><span data-stat="severity.police_reported.percentage">--</span>%</strong> involved a police response. (These fields come from Waymo's quarterly data, so the newest federal reports aren't counted yet. Crashes from supervised testing with a safety driver — <span data-stat="overview.supervised_crashes">--</span> on record — are excluded from all figures here; see the <a href="methodology.html">methodology</a>.)</p>
+            <!-- The fatal crashes: written by an editor, checked against the data by app.js -->
+            <div class="fatal-box" id="fatal-box">
+                <h3>The fatal crashes</h3>
+                <p class="fatal-intro"><span data-stat="severity.fatality.count">--</span> crashes on record involved a death. According to the reports Waymo filed and to police accounts, in each one the Waymo was stopped or slowing and was hit as a result of another road user's actions; no Waymo has been found at fault.</p>
+                <ul class="fatal-list" id="fatal-list">
+                    <li data-report-id="30270-9724"><strong>San Francisco, January 2025.</strong> An empty Waymo was stopped in traffic when a speeding driver plowed into a line of cars, pushing them into the Waymo. One person and a dog were killed; the speeding driver was charged.</li>
+                    <li data-report-id="30270-11713"><strong>Tempe, Ariz., September 2025.</strong> An empty Waymo was slowing at 8 mph to turn right when a motorcycle hit it from behind. The rider fell and was run over by a passing car whose driver fled; police later sought a felony charge against that driver.</li>
+                    <li data-report-id="30270-16196"><strong>Dallas, August 2026.</strong> An empty Waymo had slowed to about 5 mph for a pedestrian in the road when an SUV in the opposite lanes struck the pedestrian, who was thrown into the Waymo's rear. Dallas police had not publicly assigned fault in the latest reports.</li>
+                </ul>
+                <p class="fatal-source">Sources: Waymo's reports to NHTSA (report IDs 30270-9724, -11713, -16196); San Francisco, Tempe and Dallas police via CBS SF, azfamily, NBC DFW and Fox 4.</p>
+            </div>
 
-            <p class="section-intro"><strong>In <span data-stat="crash_circumstances.speed_stats.stopped_pct">--</span>% of reported crashes with speed data, the Waymo vehicle was traveling at 0 mph at the time of contact</strong> — and <span data-stat="crash_circumstances.speed_stats.under_5mph_pct">--</span>% were at 5 mph or less.</p>
+            <p class="section-intro"><strong>In <span data-stat="crash_circumstances.stationary.percentage">--</span>% of reported crashes, the Waymo was stopped or parked</strong> when the crash happened — and in <span data-stat="crash_circumstances.speed_stats.under_5mph_pct">--</span>% it was going 5 mph or slower.</p>
 
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Waymo Vehicle Speed at Time of Crash</h3>
-                    <!-- <canvas> is an HTML element that Chart.js draws charts onto.
-                         The id="speed-chart" lets our JS find this element and render the chart here. -->
                     <canvas id="speed-chart" role="img" aria-label="Bar chart of Waymo vehicle speed at the time of crash: most crashes happened at 0 miles per hour"></canvas>
                     <p class="chart-note">Based on <span data-stat="crash_circumstances.speed_stats.total_with_speed_data">--</span> crashes with speed data. Median speed: <span data-stat="crash_circumstances.speed_stats.median_speed_mph">--</span> mph. Mean: <span data-stat="crash_circumstances.speed_stats.mean_speed_mph">--</span> mph.</p>
                 </div>
             </div>
 
-            <p class="section-intro">The most common scenario: the Waymo vehicle is stopped at a light or waiting in traffic, and another vehicle makes contact — often while backing up, changing lanes, or proceeding through an intersection. Crash types describe the physical collision, not who was at fault.</p>
+            <p class="section-intro">The most common crash is a rear-end collision — and in <span data-stat="crash_circumstances.rear_end.waymo_struck_from_behind_pct">--</span>% of those, it was the Waymo that was hit from behind. Crash types describe the physical collision, not who was at fault.</p>
 
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Crashes by Type</h3>
-                    <!-- Another canvas for Chart.js — same idea as above -->
                     <canvas id="crash-type-chart" role="img" aria-label="Horizontal bar chart of crash types: rear-end and side-impact collisions are the most common"></canvas>
                     <p class="chart-note">Crash types come from Waymo's quarterly data release and cover <span data-stat="crash_types_meta.classified_count">--</span> of <span data-stat="overview.total_crashes">--</span> crashes; the most recent crashes are awaiting classification.</p>
                 </div>
             </div>
 
-            <p class="section-intro">Crashes involving vulnerable road users — pedestrians, cyclists, and motorcyclists — account for <span data-stat="crash_circumstances.vulnerable_road_users.total">--</span> of <span data-stat="overview.total_crashes">--</span> total incidents (<span data-stat="crash_circumstances.vulnerable_road_users.percentage">--</span>%).</p>
+            <p class="section-intro">Crashes involving pedestrians, cyclists and motorcyclists — the people most likely to be hurt — account for <span data-stat="crash_circumstances.vulnerable_road_users.total">--</span> of <span data-stat="overview.total_crashes">--</span> crashes (<span data-stat="crash_circumstances.vulnerable_road_users.percentage">--</span>%).</p>
         </div>
     </section>
 
     <!-- ================================================================ -->
-    <!-- SECTION 3: TEMPORAL ANALYSIS                                    -->
-    <!-- When do crashes happen? Rush hour patterns, day/night, etc.     -->
+    <!-- SECTION 4: SAFER? Miles, rates over time, human benchmarks       -->
     <!-- ================================================================ -->
-    <section id="temporal" class="analysis-section alt-bg">
+    <section id="safety" class="analysis-section alt-bg">
+        <div class="section-container">
+            <h2 class="section-title">Are Waymos Getting Safer — and Are They Safer Than People?</h2>
+            <p class="section-subtitle">Crash counts can't answer that. Crashes per mile can.</p>
+
+            <div class="chart-row">
+                <div class="chart-container">
+                    <h3 class="chart-title">Waymo's Driverless Miles</h3>
+                    <canvas id="mileage-chart" role="img" aria-label="Line chart of Waymo's cumulative rider-only miles, growing from 1 million in early 2023 to more than 270 million by mid-2026"></canvas>
+                    <p class="chart-note">Cumulative rider-only miles. Filled points are Waymo's quarterly data releases, added automatically; hollow points are milestones from Waymo announcements and research papers. Hover for each source.</p>
+                </div>
+            </div>
+
+            <p class="section-intro">Waymo now drives about <span id="quarterly-latest-miles">--</span> million driverless miles a quarter, so crash counts rise even if each mile gets safer. Dividing crashes by miles gives a rate — and the rate for <em>all reported</em> crashes appears to halve in mid-2025.</p>
+            <p class="section-intro"><strong>That drop is mostly a paperwork change.</strong> On June 16, 2025, new federal rules stopped requiring reports for many minor crashes in which the self-driving car was hit and damage stayed under $1,000. The rate of crashes in which someone was injured — which must still be reported — barely moved.</p>
+
+            <div class="chart-row two-up">
+                <div class="chart-container">
+                    <h3 class="chart-title">All Reported Crashes per Million Miles</h3>
+                    <canvas id="rate-all-chart" role="img" aria-label="Line chart by quarter: reported crashes per million miles fell from about 10 to about 5 to 6 after the June 2025 reporting rule change"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Injury Crashes per Million Miles</h3>
+                    <canvas id="rate-injury-chart" role="img" aria-label="Line chart by quarter: injury crashes per million miles stayed between about 0.5 and 1.1 before and after the rule change"></canvas>
+                </div>
+            </div>
+            <p class="chart-note">Crashes from Waymo's quarterly release, divided by the miles Waymo drove that quarter (the difference between consecutive cumulative mileage releases). The dashed line marks the reporting-rule change. Each quarter has only a few dozen injury crashes, so quarter-to-quarter swings in that chart are mostly noise.</p>
+
+            <!-- Waymo vs. human benchmarks, from Waymo's CSV3 — built by app.js -->
+            <div class="benchmark-block">
+                <h3 class="block-title">Compared With Human Drivers</h3>
+                <p class="section-intro">Waymo compares its crash rates with human drivers on the same kinds of roads in the same cities, using a method published in a peer-reviewed journal. Across <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> driverless miles through <span data-stat="waymo_context.data_through">--</span>, its cars were in far fewer crashes of every severity:</p>
+                <div class="benchmark-rows" id="benchmark-rows" role="table" aria-label="Waymo crash rates compared with human-driver benchmarks"></div>
+                <p class="chart-note">Bars show the 95% confidence interval; the dot is Waymo's estimate. "Expected for human drivers" is how many crashes human drivers would have had over the same miles. Source: <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a> (CSV3, "dynamic" benchmark), read automatically each quarter.</p>
+                <div class="caveat-box">
+                    <p><strong>Read with care.</strong> This is Waymo's analysis of Waymo. The method has been peer-reviewed (<a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">Kusano et al., 2025</a>), but human benchmarks can't perfectly match where, when and how Waymo drives. The rarest outcomes rest on very few crashes: the serious-injury and fatal comparisons are based on <span data-stat="benchmarks.overall.serious_injury.waymo_count">--</span> and <span data-stat="benchmarks.overall.fatal.waymo_count">--</span> Waymo crashes, hence the wide ranges.</p>
+                    <p><strong>An independent check</strong> points the same way, less dramatically. The Insurance Institute for Highway Safety (<a href="https://www.axios.com/2026/07/23/waymo-robotaxis-av-crash-study" target="_blank" rel="noopener">July 2026</a>) analyzed about 50 million Waymo miles from 2021–2024 and found 68% fewer police-reportable crashes and 81% fewer injury crashes per mile than human drivers in the same cities — but only 35% fewer in San Francisco, and slightly more in Austin, where its sample was small.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 5: TEMPORAL ANALYSIS                                    -->
+    <!-- ================================================================ -->
+    <section id="temporal" class="analysis-section">
         <div class="section-container">
             <h2 class="section-title">When Do Crashes Happen?</h2>
-            <p class="section-intro">Crash timing reveals a familiar pattern: Waymo incidents peak during the hours and days when roads are busiest. This mirrors what traffic safety researchers see in human-driver crash data nationally — more vehicles on the road means more opportunities for collisions.</p>
-            <p class="section-subtitle">Temporal patterns from <span data-stat="overview.total_with_time_data">--</span> crashes with time data</p>
+            <p class="section-intro">Crashes cluster in the afternoon and evening and on Fridays and Saturdays. Part of that is busier roads; part is simply when Waymo's cars are out carrying riders. Waymo doesn't publish miles by hour, so these patterns show when crashes happen — not when driving is riskier.</p>
+            <p class="section-subtitle">Timing of <span data-stat="overview.total_with_time_data">--</span> crashes with a recorded time</p>
 
             <div class="analysis-grid">
                 <div class="analysis-card highlight">
                     <div class="analysis-number" data-stat="temporal.rush_hour_percentage" data-suffix="%">--</div>
                     <div class="analysis-label">Rush Hour Crashes</div>
-                    <p class="analysis-desc">7-9 AM &amp; 5-7 PM — when roads are busiest</p>
+                    <p class="analysis-desc">7–10 a.m. and 5–8 p.m.</p>
                 </div>
                 <div class="analysis-card">
                     <div class="analysis-number" data-stat="temporal.late_night_percentage" data-suffix="%">--</div>
                     <div class="analysis-label">Late Night Crashes</div>
-                    <p class="analysis-desc">11 PM - 4 AM</p>
+                    <p class="analysis-desc">11 p.m.–5 a.m.</p>
                 </div>
                 <div class="analysis-card">
                     <div class="analysis-number" data-stat="temporal.daytime_percentage" data-suffix="%">--</div>
                     <div class="analysis-label">Daytime</div>
-                    <p class="analysis-desc">6 AM - 8 PM</p>
+                    <p class="analysis-desc">6 a.m.–8 p.m.</p>
                 </div>
             </div>
 
-            <!-- Interactive charts -->
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Crashes by Hour of Day</h3>
@@ -280,74 +333,34 @@
                 <div class="chart-container">
                     <h3 class="chart-title">Crashes by Day of Week</h3>
                     <canvas id="day-chart" role="img" aria-label="Bar chart of crashes by day of week"></canvas>
+                    <p class="chart-note">Crashes with an exact date only (from Waymo's quarterly release).</p>
                 </div>
             </div>
 
-            <!-- Monthly trend — the long view -->
             <div class="chart-row">
                 <div class="chart-container">
                     <h3 class="chart-title">Reported Crashes per Month</h3>
                     <canvas id="trend-chart" role="img" aria-label="Bar chart of reported crashes per month from 2020 to today, rising as Waymo's service expands"></canvas>
-                    <p class="chart-note">Crash counts rise with Waymo's rapid expansion — more cities and more miles mean more reports. Raw counts say little about safety on their own; see the per-mile crash rates in the city section below. Lighter bars are recent months from preliminary federal reports, which can still be amended.</p>
+                    <div class="trend-legend" aria-hidden="true">
+                        <span><i class="sw sw-hub"></i>Detailed by Waymo's quarterly release</span>
+                        <span><i class="sw sw-fed"></i>Federal reports only so far</span>
+                        <span><i class="sw sw-prov"></i>Still filling in</span>
+                    </div>
+                    <p class="chart-note">Counts rise with Waymo's expansion — more cities and more miles mean more reports; see the per-mile rates above. The dip after June 2025 reflects the reporting-rule change, not fewer crashes. Months after <span data-stat="meta.federal_complete_through_label">--</span> are incomplete: companies have until the 15th of the following month to file, and NHTSA publishes with a further lag.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ================================================================ -->
-    <!-- SECTION 5: THE BIGGER PICTURE (growth + Waymo comparisons)       -->
-    <!-- Animated counters that populate from site-data.json              -->
-    <!-- ================================================================ -->
-    <section id="stats" class="stats-section">
-        <div class="section-container">
-            <h2 class="section-title">The Bigger Picture</h2>
-            <p class="section-subtitle">Waymo's growth — and how the company says its safety record compares</p>
-
-            <!-- Mileage growth chart — shows Waymo's exponential growth in rider-only miles -->
-            <div class="chart-row">
-                <div class="chart-container">
-                    <h3 class="chart-title">Waymo's Rider-Only Miles Over Time</h3>
-                    <canvas id="mileage-chart" role="img" aria-label="Line chart of Waymo's cumulative rider-only miles, growing from 1 million in early 2023 to more than 170 million"></canvas>
-                    <p class="chart-note">Data compiled from Waymo press releases, Safety Impact Data Hub, and archived web pages. See <a href="methodology.html">Methodology</a> for full sourcing.</p>
-                    <p class="chart-source">Source: <a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Mileage dataset by Anders Eidesvik</a> · Compiled from Waymo press releases and archived web data</p>
-                </div>
-            </div>
-
-            <!-- Waymo safety context from published research -->
-            <div class="safety-context">
-                <h3>How Does This Compare?</h3>
-                <!-- target="_blank" opens the link in a new tab.
-                     rel="noopener" is a security measure — it prevents the new tab
-                     from being able to access or control this page via JavaScript. -->
-                <p>Waymo publishes crash rate comparisons on its <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>, applying a <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed methodology</a> (Kusano et al., 2025) to data covering <span data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span> rider-only miles. These figures come from Waymo's own analysis. While the methodology has been peer-reviewed and adheres to industry best practices (the RAVE checklist), the comparisons are made against human driver benchmarks that may not perfectly match Waymo's specific operating conditions.</p>
-                <div class="context-stats">
-                    <div class="context-stat">
-                        <span class="context-number" data-stat="waymo_context.serious_crash_reduction_pct" data-suffix="%">--</span>
-                        <span class="context-label">fewer serious crashes vs. human drivers</span>
-                    </div>
-                    <div class="context-stat">
-                        <span class="context-number" data-stat="waymo_context.injury_crash_reduction_pct" data-suffix="%">--</span>
-                        <span class="context-label">fewer injury-causing crashes vs. human drivers</span>
-                    </div>
-                    <div class="context-stat">
-                        <span class="context-number" data-stat="waymo_context.total_rider_only_miles" data-format="millions">--</span>
-                        <span class="context-label">rider-only miles driven (through <span data-stat="waymo_context.data_through">--</span>)</span>
-                    </div>
-                </div>
-                <p class="context-source">Source: <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ================================================================ -->
-    <!-- SECTION 5: EXPLORE THE DATA                                     -->
+    <!-- SECTION 6: EXPLORE THE DATA                                     -->
     <!-- Interactive map with filters — the main interactive feature.    -->
     <!-- ================================================================ -->
     <section id="explore" class="explore-section">
         <div class="section-container">
             <h2 class="section-title">Explore the Data</h2>
-            <p class="section-intro">Every reported crash is mapped below. Use the filters to find patterns — or look up what's happened near you.</p>
-            <p class="explore-freshness">The <span data-stat="overview.preliminary_count">--</span> most recent crashes are placed at city-level accuracy — federal reports redact exact addresses until Waymo's quarterly release fills them in.</p>
+            <p class="section-intro">Every reported crash is mapped below. Use the filters to find patterns — or look up what's happened near you. Click a marker to read the report Waymo filed.</p>
+            <p class="explore-freshness">Federal reports redact addresses, so locations come from Waymo's quarterly release. <span data-stat="geocoding.tiers.street">--</span> crashes are placed at the intersection or address, <span data-stat="geocoding.tiers.road">--</span> on the right street near it, and the rest — mostly the <span data-stat="overview.preliminary_count">--</span> newest crashes — near the center of their ZIP code or city. Each marker's popup says which. <a data-download="waymo_crashes.csv" href="#" class="download-link" download>Download all crashes (CSV)</a></p>
             <!-- One-click starting points — each chip applies the filters for you -->
             <div class="explore-presets" role="group" aria-label="Quick filter presets">
                 <button class="preset-chip" data-preset="serious"><span class="preset-dot" style="background:#8b2020"></span>Serious injuries only (<span data-stat="severity.moderate_plus.count">--</span>)</button>
@@ -369,7 +382,7 @@
                             <button id="zip-search-btn" class="filter-toggle">Search</button>
                             <button id="zip-clear-btn" class="filter-toggle" style="display:none;">Clear</button>
                         </div>
-                        <p class="zip-note">Zip codes come from Waymo's detailed data and aren't available yet for the most recent crashes.</p>
+                        <p class="zip-note">ZIP codes come from Waymo's data release, which stopped including them for crashes after June 2025; newer crashes are matched by map position where it is precise enough.</p>
                         <p class="zip-result" id="zip-result" style="display:none;"></p>
                     </div>
 
@@ -443,7 +456,7 @@
             <div class="footer-content">
                 <div class="footer-info">
                     <h3>The Waymo Crash Record</h3>
-                    <p>A Stanford COMM277T data journalism project by Anders Eidesvik and Kate Li.</p>
+                    <p>A data journalism project by Anders Eidesvik and Kate Li, begun in Stanford's COMM 277T.</p>
                     <p>Last updated: <span data-stat="meta.generated_at" data-format="date">--</span></p>
                 </div>
                 <div class="footer-links">
@@ -451,6 +464,12 @@
                     <ul>
                         <li><a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">NHTSA Standing General Order Data</a></li>
                         <li><a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a></li>
+                    </ul>
+                    <h4>The data</h4>
+                    <ul>
+                        <li><a data-download="waymo_crashes.csv" href="#" download>Download all crashes (CSV)</a></li>
+                        <li><a href="methodology.html#download">Data dictionary</a></li>
+                        <li><a href="methodology.html#updates">Update history &amp; corrections</a></li>
                     </ul>
                     <h4>Pages</h4>
                     <ul>
@@ -461,7 +480,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>Data updates automatically when new NHTSA/Waymo reports are published. Federal reports through <span data-stat="meta.federal_data_through_label">--</span>; Waymo's detailed quarterly data through <span data-stat="meta.hub_data_through_label">--</span>.</p>
+                <p>Updated weekly from federal and Waymo data. Federal reports through <span data-stat="meta.federal_data_through_label">--</span> (complete through <span data-stat="meta.federal_complete_through_label">--</span>); Waymo's detailed quarterly data through <span data-stat="meta.hub_data_through_label">--</span>.</p>
             </div>
         </div>
     </footer>
@@ -475,6 +494,9 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- MarkerCluster: groups nearby markers into clusters (depends on Leaflet, so loaded after it) -->
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <!-- MapLibre GL + its Leaflet bridge: render the OpenFreeMap vector background map -->
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.22/leaflet-maplibre-gl.js"></script>
     <!-- Chart.js: draws bar charts and other visualizations on <canvas> elements -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
@@ -488,6 +510,7 @@
          7. app.js — ties everything together, kicks off on page load -->
     <script src="js/data-loader.js"></script>
     <script src="js/stat-renderer.js"></script>
+    <script src="js/basemap.js"></script>
     <script src="js/map-controller.js"></script>
     <script src="js/scrollytelling.js"></script>
     <script src="js/explore.js"></script>

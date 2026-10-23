@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Step 3: Build dynamic city cards and the severity waffle
         buildCityCards(data.stats);
+        buildFatalList(data.stats);
+        buildBenchmarkRows(data.stats);
+        fillSafetyNumbers(data.stats);
         buildSeverityWaffle(data.crashes);
 
         // Step 4: Initialize the scrollytelling map
@@ -50,7 +53,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         Charts.buildHourlyChart(data.stats);           // Similar to above
         Charts.buildDayOfWeekChart(data.stats);        // Similar to above
         Charts.buildLocationTypeChart(data.stats);     // Similar to above
-        Charts.buildMileageChart(data.mileageMilestones);  // Line chart: rider-only miles over time
+        Charts.buildMileageChart(data.stats);          // Line chart: rider-only miles over time
+        Charts.buildRateCharts(data.stats);            // Quarterly crash rates per million miles
         Charts.buildTrendChart(data.stats);            // Bar chart: crashes per month over time
 
         // Step 7: Initialize the interactive explore section
@@ -121,6 +125,21 @@ const CITY_ART = {
         <circle cx="44" cy="21" r="12"/>
         <path d="M44 9 V33 M32 21 H56 M36 13 L52 29 M52 13 L36 29 M37 40 L44 22 L51 40"/>
         <path d="M86 40 C84 32 85 27 88 22 M88 22 C84 19 80 19 77 21 M88 22 C92 17 96 16 99 18"/>`,
+    SAN_DIEGO: `
+        <path d="M8 34 Q36 14 64 34 M18 27 V40 M32 21 V40 M46 21 V40 M58 28 V40"/>
+        <path d="M88 40 C86 31 87 25 90 19 M90 19 C85 16 80 16 76 19 M90 19 C94 13 99 12 103 14"/>`,
+    TAMPA: `
+        <path d="M30 40 V24 H44 V40 M37 24 V18 M33 18 Q37 10 41 18 M37 10 V6"/>
+        <path d="M54 40 V28 H64 V40 M59 28 Q59 22 59 22 M56 22 Q59 16 62 22"/>
+        <path d="M80 35 Q86 29 92 35 Q98 41 104 35"/>`,
+    LAS_VEGAS: `
+        <path d="M30 40 V24 M44 40 V24 M24 24 L37 12 L50 24 Z"/>
+        <path d="M78 40 V12 M74 12 H82 M75 16 H81 M76 8 Q78 2 80 8"/>
+        <path d="M92 40 V28 H102 V40"/>`,
+    DETROIT: `
+        <path d="M52 40 V12 H62 V40 M57 12 V7"/>
+        <path d="M38 40 V20 H48 V40 M66 40 V20 H76 V40"/>
+        <path d="M24 40 V30 H32 V40 M82 40 V30 H90 V40"/>`,
     OTHER: `
         <path d="M28 37 H38 M48 37 H58 M68 37 H78"/>
         <circle cx="96" cy="19" r="5"/>
@@ -139,90 +158,178 @@ function cityArtSVG(code) {
 // Dynamic City Cards
 // ============================================
 
+/** Cities with fewer driverless crashes than this go in the one-line "also" list. */
+const CITY_CARD_MIN_CRASHES = 10;
+
 /**
- * Build city breakdown cards in the #city-cards-container.
- * Each card shows a city name, crash count, percentage, miles driven,
- * crash rate per million miles, and peak hour.
+ * Build the city cards in #city-cards-container, plus the "also" line
+ * for smaller metros. Each card shows the crash count and share; where
+ * Waymo publishes mileage, the crash rate per million miles and Waymo's
+ * own injury-crash comparison with human drivers (with its 95% CI).
  *
  * @param {Object} stats — site-data.json
  */
 function buildCityCards(stats) {
-    // Find the HTML element where city cards should go
     const container = document.getElementById("city-cards-container");
-    // If the container doesn't exist on this page, or there's no city data, stop here
     if (!container || !stats.city_breakdown) return;
 
-    // Object.entries() converts {SF: {...}, LA: {...}} into [["SF", {...}], ["LA", {...}]]
-    // .sort() reorders so the city with the most crashes comes first
     const sorted = Object.entries(stats.city_breakdown).sort(
-        // Arrow function comparing two cities' crash counts (b - a = descending order)
         (a, b) => b[1].count - a[1].count
     );
+    const bench = (stats.benchmarks && stats.benchmarks.by_metro) || {};
+    const small = [];
 
-    // .forEach() loops through every [cityName, info] pair in the sorted array
-    // For this part we consulted Claude who recommended destructuring assignment — a
-    // shorthand that unpacks an array into named variables in one line. Instead of writing
-    // `const stats = results[0]; const crashData = results[1]; const incidents = results[2];`
-    // we can write it all in one line. The variable names are matched by position: first
-    // item goes to the first name, second to the second, and so on.
     sorted.forEach(([cityName, info]) => {
-
-        // Look up peak hour for this city (if available)
-        const peak = stats.city_peaks ? stats.city_peaks[cityName] : null;
-
-        // Look up mileage data for this city (if available)
+        if (info.count < CITY_CARD_MIN_CRASHES || info.code === "OTHER") {
+            small.push([cityName, info]);
+            return;
+        }
         const mileage = stats.city_mileage ? stats.city_mileage[cityName] : null;
+        const meta = stats.cities ? stats.cities[info.code] : null;
+        const injury = bench[cityName] && bench[cityName].any_injury;
 
-        // Create a new <div> element to hold this city's card
-        const card = document.createElement("div");
-        // Give it a CSS class so our stylesheet can style it
-        card.className = "city-card";
-
-        // Build mileage lines — only show if we have miles data
-        let mileageHTML = "";
-        if (mileage && mileage.miles_millions !== null && mileage.miles_millions !== undefined) {
-            // .toFixed(1) rounds to 1 decimal place: 56.535 → "56.5"
-            const milesFormatted = mileage.miles_millions.toFixed(1) + "M";
-            // Template literal (backtick string): ${...} inserts a variable's value into the string
-            mileageHTML += `<div class="city-card-miles">${milesFormatted} miles driven</div>`;
+        let detailHTML = "";
+        if (mileage && mileage.miles_millions) {
+            detailHTML += `<div class="city-card-miles">${mileage.miles_millions.toFixed(1)}M driverless miles</div>`;
             if (mileage.crashes_per_million_miles !== null) {
-                // Similar to above — insert crash rate into the HTML string
-                mileageHTML += `<div class="city-card-rate">${mileage.crashes_per_million_miles} crashes per M miles</div>`;
+                detailHTML += `<div class="city-card-rate"><strong>${mileage.crashes_per_million_miles}</strong> crashes per million miles</div>`;
             }
+        } else {
+            detailHTML += `<div class="city-card-miles city-card-muted">Mileage not yet published</div>`;
         }
-
-        // Status note for metros without open public service, and for the
-        // catch-all "Other" bucket (supervised testing locations, etc.)
-        let statusHTML = "";
-        if (info.status === "testing") {
-            statusHTML = `<div class="city-card-status">Driverless testing — service not yet open</div>`;
-        } else if (info.code === "OTHER") {
-            statusHTML = `<div class="city-card-status">Outside mapped metro areas</div>`;
+        if (injury && injury.reduction_pct !== null) {
+            detailHTML += `<div class="city-card-bench" title="Waymo's analysis; 95% confidence interval ${injury.reduction_ci_low}–${injury.reduction_ci_high}%">
+                ${Math.round(injury.reduction_pct)}% fewer injury crashes than human drivers
+                <span class="city-card-ci">(${Math.round(injury.reduction_ci_low)}–${Math.round(injury.reduction_ci_high)}%)</span></div>`;
         }
+        const launched = meta && meta.launched ? formatMonth(meta.launched) : null;
 
-        // Peak hour line — only shown when there's enough data to compute it
-        const peakHTML = peak ? `<div class="city-card-peak">Peak: ${peak.peak_label}</div>` : "";
-
-        // Set the card's inner HTML using a template literal with embedded variables
-        // .toLocaleString("en-US") formats 1123 as "1,123" with commas
+        const card = document.createElement("div");
+        card.className = "city-card";
         card.innerHTML = `
             <div class="city-card-art">${cityArtSVG(info.code)}</div>
             <h3 class="city-card-name">${cityName}</h3>
+            ${launched ? `<div class="city-card-since">Public since ${launched}</div>` : ""}
             <div class="city-card-count">${info.count.toLocaleString("en-US")}</div>
             <div class="city-card-label">crashes (${info.percentage}%)</div>
-            ${mileageHTML}
-            ${peakHTML}
-            ${statusHTML}
+            ${detailHTML}
         `;
-
-        // Add the finished card into the container on the page
         container.appendChild(card);
     });
+
+    const also = document.getElementById("city-also");
+    if (also && small.length) {
+        const parts = small.map(([cityName, info]) => {
+            const note = info.status === "testing" ? " (testing)"
+                : info.code === "OTHER" ? " (outside Waymo's metros)" : "";
+            return `${cityName} ${info.count.toLocaleString("en-US")}${note}`;
+        });
+        also.innerHTML = `<span class="city-also-label">Also:</span> ${parts.join(" &middot; ")}`;
+    }
+
+    const mileageCount = document.getElementById("mileage-metro-count");
+    if (mileageCount && stats.city_mileage) {
+        const n = Object.values(stats.city_mileage).filter((m) => m.miles_millions).length;
+        mileageCount.textContent = numberWord(n);
+    }
 }
 
-// ============================================
-// Severity Waffle — one square per crash
-// ============================================
+/** "2024-03" → "March 2024" */
+function formatMonth(yearMonth) {
+    const [year, month] = yearMonth.split("-");
+    const names = ["January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December"];
+    return `${names[parseInt(month, 10) - 1]} ${year}`;
+}
+
+/** Spell out small numbers, AP style. */
+function numberWord(n) {
+    const words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+    return n < 10 ? words[n] : String(n);
+}
+
+/**
+ * The fatal-crash list is written by an editor (it needs judgment about
+ * fault), so it can fall behind the data. This compares the list with
+ * stats.fatal_crashes and appends any crash the editor hasn't covered yet,
+ * using only the facts from the federal report — the page never shows a
+ * stale count.
+ *
+ * @param {Object} stats — site-data.json
+ */
+function buildFatalList(stats) {
+    const list = document.getElementById("fatal-list");
+    if (!list || !stats.fatal_crashes) return;
+    const documented = new Set(
+        [...list.querySelectorAll("li[data-report-id]")].map((li) => li.dataset.reportId)
+    );
+    stats.fatal_crashes
+        .filter((c) => !documented.has(c.report_id))
+        .forEach((c) => {
+            const li = document.createElement("li");
+            li.className = "fatal-pending";
+            const speed = c.speed_mph !== null ? ` at ${c.speed_mph} mph` : "";
+            li.innerHTML = `<strong>${c.city || c.metro}, ${c.month_label}.</strong>
+                Newly reported; details under review. From the federal report: the Waymo was
+                ${(c.sv_movement || "in an unknown state").toLowerCase()}${speed}; the other party
+                was a ${(c.crash_with || "road user").replace("Non-Motorist: ", "").toLowerCase()}
+                (report ${c.report_id}).`;
+            list.appendChild(li);
+        });
+}
+
+/**
+ * Waymo-vs-human comparison rows (#benchmark-rows), one per outcome, from
+ * stats.benchmarks.overall (hub CSV3). Each row draws the 95% confidence
+ * interval as a bar on a 0–100% "fewer crashes" scale with a dot at the
+ * estimate, plus the underlying counts.
+ *
+ * @param {Object} stats — site-data.json
+ */
+function buildBenchmarkRows(stats) {
+    const container = document.getElementById("benchmark-rows");
+    if (!container || !stats.benchmarks || !stats.benchmarks.overall) return;
+    const overall = stats.benchmarks.overall;
+    const ROWS = [
+        { key: "serious_injury", label: "Serious-injury or fatal crashes" },
+        { key: "fatal", label: "Fatal crashes" },
+        { key: "airbag", label: "Crashes with an airbag deployment" },
+        { key: "any_injury", label: "Crashes with any injury" },
+        { key: "police", label: "Police-reported crashes" },
+    ];
+    container.innerHTML = ROWS.filter((r) => overall[r.key]).map((r) => {
+        const b = overall[r.key];
+        const lo = Math.max(0, b.reduction_ci_low);
+        const hi = Math.min(100, b.reduction_ci_high);
+        const fmt = (n) => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+        return `
+            <div class="bench-row" role="row">
+                <div class="bench-label" role="rowheader">${r.label}</div>
+                <div class="bench-viz" role="cell" aria-label="${Math.round(b.reduction_pct)}% fewer, 95% confidence interval ${Math.round(b.reduction_ci_low)} to ${Math.round(b.reduction_ci_high)}%">
+                    <div class="bench-track">
+                        <div class="bench-ci" style="left:${lo}%;width:${Math.max(hi - lo, 0.8)}%"></div>
+                        <div class="bench-dot" style="left:${b.reduction_pct}%"></div>
+                    </div>
+                </div>
+                <div class="bench-value" role="cell">
+                    <strong>${Math.round(b.reduction_pct)}% fewer</strong>
+                    <span class="bench-range">range ${Math.round(b.reduction_ci_low)}–${Math.round(b.reduction_ci_high)}%</span>
+                    <span class="bench-counts">${fmt(b.waymo_count)} Waymo crashes vs. ~${fmt(b.predicted_human_count)} expected for human drivers</span>
+                </div>
+            </div>`;
+    }).join("") + `
+        <div class="bench-axis" aria-hidden="true"><span>0%</span><span>50%</span><span>100% fewer</span></div>`;
+}
+
+/** Numbers in the safety section that need a little arithmetic. */
+function fillSafetyNumbers(stats) {
+    const el = document.getElementById("quarterly-latest-miles");
+    const series = stats.quarterly_rates && stats.quarterly_rates.series
+        && stats.quarterly_rates.series["All metros"];
+    if (el && series && series.length) {
+        el.textContent = Math.round(series[series.length - 1].miles_millions);
+    }
+}
 
 /**
  * Render every driverless crash as a single colored square, grouped by

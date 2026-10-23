@@ -149,23 +149,8 @@ const Explore = (function () {
             attributionControl: true,      // Show map credits
         });
 
-        // Base tiles: CARTO light without labels — same as the scrollytelling map
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-            {
-                attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-                    '&copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: "abcd",
-                maxZoom: 19,
-            }
-        ).addTo(exploreMap);  // .addTo() adds this tile layer to the explore map
-
-        // Label layer on top — same pattern as MapController
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }
-        ).addTo(exploreMap);
+        // Background map (OpenFreeMap — see basemap.js)
+        Basemap.addTo(exploreMap);
 
         // L.markerClusterGroup() groups nearby markers into clusters — same setup as MapController
         exploreCluster = L.markerClusterGroup({
