@@ -345,8 +345,7 @@ Final state (2026-10-23), before merging to `main`:
 
 ## 6. Open items for Anders
 
-- Confirm the course name ("COMM 277T" — README says "Building News
-  Apps", the old FAQ said "Computational Journalism").
+- Course name confirmed by Anders: "COMM 277T: Building News Apps" (resolved).
 - The About page line "Residents … did not sign up for a safety
   experiment, but they are part of one" was softened; revert if you want
   your original voice.
