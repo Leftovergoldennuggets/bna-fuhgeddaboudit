@@ -84,6 +84,7 @@ WEB_CRASH_DATA = os.path.join(WEB_DIR, "crash_data.json")
 WEB_SERIOUS_INCIDENTS = os.path.join(WEB_DIR, "serious_incidents.json")
 WEB_CRASH_CSV = os.path.join(WEB_DIR, "waymo_crashes.csv")
 WEB_UPDATE_HISTORY = os.path.join(WEB_DIR, "update_history.json")
+WEB_SOCIAL_CARD = os.path.join(WEB_DIR, "social-card.png")
 
 # Geocode cache — stores address → lat/lon lookups so we don't re-geocode
 # the same address every time the pipeline runs. Committed to git.

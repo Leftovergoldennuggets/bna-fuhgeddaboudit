@@ -76,7 +76,7 @@ jobs:
           # Copy data files into the site directory
           mkdir -p _site/data/web
           cp data/web/*.json _site/data/web/
-          cp data/web/*.csv _site/data/web/ 2>/dev/null || true
+          cp data/web/*.csv data/web/*.png _site/data/web/ 2>/dev/null || true
           # Copy static data files (mileage milestones, miles by city)
           mkdir -p _site/data/static
           cp data/static/*.json _site/data/static/ 2>/dev/null || true
