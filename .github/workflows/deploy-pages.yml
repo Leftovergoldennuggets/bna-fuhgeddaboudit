@@ -65,7 +65,7 @@ jobs:
       #   ├── css/styles.css
       #   ├── js/*.js
       #   ├── assets/images/*.png
-      #   └── data/web/*.json      ← data files moved here
+      #   └── data/web/*.json, *.csv ← data files (incl. the public CSV download)
       #
       # The JS data-loader detects GitHub Pages and adjusts paths automatically.
       - name: Build site
@@ -76,6 +76,7 @@ jobs:
           # Copy data files into the site directory
           mkdir -p _site/data/web
           cp data/web/*.json _site/data/web/
+          cp data/web/*.csv data/web/*.png _site/data/web/ 2>/dev/null || true
           # Copy static data files (mileage milestones, miles by city)
           mkdir -p _site/data/static
           cp data/static/*.json _site/data/static/ 2>/dev/null || true

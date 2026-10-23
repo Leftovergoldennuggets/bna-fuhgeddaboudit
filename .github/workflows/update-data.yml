@@ -17,6 +17,12 @@
 #   - data/static/*.json (miles_by_city.json regenerated from Waymo CSV1)
 #
 # If nothing changed, no commit is created.
+#
+# Editorial alerts: pipeline step 06 compares the data with what an editor
+# has already reviewed (data/static/editorial_baseline.json). If anything
+# needs a human — a new fatal or serious-injury crash, an unmapped city, a
+# new Waymo hub release — this workflow opens (or updates) a GitHub issue
+# labelled "editorial-alert". See MAINTENANCE.md → Editorial review.
 # =============================================================================
 
 name: Update Crash Data
@@ -29,6 +35,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   update-data:
@@ -97,6 +104,31 @@ jobs:
           git pull --rebase origin main
           git push
 
+      - name: Open or update editorial-review issue
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ALERTS=data/processed/editorial_alerts.md
+          if [ ! -s "$ALERTS" ]; then
+            echo "No editorial alerts."
+            exit 0
+          fi
+          gh label create editorial-alert --color B60205 \
+            --description "Data change needs an editor's review" 2>/dev/null || true
+          EXISTING=$(gh issue list --label editorial-alert --state open --json number --jq '.[0].number')
+          if [ -n "$EXISTING" ]; then
+            # Only touch the issue when the alerts actually changed
+            gh issue view "$EXISTING" --json body --jq '.body' > /tmp/current_body.md
+            if ! diff -q <(sed -e '$a\' /tmp/current_body.md) <(sed -e '$a\' "$ALERTS") >/dev/null; then
+              gh issue edit "$EXISTING" --body-file "$ALERTS"
+              gh issue comment "$EXISTING" --body "Alerts changed in the $(date -u +%Y-%m-%d) data update."
+            fi
+          else
+            gh issue create --title "Editorial review needed (automated data check)" \
+              --label editorial-alert --body-file "$ALERTS"
+          fi
+
       - name: Write job summary
         if: always()
         run: |
@@ -113,5 +145,11 @@ jobs:
           print(f"- Federal data through: **{m['federal_data_through_label']}**")
           print(f"- Waymo hub data through: {m['hub_data_through_label']}")
           print(f"- Metros with crashes: {o['cities_count']}")
+          print(f"- Federal record complete through: {m['federal_complete_through_label']}")
           EOF
+            if [ -s data/processed/editorial_alerts.md ]; then
+              echo ""
+              echo "## Editorial alerts"
+              cat data/processed/editorial_alerts.md
+            fi
           } >> "$GITHUB_STEP_SUMMARY"

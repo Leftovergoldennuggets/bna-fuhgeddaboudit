@@ -2,7 +2,7 @@
  * map-controller.js — Leaflet map initialization and marker management
  * =====================================================================
  * Handles the main scrollytelling map:
- *   - Creates the Leaflet map with CartoDB Positron tiles (clean look)
+ *   - Creates the Leaflet map on the shared OpenFreeMap background (basemap.js)
  *   - Adds city overview markers (circle markers showing crash counts)
  *   - Adds individual crash markers in MarkerCluster groups
  *   - Manages serious incident markers with pulsing red dots
@@ -115,24 +115,8 @@ const MapController = (function () {
             attributionControl: true,         // Show the map credits in the corner
         });
 
-        // L.tileLayer() adds the map background images (called "tiles")
-        // CARTO light without labels gives a clean, quiet backdrop for our data dots
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-            {
-                attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-                    '&copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: "abcd",  // Load tiles from a/b/c/d subdomains for speed
-                maxZoom: 19,         // Maximum zoom level allowed
-            }
-        ).addTo(map);  // .addTo(map) adds this tile layer to the map
-
-        // Second tile layer: just the city/street labels, drawn on top of our markers
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }  // "shadowPane" puts labels above markers
-        ).addTo(map);
+        // Background map (OpenFreeMap — see basemap.js)
+        Basemap.addTo(map);
 
         // Add zoom +/- buttons in the bottom-right corner
         L.control.zoom({ position: "bottomright" }).addTo(map);
@@ -216,13 +200,37 @@ const MapController = (function () {
             });
 
             const statusNote = cityCoord.status === "testing"
-                ? "<br><em>Driverless testing — public service not yet open</em>" : "";
+                ? "<br><em>Testing — not yet open to the public</em>" : "";
             marker.bindTooltip(
                 `<strong>${cityName}</strong><br>${info.count} crashes (${info.percentage}%)${statusNote}`,
                 { direction: "top", className: "city-tooltip" }
             );
 
             // .addLayer() adds this marker to the cityMarkersLayer group
+            cityMarkersLayer.addLayer(marker);
+        });
+
+        // Metros with no driverless crashes on record: newly opened cities
+        // (small filled dot) and cities in testing (solid outline).
+        const drawn = new Set(Object.values(statsData.city_breakdown || {}).map((i) => i.code));
+        Object.entries(statsData.cities || {}).forEach(([code, info]) => {
+            if (drawn.has(code)) return;
+            const isPublic = info.status === "public";
+            const marker = L.circleMarker([info.lat, info.lon], {
+                radius: 6,
+                fillColor: isPublic ? "#8b6f47" : "#fff",
+                color: isPublic ? "#fff" : "#8b6f47",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: isPublic ? 0.8 : 0.4,
+            });
+            const note = isPublic
+                ? "Public service since " + (info.launched || info.public_since) + " — no driverless crashes reported yet"
+                : (info.testing === "supervised"
+                    ? "Testing with safety drivers — not open to the public"
+                    : "Driverless testing — not open to the public");
+            marker.bindTooltip(`<strong>${info.name}</strong><br>${note}`,
+                { direction: "top", className: "city-tooltip" });
             cityMarkersLayer.addLayer(marker);
         });
 
@@ -239,7 +247,7 @@ const MapController = (function () {
                 dashArray: "3",
             });
             marker.bindTooltip(
-                `<strong>${metro.name}</strong><br>Announced / preparing to launch`,
+                `<strong>${metro.name}</strong><br>Announced — not yet open to riders`,
                 { direction: "top", className: "city-tooltip" }
             );
             cityMarkersLayer.addLayer(marker);
@@ -472,7 +480,7 @@ const MapController = (function () {
             ` : ""}
 
             ${incident.is_estimated_location ? `
-            <p class="panel-note"><em>Note: Location is approximate (city-level estimate).</em></p>
+            <p class="panel-note"><em>Note: Location is approximate (ZIP code or city level).</em></p>
             ` : ""}
         `;
 
@@ -544,8 +552,12 @@ const MapController = (function () {
         // Header: crash type + severity badge
         html += `<div class="popup-header">`;
         html += `<strong>${formatCrashType(crash.crash_type)}</strong>`;
-        if (crash.is_serious) {
-            html += ` <span class="popup-badge popup-badge-serious">Serious</span>`;
+        if (crash.severity_level === "fatal") {
+            html += ` <span class="popup-badge popup-badge-serious">Fatal</span>`;
+        } else if (crash.severity_level === "serious") {
+            html += ` <span class="popup-badge popup-badge-serious">Serious injury</span>`;
+        } else if (crash.is_serious) {
+            html += ` <span class="popup-badge popup-badge-serious">Moderate injury</span>`;
         } else if (crash.has_injury) {
             html += ` <span class="popup-badge popup-badge-injury">Injury</span>`;
         }
@@ -605,6 +617,9 @@ const MapController = (function () {
             const place = crash.city_name ? ` (placed near ${crash.city_name})` : "";
             html += `<br><em class="popup-estimated">Approximate location${place} — exact address not yet public</em>`;
         }
+        if (crash.location_precision === "zip") {
+            html += `<br><em class="popup-estimated">Approximate location — placed at the center of ZIP code ${crash.zip_code || ""}; the street address couldn't be matched exactly</em>`;
+        }
         if (crash.location_precision === "road") {
             html += `<br><em class="popup-estimated">Placed on the named street — exact point along it is approximate</em>`;
         }
@@ -613,6 +628,9 @@ const MapController = (function () {
         }
         if (crash.operation_type === "supervised") {
             html += `<br><em class="popup-estimated">Occurred during supervised testing (human safety driver on board)</em>`;
+        }
+        if (crash.report_id) {
+            html += `<br><a class="popup-id" href="#crash=${crash.report_id}" title="Link to this crash">NHTSA report ${crash.report_id} &middot; link</a>`;
         }
 
         html += `</div>`;

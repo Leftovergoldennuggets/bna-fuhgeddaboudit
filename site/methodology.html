@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Methodology | The Waymo Crash Record</title>
+    <meta name="description" content="How The Waymo Crash Record is built: data sources, completeness, crash rates, comparisons with human drivers, map precision, the downloadable dataset, and corrections.">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Methodology — The Waymo Crash Record">
+    <meta property="og:description" content="How the Waymo crash record is built: sources, completeness, rates, comparisons, map precision, data download and corrections.">
+    <meta property="og:url" content="https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/methodology.html">
+    <meta property="og:image" content="https://leftovergoldennuggets.github.io/bna-fuhgeddaboudit/data/web/social-card.png">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,213 +45,147 @@
         <div class="page-content">
             <h1>Methodology</h1>
 
-            <p>This page documents our complete data processing methodology, including limitations, caveats, and known biases. Transparency is central to this project — we want you to understand exactly how we produced every number on this website.</p>
+            <p>This page documents how every number on this site is produced, including limitations and known biases. Everything is computed by an open-source pipeline from public data, and re-run every week. If you find an error, please <a href="about.html#contact">tell us</a>; corrections are listed <a href="#updates">at the bottom of this page</a>.</p>
+
+            <p class="page-toc"><strong>On this page:</strong> <a href="#sources">Data sources</a> · <a href="#operation">Driverless vs. supervised</a> · <a href="#completeness">How complete is the record?</a> · <a href="#rates">Rates and comparisons</a> · <a href="#locations">Map locations</a> · <a href="#fields">Crash details</a> · <a href="#pipeline">The pipeline</a> · <a href="#download">Download the data</a> · <a href="#updates">Updates &amp; corrections</a></p>
 
             <!-- ========== DATA SOURCES ========== -->
-            <h2>Data Sources</h2>
+            <h2 id="sources">Data Sources</h2>
 
-            <h3>NHTSA Standing General Order (SGO) Data</h3>
-            <p>The <a href="https://www.nhtsa.gov/automated-vehicles/automated-driving-systems" target="_blank" rel="noopener">National Highway Traffic Safety Administration</a> requires all companies operating Level 3+ autonomous vehicles to report crashes resulting in injury, airbag deployment, or property damage exceeding $1,000. This creates the most comprehensive public record of AV incidents in the United States.</p>
-
-            <p>NHTSA provides two separate files:</p>
-            <ul>
-                <li><strong>Pre-June 16, 2025 (Amendment 2):</strong> The archived dataset covering reports filed before NHTSA updated their reporting format.</li>
-                <li><strong>Post-June 16, 2025 (Amendment 3):</strong> The current active dataset with an updated column structure.</li>
-            </ul>
-
-            <p>These files contain crashes from <em>all</em> AV companies (Waymo, Cruise, Zoox, Tesla FSD, etc.). We filter for Waymo-only crashes using the "Reporting Entity" field.</p>
+            <h3>NHTSA Standing General Order crash reports</h3>
+            <p>Since 2021, the National Highway Traffic Safety Administration has ordered the companies it names — including every major developer of automated driving systems — to report crashes involving their vehicles. These reports are the base of this site: every crash shown here starts as a federal report filed by Waymo.</p>
+            <p>What must be reported has changed. Under the order's current version (the Third Amended Standing General Order, in force since <strong>June 16, 2025</strong>), a self-driving company must report within five days any crash involving a death, a hospital-treated injury, an airbag deployment, a pedestrian or cyclist, or a vehicle towed away; and by the 15th of the next month any other crash in which property damage is expected to exceed $1,000, or the self-driving vehicle struck another vehicle or object. Before June 16, 2025, any crash with any property damage had to be reported. In practice the change mostly removed minor bumps in which a Waymo was hit and the damage was small (<a href="https://www.govinfo.gov/content/pkg/FR-2026-05-26/pdf/2026-10363.pdf" target="_blank" rel="noopener">Federal Register, May 2026</a>).</p>
+            <p>NHTSA publishes two files: reports filed before June 16, 2025, and reports filed since. Both are re-downloaded every week (NHTSA still revises the older one). They include all reporting companies; we keep rows where the reporting entity is "Waymo LLC". NHTSA redacts exact dates (month only), addresses and coordinates.</p>
 
             <h3>Waymo Safety Impact Data Hub</h3>
-            <p>Waymo publishes a curated dataset at their <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>. This dataset (CSV2) covers crashes during driverless (rider-only) operation and includes exact incident dates, street-level addresses, and crash type classifications, linked to the corresponding SGO Report IDs.</p>
+            <p>Every quarter, Waymo publishes data files on its <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Safety Impact Data Hub</a>, each covering September 2020 up to a cutoff about three months earlier. We use three:</p>
+            <ul>
+                <li><strong>CSV1 — miles.</strong> Cumulative rider-only (no one in the driver's seat) miles per service area. Because every past quarterly file is still online, we download all of them to build a mileage time series.</li>
+                <li><strong>CSV2 — crashes.</strong> Waymo's own list of crashes during rider-only driving, linked to the federal report IDs, with exact dates, street-level locations and crash-type classifications.</li>
+                <li><strong>CSV3 — comparisons.</strong> Waymo's comparison of its crash rates with human-driver benchmarks, with confidence intervals.</li>
+            </ul>
+            <p>Waymo's data currently runs through <span data-stat="meta.hub_data_through_label">--</span>; the federal record runs through <span data-stat="meta.federal_data_through_label">--</span>.</p>
 
-            <p>The Hub data is updated approximately quarterly with a lag of several months. It currently covers crashes through <strong><span data-stat="meta.hub_data_through_label">--</span></strong>, while the federal record runs through <strong><span data-stat="meta.federal_data_through_label">--</span></strong>.</p>
+            <h3>Which record is the base?</h3>
+            <p>The federal record. Every crash Waymo reports to NHTSA enters this site within a week of NHTSA publishing it; Waymo's quarterly files only add detail (exact date, location, crash type) to crashes that are already there. Until that detail arrives, a crash has a month-level date and an approximate map location, and is labeled as such. An earlier version of this site did the reverse and, at times, silently left out nearly six months of recent crashes.</p>
+            <p>For the periods both cover, the two sources agree almost one-for-one, which is itself a useful check: Waymo's rider-only list matches the federal driverless record for all but a handful of crashes.</p>
 
-            <h3>Which record do we trust as the base?</h3>
-            <p><strong>The federal record.</strong> An earlier version of this site built its dataset on top of Waymo's quarterly release, which meant crashes newer than that release were silently absent — at times nearly six months of incidents. We rebuilt the pipeline so that every NHTSA-reported crash enters the dataset the week it's published, and Waymo's release is used to <em>enrich</em> matched crashes with exact dates, street addresses, and classifications. Until that enrichment arrives, recent crashes carry month-precision dates and city-level map locations, and are labeled accordingly. As a transparency check, the two sources have historically matched nearly one-for-one for the periods both cover, and we re-verify the match on every update.</p>
+            <!-- ========== OPERATION TYPE ========== -->
+            <h2 id="operation">Driverless vs. Supervised Operation</h2>
+            <p>Waymo's federal reports cover two kinds of driving: <strong>driverless</strong> (no human in the driver's seat; remote assistance doesn't count as a driver) and <strong>supervised testing</strong> (a safety driver behind the wheel, as in cities where Waymo isn't yet allowed to drive empty). All headline figures on this site cover driverless operation only: it is what the public rides in, and Waymo's mileage — the denominator for every rate — covers only driverless driving. The <span data-stat="overview.supervised_crashes">--</span> supervised-testing crashes stay in the data and can be shown on the map with the "Include supervised-testing crashes" toggle.</p>
+            <p>We classify each crash from NHTSA's "Driver / Operator Type" field. Two corrections apply: an operator type we don't recognize counts as supervised (keeping it out of the headline count), and a crash whose operator field is blank but whose narrative says a test driver was present — and which Waymo's rider-only list does not include — counts as supervised (this applied to <a href="#updates">two crashes</a> in October 2026).</p>
 
-            <h3>Driverless vs. supervised operation</h3>
-            <p>NHTSA's data includes crashes from two different kinds of operation: <strong>driverless</strong> (no human behind the wheel — including vehicles with remote assistance, which still drive themselves) and <strong>supervised testing</strong> (a human safety driver in the driver's seat). All headline statistics on this site cover driverless operation only, for two reasons: it is the product the public actually rides in, and Waymo's published mileage — the denominator for any rate — covers only rider-only driving. The <span data-stat="overview.supervised_crashes">--</span> supervised-testing crashes on record are not discarded: they can be viewed in the Explore section via a dedicated toggle. We classify operation type from NHTSA's "Driver / Operator Type" field, treating any unrecognized value conservatively as supervised.</p>
+            <!-- ========== COMPLETENESS ========== -->
+            <h2 id="completeness">How Complete Is the Record?</h2>
+            <ul>
+                <li><strong>The newest months are still filling in.</strong> Companies have until the 15th of the month after a crash to report most crashes, and NHTSA publishes with a further lag. NHTSA's own "report submission date" field shows that 99.5% of Waymo's reports arrive within one month of the crash month, and that each file only partly covers the latest submission month. We therefore treat the two most recent incident months as incomplete: the record is currently considered complete through <strong><span data-stat="meta.federal_complete_through_label">--</span></strong>. Charts shade later months.</li>
+                <li><strong>The June 2025 rule change breaks trends.</strong> Monthly counts and per-mile rates before and after June 16, 2025 are not like-for-like. Across that date, Waymo's rate of all reported crashes per mile fell from about 10 to about 5.5 per million miles, across Waymo's cities at the same time, while its rate of injury crashes — which are reported under both rules — barely changed. More than half of the drop is in contacts with a change in speed under 1 mph, the lightest kind of bump; the rest is consistent with other minor crashes the new rules no longer require, though some of it could be real improvement. We show both rates side by side so this is visible.</li>
+                <li><strong>Reports are filed by Waymo.</strong> The narratives and fields (speed, movement, injuries) are Waymo's account, sometimes based on what it was told by police or others. Injury levels are what was "alleged", for anyone involved.</li>
+                <li><strong>Duplicates.</strong> A crash involving two Waymo vehicles can produce two reports; this affects two pairs of reports in the data.</li>
+            </ul>
+
+            <!-- ========== RATES ========== -->
+            <h2 id="rates">Rates and Comparisons</h2>
+            <h3>Crashes per million miles, by city</h3>
+            <p>For each city where Waymo publishes mileage (currently Phoenix, the San Francisco Bay Area, Los Angeles, Austin and Atlanta), we divide the driverless crashes up to the month the mileage covers (<span data-stat="city_mileage_meta.data_through">--</span>) by the cumulative miles over the same period. Counting newer crashes against older mileage would overstate the rate; an earlier version of this site did that. These cumulative rates mix the periods before and after the June 2025 rule change, and cities that launched recently have most of their miles under the newer, stricter-to-trigger rules — so compare cities with care.</p>
+
+            <h3>Crash rates by quarter</h3>
+            <p>Miles driven in a quarter are the difference between two consecutive cumulative releases of Waymo's CSV1. Crashes in that quarter are those in Waymo's CSV2 (the same rider-only driving the miles cover). Injury crashes are those Waymo flags as "any injury reported"; police-reported crashes are flagged similarly. Quarters where a city has less than a million miles are left out.</p>
+
+            <h3>Comparisons with human drivers</h3>
+            <p>The "fewer crashes than human drivers" figures are Waymo's own, read automatically from its CSV3 file each quarter. We use the comparison Waymo itself headlines, against a "dynamic" human benchmark that weights human crash rates by where in each city Waymo drives. The method is described in a peer-reviewed paper by Waymo researchers (<a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">Kusano et al., 2025, <em>Traffic Injury Prevention</em></a>) and follows an industry checklist for such studies. We show the 95% confidence intervals Waymo publishes, and the underlying crash counts.</p>
+            <p>Limitations to keep in mind: the analysis is by Waymo, about Waymo; human benchmarks can't fully match Waymo's roads, hours, weather and vehicles; and the rarest outcomes rest on very few crashes (serious-injury-or-worse: <span data-stat="benchmarks.overall.serious_injury.waymo_count">--</span>; fatal: <span data-stat="benchmarks.overall.fatal.waymo_count">--</span>). One crash involving two Waymo vehicles, with a reported life-threatening injury to another driver, is counted by Waymo as "unknown" severity pending a police report; Waymo notes that counting it would raise its serious-injury rate. An independent study by the <a href="https://www.axios.com/2026/07/23/waymo-robotaxis-av-crash-study" target="_blank" rel="noopener">Insurance Institute for Highway Safety</a> (July 2026) found smaller but still large reductions (68% fewer police-reportable crashes, 81% fewer injury crashes per mile, 2021–2024).</p>
+
+            <!-- ========== LOCATIONS ========== -->
+            <h2 id="locations">Map Locations</h2>
+            <p>NHTSA redacts addresses and coordinates. Locations come from the street description in Waymo's CSV2 (for example "Florida Street near 24th Street"), which we geocode with OpenStreetMap's Nominatim service, searching in the crash's own city. Every marker carries a precision label, shown in its popup:</p>
+            <ul>
+                <li><strong>Intersection or address</strong> (<span data-stat="geocoding.tiers.street">--</span> driverless crashes): the full description matched.</li>
+                <li><strong>On the right street</strong> (<span data-stat="geocoding.tiers.road">--</span>): only one of two named streets matched, so the marker is on the correct street near, but not exactly at, the crash.</li>
+                <li><strong>ZIP code center</strong> (<span data-stat="geocoding.tiers.zip">--</span>): the address couldn't be placed inside the ZIP code Waymo reported, so the marker sits at that ZIP's center.</li>
+                <li><strong>City center</strong> (<span data-stat="geocoding.tiers.city">--</span>): crashes Waymo's quarterly file doesn't cover yet, placed near the center of the city in the federal report with a small random offset.</li>
+            </ul>
+            <p><strong>ZIP check.</strong> Until June 2025, Waymo also published each crash's ZIP code. We use U.S. Census Bureau ZIP-area centers and sizes to check that a geocoded marker actually falls inside that ZIP; if it doesn't, we search again within the ZIP's area only. An October 2026 audit found that before this check, about a quarter of "on the right street" markers were placed well outside their reported ZIP code. Waymo no longer publishes ZIP codes for newer crashes, so those can't be checked this way.</p>
+            <p>Geocoding results are cached in the repository so markers don't move between updates.</p>
+
+            <!-- ========== CRASH DETAILS ========== -->
+            <h2 id="fields">Crash Details</h2>
+            <ul>
+                <li><strong>Speed</strong> — "SV Precrash Speed (MPH)", the Waymo's speed just before the crash. Bucketed into 0, 1–5, 6–15, 16–25, 26–35 and 36+ mph.</li>
+                <li><strong>Stopped or parked</strong> — "SV Pre-Crash Movement" is "Stopped" or "Parked".</li>
+                <li><strong>Hit from behind</strong> — for rear-end crashes, NHTSA's contact-area fields show whether the Waymo's rear (and not its front) was struck.</li>
+                <li><strong>Kind of road</strong> — "Roadway Type" (street, intersection, parking lot, highway, traffic circle). Until October 2026 this site guessed the location type from words in the narrative, which badly overcounted parking lots and intersections; see <a href="#updates">corrections</a>.</li>
+                <li><strong>Crash type</strong> — Waymo's classification in CSV2 (e.g. "V2V F2R", translated as "rear-end collision"). Available only once Waymo's quarterly file covers a crash; pedestrian, cyclist and motorcycle counts fall back to NHTSA's "Crash With" field for newer crashes.</li>
+                <li><strong>Injury severity</strong> — NHTSA's "Highest Injury Severity Alleged" (none, minor, moderate, serious, fatal). The "any injury", "police-reported" and "airbag" flags come from Waymo's CSV2 and are computed among crashes it covers.</li>
+                <li><strong>Time of day</strong> — NHTSA's incident time. Day of week needs an exact date, so it covers only crashes in Waymo's quarterly files.</li>
+            </ul>
+            <p><strong>Fault.</strong> Federal reports don't assign fault, and neither do we. A Waymo that was stopped when hit, or a "rear-end" crash, describes what happened physically, not who was responsible. The short summaries of fatal crashes on the home page draw on police and news reports as well, and are written by an editor.</p>
 
             <!-- ========== PIPELINE ========== -->
-            <h2>Data Processing Pipeline</h2>
-
-            <p>Our data pipeline runs in five automated steps:</p>
-
-            <h3>Step 1: Download</h3>
-            <p>We download all three raw CSV files directly from NHTSA and Waymo's public servers. The pipeline includes error detection for cases where URLs may have changed (particularly the Waymo Hub URL, which includes a date range in the filename that changes quarterly).</p>
-
-            <h3>Step 2: Merge and Clean</h3>
-            <p>This is the core data processing step:</p>
+            <h2 id="pipeline">The Pipeline</h2>
+            <p>An automated job runs every Monday on GitHub Actions. It runs the test suite, then six steps:</p>
             <ol>
-                <li><strong>Filter:</strong> From the NHTSA data, we keep only rows where Reporting Entity = "Waymo LLC". The full NHTSA dataset includes many other companies.</li>
-                <li><strong>Harmonize:</strong> The pre- and post-June 2025 files have different column names (due to the Amendment 2 → 3 transition). We rename columns from the older format to match the newer format.</li>
-                <li><strong>Combine:</strong> The two NHTSA files are stacked into a single dataset.</li>
-                <li><strong>Deduplicate NHTSA:</strong> Some crashes have multiple report versions (updates filed over time). We keep only the latest version of each report, identified by the Report ID and Report Version fields.</li>
-                <li><strong>Deduplicate Hub:</strong> The Waymo Hub CSV occasionally contains duplicate rows for the same SGO Report ID. We keep the most complete record (prioritizing rows with the most boolean fields populated) and drop duplicates.</li>
-                <li><strong>Merge:</strong> We perform a left join of the Waymo Hub data onto the NHTSA record, using NHTSA's "Report ID" and the Hub's "SGO Report ID". <em>NHTSA is the base</em> — every federal crash is preserved, and Hub fields (exact date, address, crash type) are added where a match exists. Two Hub-only crashes from 2020 (before SGO reporting began) are appended so they aren't lost.</li>
-                <li><strong>Classify operation:</strong> Each crash is labeled driverless or supervised-testing from NHTSA's "Driver / Operator Type" field.</li>
-                <li><strong>Resolve metro areas:</strong> Each crash is assigned to a metro using the Hub's county (when available) or NHTSA's city + state. The mapping covers every county and suburb in Waymo's operating areas (e.g., Tempe and Scottsdale → Phoenix; Mountain View and San Jose → San Francisco Bay Area; Glendale resolves by state, since both Arizona and California have one). Anything unrecognized lands in an "Other" bucket and triggers a loud warning in the pipeline log — crashes are never silently dropped.</li>
+                <li><strong>Download</strong> both NHTSA files and Waymo's CSV1, CSV2 and CSV3 (the newest quarter is detected automatically), plus every past CSV1 release.</li>
+                <li><strong>Merge and clean</strong>: keep the latest version of each report, classify driverless vs. supervised, attach Waymo's details, assign each crash to a metro area (crashes in unrecognized places land in an "Other" bucket — never dropped).</li>
+                <li><strong>Compute statistics</strong>: every number on the site.</li>
+                <li><strong>Map data</strong>: geocoding, the map file and the downloadable CSV.</li>
+                <li><strong>Serious incidents</strong>: moderate-or-worse injury crashes with their narratives.</li>
+                <li><strong>Editorial checks</strong>: compare the data with what an editor has already reviewed. A new fatal or serious-injury crash, a crash in an unmapped place, or a new Waymo release opens a review issue on GitHub — so sentences an editor wrote can't silently go out of date.</li>
             </ol>
+            <p>The output is checked before publishing (crash counts must never shrink or go back in time). The code is <a href="https://github.com/leftovergoldennuggets/bna-fuhgeddaboudit" target="_blank" rel="noopener">open source</a>; to reproduce everything, clone it and run <code>make data</code>, then <code>make serve</code>.</p>
 
-            <h3>Step 3: Compute Statistics</h3>
-            <p>Every number displayed on the website is computed in this step and saved to a JSON file. This includes:</p>
+            <!-- ========== DOWNLOAD ========== -->
+            <h2 id="download">Download the Data</h2>
+            <p><a data-download="waymo_crashes.csv" href="#" download><strong>waymo_crashes.csv</strong></a> — every crash on the map (driverless and supervised), one row per crash, rebuilt every week. Columns:</p>
+            <div class="table-scroll">
+            <table class="data-table">
+                <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+                <tbody>
+                    <tr><td><code>report_id</code></td><td>NHTSA report ID (blank for two 2020–21 crashes that predate federal reporting)</td></tr>
+                    <tr><td><code>operation</code></td><td><code>driverless</code> or <code>supervised</code></td></tr>
+                    <tr><td><code>date</code>, <code>date_precision</code></td><td>Exact date (<code>day</code>) from Waymo's file, or month only (<code>month</code>) from the federal report</td></tr>
+                    <tr><td><code>hour</code></td><td>Hour of day (0–23), local time</td></tr>
+                    <tr><td><code>metro</code>, <code>city</code></td><td>Metro area this site assigns; city named in the federal report</td></tr>
+                    <tr><td><code>zip_code</code></td><td>ZIP code (from Waymo's file; for newer crashes, looked up from the marker position when precise)</td></tr>
+                    <tr><td><code>latitude</code>, <code>longitude</code>, <code>location_precision</code></td><td>Map position and how precise it is: <code>street</code>, <code>road</code>, <code>zip</code>, <code>city</code>, <code>metro</code> (see <a href="#locations">Map locations</a>)</td></tr>
+                    <tr><td><code>roadway_type</code></td><td>NHTSA "Roadway Type"</td></tr>
+                    <tr><td><code>crash_type_waymo</code></td><td>Waymo's crash-type code, or "Pending classification"</td></tr>
+                    <tr><td><code>crash_with</code></td><td>The other party (NHTSA "Crash With")</td></tr>
+                    <tr><td><code>waymo_movement</code>, <code>other_party_movement</code></td><td>NHTSA pre-crash movements</td></tr>
+                    <tr><td><code>waymo_speed_mph</code></td><td>Waymo's pre-crash speed</td></tr>
+                    <tr><td><code>highest_injury_alleged</code>, <code>severity_level</code></td><td>NHTSA injury field, and this site's level: <code>none</code>, <code>minor</code>, <code>moderate</code>, <code>serious</code>, <code>fatal</code></td></tr>
+                    <tr><td><code>in_waymo_hub</code></td><td>Whether Waymo's quarterly file covers the crash yet</td></tr>
+                    <tr><td><code>narrative</code></td><td>Waymo's description of the crash, as filed (redactions as in the original)</td></tr>
+                </tbody>
+            </table>
+            </div>
+            <p>The original sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener">NHTSA Standing General Order data</a> and the <a href="https://waymo.com/safety/impact/" target="_blank" rel="noopener">Waymo Safety Impact Data Hub</a> downloads. The mileage milestones from Waymo announcements are in the repository (<code>data/static/mileage_milestones.json</code>), each with its source.</p>
+
+            <!-- ========== UPDATES & CORRECTIONS ========== -->
+            <h2 id="updates">Updates &amp; Corrections</h2>
+            <h3>Corrections</h3>
+            <p><strong>October 23, 2026</strong> — A full review of the site's data, methods and text found and corrected these errors:</p>
             <ul>
-                <li>Total crash counts and city breakdowns</li>
-                <li>Time-of-day analysis (rush hour, late night, daytime/nighttime splits)</li>
-                <li>Crash type distributions</li>
-                <li>Severity indicators (police-reported, injury-reported, airbag deployment, serious injury, fatality count)</li>
-                <li>Location type analysis (intersection, street, parking, highway)</li>
-                <li>Day-of-week patterns</li>
+                <li>The FAQ described the fatal crashes as "both" cases after a third, in Dallas in August 2026, had entered the data. All three are now summarized individually, and an automated check flags any new fatal crash for review.</li>
+                <li>The "location type" chart, built from words in the crash narratives, said 45% of crashes were at intersections and 26% in parking lots. Using the structured field on the federal reports, the shares are about 22% and 9%. An FAQ answer about parking-lot crashes based on the old figure was removed.</li>
+                <li>Per-city crash rates counted crashes up to three months newer than the mileage they were divided by, overstating every rate by roughly 5–10%. Atlanta's published mileage was missing.</li>
+                <li>Waymo's "fewer crashes than human drivers" figures were presented as covering all of Waymo's miles and attributed to a 2025 paper; they came from an older data release. They are now read from Waymo's latest release, with confidence intervals.</li>
+                <li>Two crashes during supervised testing (Washington, D.C., March 2026; San Francisco) had been counted as driverless because a field was blank on the federal report.</li>
+                <li>Roughly 330 map markers had been placed well away from the crash; markers are now checked against the reported ZIP code.</li>
+                <li>Several facts were out of date: Waymo serves 15 metro areas, not 11; Denver is open to the public, while Washington, D.C. and Philadelphia allow only supervised testing; Waymo's San Antonio service was paused for about five months in 2026, not two weeks; and a June 2026 recall was missing.</li>
+                <li>Two mileage milestones were misdated; the reporting threshold described on several pages was imprecise; the latest months of federal data were presented as complete.</li>
             </ul>
+            <p>A detailed, technical log of the review is in the repository (<code>OVERHAUL_LOG_2026-10.md</code>).</p>
 
-            <h3>Step 4: Generate Map Data</h3>
-            <p>Each crash record is geocoded and converted into a simplified JSON object for the Leaflet map. Geocoding queries use the crash's own city from the federal report (a Tempe intersection is searched in Tempe, not metro-core Phoenix), and results must land near that city's centroid to be accepted. Every marker carries a location-precision tier, flagged in its popup:</p>
-            <ol>
-                <li><strong>Street level:</strong> the full intersection or address from Waymo's Hub release matched (e.g. "7th Street &amp; Market Street").</li>
-                <li><strong>Road level:</strong> only one of the two named streets matched — the marker sits on the right road, but the exact point along it is approximate.</li>
-                <li><strong>City level:</strong> recent crashes not yet covered by the Hub have no public address (NHTSA redacts them), so they're placed near the centroid of the city NHTSA names, with a small random offset.</li>
-                <li><strong>Metro center:</strong> the rare last resort when even the city can't be geocoded.</li>
-            </ol>
-            <p>Results are cached locally to avoid repeated API calls. Currently <span data-stat="geocoding.accuracy_pct">--</span>% of mapped driverless crashes (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location; the share rises automatically each time a quarterly Hub release adds addresses for recent crashes. Each record also includes severity flags (<code>has_injury</code>, <code>is_serious</code>, <code>is_vulnerable_road_user</code>) used for color-coding markers on the map.</p>
-
-            <h3>Step 5: Extract Serious Incidents</h3>
-            <p>Crashes involving moderate, serious, or fatal injuries are extracted into a separate file with their full NHTSA narratives, enabling the detailed incident view on the map.</p>
-
-            <!-- ========== CRASH CIRCUMSTANCES ========== -->
-            <h2>Crash Circumstances Analysis</h2>
-
-            <p>In addition to the core statistics (counts, severity, timing, geography), we analyze the circumstances of each crash using fields from the NHTSA Standing General Order reports.</p>
-
-            <h3>Speed at Time of Crash</h3>
-
-            <p>The NHTSA report includes a "SV Precrash Speed (MPH)" field recording the subject vehicle's speed at the time of the crash. We use this field to compute the speed distribution displayed on the website. Of <span data-stat="overview.total_crashes">--</span> total crashes, nearly all have valid speed data.</p>
-
-            <p>We bucket speeds into six ranges: 0 mph, 1–5 mph, 6–15 mph, 16–25 mph, 26–35 mph, and 36+ mph. The median and mean are computed from the raw values. The finding that <span data-stat="crash_circumstances.speed_distribution.0_mph.percentage">--</span>% of crashes occur at 0 mph is derived directly from this field with no adjustment or interpretation.</p>
-
-            <h3>Pre-Crash Movement</h3>
-
-            <p>The "SV Pre-Crash Movement" field describes what the Waymo vehicle was doing immediately before the crash (e.g., stopped, proceeding straight, making a turn). The "CP Pre-Crash Movement" field describes the other party's movement. We report both for context.</p>
-
-            <p>These fields describe the physical movements of the vehicles, not legal fault or responsibility. A vehicle classified as "stopped" at the time of contact may or may not bear any responsibility for the circumstances that led to the crash.</p>
-
-            <h3>Crash Type Classification</h3>
-
-            <p>Crash types (e.g., "V2V F2R", "Pedestrian") come from Waymo's Safety Impact Data Hub, not from NHTSA, so they exist only for the <span data-stat="crash_types_meta.classified_count">--</span> crashes the Hub has covered so far; the most recent <span data-stat="crash_types_meta.unclassified_count">--</span> crashes are shown as "pending classification" until the next quarterly release. (For the vulnerable-road-user counts we additionally fall back to NHTSA's "Crash With" field so recent pedestrian/cyclist/motorcycle crashes aren't undercounted.) Waymo classifies each crash into one of 11 categories. We translate these codes into plain English for readability:</p>
-
-            <ul>
-                <li><strong>V2V F2R</strong> → Rear-end collision</li>
-                <li><strong>V2V Lateral</strong> → Side-impact collision</li>
-                <li><strong>V2V Backing</strong> → Backing collision</li>
-                <li><strong>V2V Head-on</strong> → Head-on collision</li>
-                <li><strong>V2V Intersection</strong> → Intersection collision</li>
-                <li><strong>Single Vehicle</strong> → Single vehicle</li>
-                <li><strong>Secondary Crash</strong> → Secondary crash</li>
-                <li><strong>Motorcycle</strong> → Motorcycle</li>
-                <li><strong>Cyclist</strong> → Cyclist</li>
-                <li><strong>Pedestrian</strong> → Pedestrian</li>
-                <li><strong>All Others</strong> → Other</li>
-            </ul>
-
-            <!-- ========== LIMITATIONS ========== -->
-            <h2>Limitations and Caveats</h2>
-
-            <h3>Crash Locations and Geocoding</h3>
-            <p>NHTSA redacts both GPS coordinates and street addresses from its public files. Street-level addresses come from Waymo's Safety Impact Data Hub release ("Location Address / Description"), which we geocode using OpenStreetMap's Nominatim service with a multi-strategy approach (intersection parsing, direct address lookup, metro sanity checks).</p>
-            <p>Current accuracy: <strong><span data-stat="geocoding.accuracy_pct">--</span>% of mapped driverless crashes</strong> (<span data-stat="geocoding.accurate">--</span> of <span data-stat="geocoding.total_mapped">--</span>) are placed at their real street location. The remaining <span data-stat="geocoding.estimated">--</span> — mostly recent crashes the Hub hasn't covered yet — are placed at city level and flagged as approximate, both on the map and in this statistic. Accuracy varies by city:</p>
-            <ul>
-                <li>San Francisco: <span data-stat="geocoding.by_city.San Francisco">--</span>%, Los Angeles: <span data-stat="geocoding.by_city.Los Angeles">--</span>%, Austin: <span data-stat="geocoding.by_city.Austin">--</span>%</li>
-                <li>Atlanta: <span data-stat="geocoding.by_city.Atlanta">--</span>%, Phoenix: <span data-stat="geocoding.by_city.Phoenix">--</span>% (some reports have less detailed addresses; newer metros are lower until the Hub covers them)</li>
-            </ul>
-            <p>Geocode results are cached in <code>geocode_cache.json</code> to ensure reproducibility and avoid repeated API calls.</p>
-
-            <h3>Reporting Thresholds</h3>
-
-            <p>The NHTSA Standing General Order has been amended three times since its original 2021 release. The most significant change for this dataset occurred on June 16, 2025, when the <strong>Third Amended SGO</strong> took effect. Key changes include:</p>
-
-            <ul>
-                <li><strong>Property damage threshold:</strong> The amended order added a threshold for property-damage-only crashes involving ADS vehicles, meaning very minor incidents that would have been reported under the previous rules may no longer be reported</li>
-                <li><strong>Reporting timeline:</strong> The deadline for reporting the most serious crashes was extended from one calendar day to five calendar days</li>
-                <li><strong>Duplicate reporting:</strong> When multiple companies are involved in the same crash, only one entity now needs to report (unless they have materially different information)</li>
-            </ul>
-
-            <p>This means the dataset is not perfectly uniform across time. Crashes reported before June 2025 were filed under a lower reporting threshold than those reported after. When interpreting trends over time, this difference in reporting requirements should be considered.</p>
-
-            <p>For our analysis, we include all crashes from both periods. Where relevant, we note the reporting period distinction.</p>
-
-            <h3>Severity Assessment</h3>
-            <p>We report severity using four independent boolean indicators rather than a composite score:</p>
-            <ul>
-                <li><strong>Police-reported:</strong> Whether law enforcement responded to the scene</li>
-                <li><strong>Injury reported:</strong> Whether any injury (of any severity) was reported</li>
-                <li><strong>Airbag deployed:</strong> Whether any vehicle's airbag deployed</li>
-                <li><strong>Serious injury:</strong> Whether a suspected serious injury was reported</li>
-            </ul>
-            <p>We deliberately avoid creating composite "severity scores" because the weighting of different factors would be arbitrary and potentially misleading.</p>
-            <p>One nuance: the four boolean indicators come from Waymo's Hub release, so they're unknown for the most recent crashes. Their percentages are therefore computed among crashes with a known value, not the full total. Injury-severity classifications (minor / moderate / serious / fatal), by contrast, come from NHTSA's own "Highest Injury Severity Alleged" field and cover essentially every crash.</p>
-
-            <h3>A Note on Crash Types and Fault</h3>
-            <p>The crash type classifications in this dataset (e.g., "rear-end collision," "side-impact collision") describe the physical dynamics of the collision — where and how contact occurred between vehicles. They do not indicate who was at fault. NHTSA Standing General Order reports do not assign legal fault or determine responsibility.</p>
-            <p>In the majority of crashes in this dataset, the Waymo vehicle was stationary or moving at low speed at the time of contact. The crash type describes what happened physically, not why.</p>
-
-            <h3>Waymo Safety Comparisons</h3>
-            <p>The statistics comparing Waymo to human drivers (e.g., "90% fewer serious crashes") come from Waymo's own <a href="https://doi.org/10.1080/15389588.2025.2499887" target="_blank" rel="noopener">peer-reviewed research paper</a> published in the journal <em>Traffic Injury Prevention</em>. While the paper has undergone peer review, it is important to note:</p>
-            <ul>
-                <li>The study was authored by Waymo researchers</li>
-                <li>The comparison benchmarks may not perfectly match Waymo's operating conditions (urban environments, specific cities, time of day, weather)</li>
-                <li>Autonomous vehicles currently operate in a limited set of conditions that may be systematically different from the average human driving environment</li>
-            </ul>
-
-            <h3>Crash Circumstances and Fault</h3>
-
-            <p>This website reports the circumstances of each crash — vehicle speeds, pre-crash movements, crash types, and involved parties — as recorded in the federal crash reports. <strong>We do not make fault determinations.</strong></p>
-
-            <p>A Waymo vehicle recorded as "stopped" at the time of contact was physically stationary, but this does not necessarily mean the other party was at fault. Similarly, a crash classified as a "rear-end collision" describes the physical configuration of impact, not the cause. Fault determination requires investigation beyond what is available in the NHTSA dataset.</p>
-
-            <p>Readers should interpret crash circumstances as descriptive — what happened — rather than prescriptive — who was responsible.</p>
-
-            <h3>Dataset Coverage</h3>
-            <p>Our headline count (<span data-stat="overview.total_crashes">--</span> driverless crashes) is larger than the count on Waymo's own Hub for two reasons: we include the <span data-stat="overview.preliminary_count">--</span> recent federal reports the quarterly Hub release hasn't reached yet, and we count from the federal record rather than Waymo's curation. For the periods both sources cover, they match nearly one-for-one. The <span data-stat="overview.supervised_crashes">--</span> supervised-testing crashes are excluded from headline statistics (Waymo's published mileage doesn't cover them, so no meaningful rate can be computed) but remain explorable on the map.</p>
-
-            <h3>Mileage Data</h3>
-
-            <p>Miles-driven data by city comes from Waymo's Safety Impact Data Hub, which publishes cumulative rider-only miles for each operating city. We use this data to compute crash rates per million miles. These rates allow for more meaningful comparisons across cities than raw crash counts, since cities with more miles driven will naturally report more crashes.</p>
-
-            <p>The mileage growth timeline displayed on this website was compiled by Anders Eidesvik from Waymo press releases, public statements, news articles, and archived snapshots of the Waymo Safety Impact Data Hub captured via the Wayback Machine. Waymo does not publish a historical time series of cumulative miles, so each data point was individually sourced and verified. Full source URLs are documented in our data files.</p>
-
-            <p>The full mileage milestone dataset, including source URLs for each data point, is publicly available as a <a href="https://docs.google.com/spreadsheets/d/1eZdFOrOMO2li30MImf2zg8PTw4s3DbSz/edit?usp=sharing&ouid=110131066109816005681&rtpof=true&sd=true" target="_blank" rel="noopener">Google Sheets document</a>.</p>
-
-            <p>Waymo currently publishes per-city mileage only for its four longest-running markets (Phoenix, the San Francisco Bay Area, Los Angeles, and Austin). For newer markets — Atlanta, Miami, Dallas, Houston, San Antonio, Orlando, and Nashville — no mileage has been published yet, so we cannot compute crash rates there.</p>
-
-            <h3>Temporal Limitations</h3>
-            <p>Crash time data comes from the "Incident Time" field in the NHTSA reports. A small number of records have missing or unparseable times, which are excluded from time-of-day analyses. The overall coverage is high (typically &gt;99% of records have valid time data).</p>
-
-            <!-- ========== AUTOMATION ========== -->
-            <h2>Automated Updates</h2>
-
-            <p>This website is designed to be "evergreen" — every statistic is computed from data, and the entire pipeline re-runs automatically every Monday.</p>
-
-            <p>The GitHub Actions workflow:</p>
-            <ol>
-                <li>Runs the unit test suite (the pipeline never publishes from broken code)</li>
-                <li>Downloads the latest data from NHTSA and Waymo — the quarterly Waymo URL is auto-detected by probing recent quarter end-dates, so no manual URL updates are needed</li>
-                <li>Runs the full processing pipeline and validates the output (crash counts must never shrink or go backwards in time)</li>
-                <li>Commits and pushes any changes, which triggers a site deployment</li>
-            </ol>
-
-            <p>The one task that still requires editorial judgment: when Waymo announces a brand-new metro, it must be added to the metro registry in the configuration file. Until then, crashes from an unmapped city still appear in the totals and on the map under an "Other" bucket, and the pipeline log calls them out.</p>
-
-            <!-- ========== REPRODUCIBILITY ========== -->
-            <h2>Reproducibility</h2>
-
-            <p>To reproduce our analysis:</p>
-            <ol>
-                <li>Clone the repository</li>
-                <li>Install dependencies: <code>pip install -r requirements.txt</code></li>
-                <li>Run the pipeline: <code>make data</code></li>
-                <li>View the results: <code>make serve</code></li>
-            </ol>
-
-            <p>Geocoding results are cached in <code>geocode_cache.json</code> (committed to the repository), so map layouts are identical across runs without re-querying the geocoding service. The pipeline's core logic — metro mapping, operation classification, date parsing, merge behavior — is covered by a unit test suite (<code>pytest tests/</code>) that runs in CI on every change.</p>
+            <h3>Data updates</h3>
+            <p>What each automatic weekly update changed:</p>
+            <div class="table-scroll">
+            <table class="data-table" id="update-history">
+                <thead><tr><th>Date</th><th>Driverless crashes</th><th>New</th><th>Federal data through</th><th>Waymo data through</th></tr></thead>
+                <tbody></tbody>
+            </table>
+            </div>
+            <p class="chart-note">Counts before October 23, 2026 include two supervised crashes later reclassified (see corrections).</p>
         </div>
     </section>
 
@@ -251,7 +193,7 @@
     <footer class="site-footer">
         <div class="section-container">
             <div class="footer-bottom">
-                <p>A Stanford COMM277T project by Anders Eidesvik and Kate Li.</p>
+                <p>A data journalism project by Anders Eidesvik and Kate Li, begun in Stanford's COMM 277T. <a data-download="waymo_crashes.csv" href="#" download>Download the data</a>.</p>
             </div>
         </div>
     </footer>
@@ -278,6 +220,19 @@
                 StatRenderer.renderAll(stats);
             } catch (e) {
                 console.warn('Methodology: Could not load dynamic stats', e);
+            }
+            // Update history table (newest first)
+            try {
+                const history = await DataLoader.fetchJSON('update_history.json');
+                const fmtYm = (ym) => new Date(Math.floor(ym / 100), ym % 100 - 1, 1)
+                    .toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                const body = document.querySelector('#update-history tbody');
+                body.innerHTML = history.slice().reverse().map((h) => `
+                    <tr><td>${h.date}</td><td>${h.total_crashes.toLocaleString('en-US')}</td>
+                    <td>${h.new_crashes === undefined ? '—' : (h.new_crashes >= 0 ? '+' : '') + h.new_crashes}${h.note ? `<br><small>${h.note}</small>` : ''}</td>
+                    <td>${fmtYm(h.federal_data_through)}</td><td>${fmtYm(h.hub_data_through)}</td></tr>`).join('');
+            } catch (e) {
+                console.warn('Methodology: Could not load update history', e);
             }
         });
     </script>

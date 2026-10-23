@@ -2193,3 +2193,454 @@ a:hover {
     color: var(--color-number);
     margin-right: 0.4rem;
 }
+
+/* ============================================
+   October 2026 overhaul — new components
+   ============================================ */
+
+/* Explore: on desktop the map fills its grid cell, so a filter column
+   taller than 600px no longer leaves an empty band under the map. */
+@media (min-width: 1025px) {
+    .explore-layout:not(.explore-fullscreen) .explore-map-container {
+        min-height: 600px;
+    }
+    .explore-layout:not(.explore-fullscreen) .explore-map {
+        position: absolute;
+        inset: 0;
+        height: auto;
+    }
+}
+
+.download-link {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.popup-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-light);
+}
+
+/* City cards: launch date, rate, human comparison */
+.city-card-since {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    margin: -0.25rem 0 0.35rem;
+}
+
+.city-card-rate {
+    margin-top: 0.15rem;
+}
+
+.city-card-rate strong {
+    color: var(--color-number);
+    font-weight: 600;
+}
+
+.city-card-muted {
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.city-card-bench {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: var(--color-text);
+}
+
+.city-card-ci {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-light);
+}
+
+.city-also {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text);
+    max-width: var(--content-width);
+    margin: calc(-1 * var(--spacing-md)) auto var(--spacing-sm);
+    line-height: 1.7;
+}
+
+.city-also-label {
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .city-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--spacing-md) var(--spacing-sm);
+    }
+    .city-card {
+        width: auto;
+    }
+}
+
+/* Fatal crashes panel */
+.fatal-box {
+    max-width: var(--content-width);
+    margin: var(--spacing-lg) auto;
+    padding: var(--spacing-md);
+    border-left: 3px solid var(--color-primary);
+    background: var(--color-background-alt);
+}
+
+.fatal-box h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.fatal-intro {
+    margin-bottom: var(--spacing-sm);
+}
+
+.fatal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--spacing-sm);
+}
+
+.fatal-list li {
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--color-border);
+    line-height: 1.55;
+}
+
+.fatal-list li.fatal-pending {
+    color: var(--color-danger);
+}
+
+.fatal-source {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+}
+
+/* Two charts side by side, each with its own scale */
+.chart-row.two-up {
+    margin-bottom: 0;
+}
+
+.chart-row.two-up .chart-container canvas {
+    max-height: 240px;
+}
+
+/* Waymo vs. human benchmarks */
+.benchmark-block {
+    max-width: 860px;
+    margin: var(--spacing-lg) auto 0;
+}
+
+.block-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.benchmark-rows {
+    margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
+.bench-row {
+    display: grid;
+    grid-template-columns: 210px 1fr 230px;
+    gap: var(--spacing-sm);
+    align-items: center;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--color-border);
+}
+
+.bench-label {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+.bench-track {
+    position: relative;
+    height: 14px;
+    background: linear-gradient(to right, var(--color-border) 1px, transparent 1px) 0 0 / 25% 100%;
+    border-left: 1px solid var(--color-text-light);
+}
+
+.bench-ci {
+    position: absolute;
+    top: 4px;
+    height: 6px;
+    background: rgba(139, 111, 71, 0.35);
+}
+
+.bench-dot {
+    position: absolute;
+    top: 1px;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: 2px solid var(--color-background);
+}
+
+.bench-value {
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+
+.bench-value strong {
+    font-family: var(--font-mono);
+    color: var(--color-number);
+}
+
+.bench-range,
+.bench-counts {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+}
+
+.bench-range {
+    font-family: var(--font-mono);
+}
+
+.bench-axis {
+    display: grid;
+    grid-template-columns: 210px 1fr 230px;
+    gap: var(--spacing-sm);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-light);
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.3rem;
+}
+
+.bench-axis span:nth-child(1) { grid-column: 2; justify-self: start; grid-row: 1; }
+.bench-axis span:nth-child(2) { grid-column: 2; justify-self: center; grid-row: 1; }
+.bench-axis span:nth-child(3) { grid-column: 2; justify-self: end; grid-row: 1; }
+
+@media (max-width: 768px) {
+    .bench-row {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+    .bench-axis {
+        grid-template-columns: 1fr;
+    }
+    .bench-axis span:nth-child(n) { grid-column: 1; }
+}
+
+.caveat-box {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.caveat-box p + p {
+    margin-top: 0.75rem;
+}
+
+/* Monthly chart legend */
+.trend-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.2rem;
+    font-size: 0.78rem;
+    color: var(--color-text-light);
+    margin-top: 0.5rem;
+}
+
+.trend-legend .sw {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 0.35rem;
+    vertical-align: -1px;
+}
+
+.sw-hub { background: #8b6f47; }
+.sw-fed { background: #c9b89d; }
+.sw-prov { background: #e8e0d4; border: 1px solid #c9b89d; }
+
+/* Methodology: update-history table and data dictionary */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.data-table th,
+.data-table td {
+    text-align: left;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+}
+
+.data-table th {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text-light);
+}
+
+.data-table code {
+    font-size: 0.8rem;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+.footer-links ul + h4 {
+    margin-top: var(--spacing-md);
+}
+
+#text-search {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 6px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+#text-search:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+/* "What we found" — the story's findings up front */
+.findings-section {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    background: var(--color-background);
+}
+
+.findings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.finding {
+    border-top: 2px solid var(--color-primary);
+    padding-top: var(--spacing-sm);
+}
+
+.finding-number {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-number);
+    line-height: 1.1;
+    margin-bottom: 0.4rem;
+}
+
+.finding p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: 0.5rem;
+}
+
+.finding a {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hero-latest {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+    margin-top: 0.35rem;
+}
+
+.city-card-landmark {
+    font-size: 0.62rem;
+    line-height: 1.3;
+    color: var(--color-text-light);
+    margin: -0.15rem auto 0.45rem;
+    max-width: 170px;
+    font-style: italic;
+}
+
+#fatal-list li.fatal-pending {
+    color: var(--color-danger);
+}
+
+/* City cards: landmark captions get two lines so names line up */
+.city-card-landmark {
+    min-height: 2.6em;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Long notes stay a comfortable measure */
+.chart-note {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Roadway type: one 100% strip */
+.proportion-strip {
+    max-width: 760px;
+    margin: var(--spacing-sm) auto;
+}
+
+.strip-bar {
+    display: flex;
+    height: 28px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+}
+
+.strip-seg {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+}
+
+.strip-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1.2rem;
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--color-text);
+}
+
+.strip-key i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 0.35rem;
+    vertical-align: -1px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.strip-key strong {
+    font-family: var(--font-mono);
+    color: var(--color-number);
+}

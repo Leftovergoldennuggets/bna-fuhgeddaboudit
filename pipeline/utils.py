@@ -12,7 +12,8 @@ import pandas as pd
 
 from pipeline.config import (
     CITIES, OTHER_METRO_CODE, SUPERVISED_OPERATOR_TYPES,
-    TIME_PERIODS, LOCATION_PATTERNS,
+    TIME_PERIODS, ROADWAY_TYPE_LABELS,
+    CSV1_TOTAL_LABEL, CSV1_AGGREGATES, CSV1_DEPOTS,
 )
 
 
@@ -149,6 +150,25 @@ def classify_operation(operator_type):
     return "supervised"
 
 
+_TEST_DRIVER_PATTERN = re.compile(
+    r"(?<!\bno )(test|safety) driver was present|in the driver'?s seating position",
+    re.IGNORECASE,
+)
+
+
+def narrative_says_test_driver(narrative):
+    """True when a crash narrative states a human test driver was aboard.
+
+    NHTSA's "Driver / Operator Type" is occasionally left blank even though
+    Waymo's own narrative says "a test driver was present (in the driver's
+    seating position)". Used as a fallback for rows Waymo's rider-only hub
+    does not contain (see add_unified_columns in 02_merge_and_clean.py).
+    """
+    if narrative is None or (isinstance(narrative, float) and pd.isna(narrative)):
+        return False
+    return bool(_TEST_DRIVER_PATTERN.search(str(narrative)))
+
+
 # ---------------------------------------------------------------------------
 # Date / time parsing
 # ---------------------------------------------------------------------------
@@ -262,25 +282,16 @@ def is_moderate_plus(severity_value):
 
 
 # ---------------------------------------------------------------------------
-# Location type extraction
+# Roadway type
 # ---------------------------------------------------------------------------
 
-def extract_location_type(row):
-    """Determine crash location type from narrative/address text fields."""
-    text = ""
-    for col in ["Narrative", "Location Address / Description", "Address"]:
-        val = row.get(col)
-        if pd.notna(val):
-            text += str(val).lower() + " "
-    if not text.strip():
-        return "Other/Unknown"
-    for loc_type, patterns in LOCATION_PATTERNS.items():
-        for pattern in patterns:
-            if re.search(pattern, text, re.IGNORECASE):
-                return loc_type
-    if re.search(r"\b(street|st|avenue|ave|road|rd|boulevard|blvd|drive|dr|way|lane|ln)\b", text, re.IGNORECASE):
-        return "Street/Road"
-    return "Other/Unknown"
+def roadway_type(value):
+    """Map NHTSA's structured "Roadway Type" to a display label.
+
+    Blank, "Unknown" and any value NHTSA adds in future fall back to
+    "Other/unknown" so they stay visible in the totals.
+    """
+    return ROADWAY_TYPE_LABELS.get(normalize_place(value), "Other/unknown")
 
 
 def clean_coordinate(val):
@@ -310,19 +321,64 @@ def clean_zip(value):
     return None
 
 
-def geocode_cache_key(address, city, state, metro_code):
+def geocode_cache_key(address, city, state, metro_code, zip_code=None):
     """Cache key for a street-address geocode.
 
-    v2 keys include the crash's ACTUAL city and state. The v1 scheme keyed
+    v3 keys (used when Waymo reported a ZIP code) include that ZIP: those
+    results have been checked to land inside the ZIP's area. v2 keys
+    include the crash's ACTUAL city and state. (The retired v1 scheme keyed
     by metro code, which made the geocoder search suburb addresses in the
-    metro's core city (e.g. a Tempe intersection searched as "Phoenix, AZ")
-    — sometimes silently matching a same-named street in the wrong city.
+    metro's core city — e.g. a Tempe intersection searched as "Phoenix, AZ".)
     """
     city = normalize_place(city)
     state = normalize_state(state)
+    if zip_code:
+        return f"v3|{address}|{city}|{state}|{zip_code}"
     if city and state:
         return f"v2|{address}|{city}|{state}"
     return f"v2|{address}|{metro_code}"
+
+
+def hub_zip(row):
+    """The ZIP code Waymo's hub reported for a merged row, or None.
+
+    After the merge the hub's column is "Zip Code_hub" for matched rows
+    (NHTSA's own redacted "Zip Code" keeps the plain name) and plain
+    "Zip Code" only for the hub-only pre-SGO rows. Waymo stopped
+    publishing ZIPs for crashes after June 2025.
+    """
+    if row.get("record_source") == "hub_only":
+        return clean_zip(row.get("Zip Code"))
+    return clean_zip(row.get("Zip Code_hub"))
+
+
+def distance_km(lat1, lon1, lat2, lon2):
+    """Great-circle distance in kilometres."""
+    import math
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dp, dl = p2 - p1, math.radians(lon2 - lon1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * 6371.0 * math.asin(math.sqrt(a))
+
+
+def zip_fit(lat, lon, zip_entry):
+    """How far a point sits from a ZIP's centre, in ZIP radii.
+
+    zip_entry is [lat, lon, equivalent_radius_km] from zip_reference.json.
+    A value <= ~1.5 means the point plausibly lies inside the ZIP area
+    (ZIPs are not circles, hence the margin).
+    """
+    zlat, zlon, radius = zip_entry
+    return distance_km(lat, lon, zlat, zlon) / radius
+
+
+def is_current_cache_key(key):
+    """True for geocode-cache keys of the schemes still in use.
+
+    Step 04 purges anything else (the retired v1 scheme). Every new key
+    scheme must be listed here, or each run would delete and re-geocode it.
+    """
+    return key.startswith(("v3|", "v2|", "__city__", "__rev__"))
 
 
 def reverse_cache_key(lat, lon):
@@ -340,3 +396,237 @@ def validate_columns(df, required, source_name):
             f"header against the required columns in pipeline/config.py and "
             f"update the pipeline accordingly."
         )
+
+
+# ---------------------------------------------------------------------------
+# Year-month arithmetic (YYYYMM integers)
+# ---------------------------------------------------------------------------
+
+def add_months(year_month, months):
+    """Shift an int YYYYMM by a number of months (202601, -2 → 202511)."""
+    index = (year_month // 100) * 12 + (year_month % 100 - 1) + months
+    return (index // 12) * 100 + index % 12 + 1
+
+
+def quarter_end(year_month):
+    """The quarter-end month a YYYYMM falls in (202605 → 202606)."""
+    year, month = divmod(int(year_month), 100)
+    return year * 100 + ((month - 1) // 3 + 1) * 3
+
+
+def parse_month_label(value):
+    """Parse NHTSA's month labels ("SEP-2026") into int YYYYMM, or None."""
+    match = re.fullmatch(r"([A-Za-z]{3})-(\d{4})", normalize_place(value))
+    if not match:
+        return None
+    month = _MONTH_ABBREVIATIONS.get(match.group(1).upper())
+    return int(match.group(2)) * 100 + month if month else None
+
+
+def complete_through(latest_submission_month):
+    """Last incident month whose federal record should be complete.
+
+    Under the amended SGO, routine crashes are reported by the 15th of the
+    month after they happen — 99.5% of Waymo's reports arrive within one
+    month of the incident month. NHTSA's file only partly covers the newest
+    submission month, so that month is treated as partial: incidents in it
+    and in the month before it may still be missing reports.
+    """
+    if latest_submission_month is None:
+        return None
+    return add_months(int(latest_submission_month), -2)
+
+
+# ---------------------------------------------------------------------------
+# Waymo hub CSV1 — rider-only miles per location
+# ---------------------------------------------------------------------------
+
+def _county_to_metro_any_state(name):
+    """CSV1 county rows carry no state; match the county name across metros."""
+    name = normalize_place(name).lower()
+    for code, info in CITIES.items():
+        if name in (c.lower() for c in info.get("counties", [])):
+            return code
+    return None
+
+
+def parse_csv1_miles(rows):
+    """Parse a CSV1 release into (total, {metro_code: miles}, unknown_names).
+
+    `rows` is a list of (location_name, miles_millions) pairs. Handles both
+    the depot format (until Sept 2025) and the county + aggregate format
+    (since Dec 2025). An aggregate service-area row replaces the sum of its
+    component counties; the total falls back to the sum of metros for old
+    releases that have no blended-total row.
+    """
+    total = None
+    aggregates, depots, counties, unknown = {}, {}, {}, []
+    for name, miles in rows:
+        name = normalize_place(name)
+        try:
+            miles = float(miles)
+        except (TypeError, ValueError):
+            continue
+        if name == CSV1_TOTAL_LABEL:
+            total = miles
+        elif name in CSV1_AGGREGATES:
+            aggregates[CSV1_AGGREGATES[name]] = miles
+        elif name in CSV1_DEPOTS:
+            code = CSV1_DEPOTS[name]
+            depots[code] = depots.get(code, 0.0) + miles
+        elif _county_to_metro_any_state(name):
+            code = _county_to_metro_any_state(name)
+            counties[code] = counties.get(code, 0.0) + miles
+        else:
+            unknown.append(name)
+
+    metro_miles = {**counties, **depots, **aggregates}
+    metro_miles = {code: round(m, 3) for code, m in metro_miles.items()}
+    if total is None and metro_miles:
+        total = round(sum(metro_miles.values()), 3)
+    return total, metro_miles, unknown
+
+
+# ---------------------------------------------------------------------------
+# Waymo hub CSV3 — comparisons against human benchmarks
+# ---------------------------------------------------------------------------
+
+def _benchmark_row(row):
+    """One CSV3 row → the fields the site shows (percent reductions positive)."""
+    def pct(value):
+        return None if pd.isna(value) else round(-float(value) * 100, 1)
+
+    return {
+        "waymo_count": int(row["Waymo Count"]),
+        "predicted_human_count": round(float(row["Predicted Benchmark Count"]), 1),
+        "waymo_rate_per_million": round(float(row["Waymo IPMM"]), 3),
+        "human_rate_per_million": round(float(row["Benchmark IPMM"]), 3),
+        "reduction_pct": pct(row["Waymo Percent Reduction"]),
+        # The CI on the reduction runs the opposite way to the CI on the
+        # (negative) percent change: CI Upper of the change = low reduction.
+        "reduction_ci_low": pct(row["Waymo Percent Reduction CI Upper"]),
+        "reduction_ci_high": pct(row["Waymo Percent Reduction CI Lower"]),
+    }
+
+
+def benchmark_summary(csv3, outcomes, metro_names=None):
+    """Extract Waymo-vs-human comparisons from a CSV3 DataFrame.
+
+    Returns {"overall": {key: row}, "by_metro": {metro_code: {key: row}},
+    "by_partner": {key: {partner: row}}} for the outcomes given as
+    (key, outcome, benchmark_comparison) tuples. `metro_names` maps CSV3
+    "County Name" values to metro codes (defaults to CSV1_AGGREGATES plus
+    single-county metros).
+    """
+    if metro_names is None:
+        metro_names = dict(CSV1_AGGREGATES)
+        for name in csv3["County Name"].dropna().unique():
+            if name not in metro_names and name != CSV1_TOTAL_LABEL:
+                code = _county_to_metro_any_state(name)
+                # A county that is part of an aggregate area is a component,
+                # not a metro of its own.
+                if code and code not in CSV1_AGGREGATES.values():
+                    metro_names[name] = code
+
+    all_crashes = csv3[csv3["Grouping Type"] == "All Crashes"]
+    result = {"overall": {}, "by_metro": {}, "by_partner": {}}
+    for key, outcome, comparison in outcomes:
+        rows = all_crashes[
+            (all_crashes["Outcome"] == outcome)
+            & (all_crashes["Benchmark Comparison"] == comparison)
+        ]
+        overall = rows[rows["County Name"] == CSV1_TOTAL_LABEL]
+        if len(overall):
+            result["overall"][key] = _benchmark_row(overall.iloc[0])
+        # A metro covered by several county rows and no aggregate row can't
+        # be represented by any single row — leave it out rather than show
+        # one county's (possibly tiny) sample as the whole metro.
+        present = [(n, c) for n, c in metro_names.items() if (rows["County Name"] == n).any()]
+        codes = [c for _, c in present]
+        for name, code in present:
+            if codes.count(code) > 1 and name not in CSV1_AGGREGATES:
+                continue
+            metro = rows[rows["County Name"] == name]
+            result["by_metro"].setdefault(code, {})[key] = _benchmark_row(metro.iloc[0])
+
+        partners = csv3[
+            (csv3["Grouping Type"] == "Aggregate Crash Type")
+            & (csv3["Outcome"] == outcome)
+            & (csv3["Benchmark Comparison"] == comparison)
+            & (csv3["County Name"] == CSV1_TOTAL_LABEL)
+        ]
+        for _, row in partners.iterrows():
+            result["by_partner"].setdefault(key, {})[row["Conflict Partner Type Group"]] = _benchmark_row(row)
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Editorial checks
+# ---------------------------------------------------------------------------
+
+def editorial_alerts(snapshot, baseline):
+    """Compare the current data against the human-reviewed baseline.
+
+    snapshot / baseline: dicts with "fatal" and "moderate_plus" (lists of
+    {"report_id", ...} crash summaries), "hub_data_through" (int YYYYMM),
+    and — snapshot only — "unmapped" ({place: count}) and
+    "testing_metro_crashes" ({metro: count} for driverless crashes in
+    metros not yet open to the public). Returns a list of
+    (priority, title, detail_lines), most urgent first.
+    """
+    alerts = []
+    reviewed_fatal = set(baseline.get("fatal_report_ids", []))
+    new_fatal = [c for c in snapshot["fatal"] if c["report_id"] not in reviewed_fatal]
+    if new_fatal:
+        alerts.append((
+            "HIGH",
+            f"{len(new_fatal)} new fatal crash(es) — fatality prose needs review",
+            ["faq.html (\"How serious are these crashes?\") summarizes every fatal "
+             "crash individually. Read the narrative(s), check news coverage for "
+             "fault findings, and update the prose."]
+            + [f"{c['report_id']}: {c['month_label']}, {c['city']} — Waymo {c['sv_movement']} "
+               f"at {c['speed_mph']} mph, crash with {c['crash_with']}" for c in new_fatal],
+        ))
+
+    reviewed_serious = set(baseline.get("moderate_plus_report_ids", []))
+    new_serious = [c for c in snapshot["moderate_plus"]
+                   if c["report_id"] not in reviewed_serious and c["report_id"] not in reviewed_fatal
+                   and c not in new_fatal]
+    if new_serious:
+        alerts.append((
+            "MEDIUM",
+            f"{len(new_serious)} new moderate/serious-injury crash(es)",
+            ["Skim the narratives for newsworthy circumstances (vulnerable road "
+             "users, Waymo at fault, school zones)."]
+            + [f"{c['report_id']}: {c['month_label']}, {c['city']} — {c['severity']}" for c in new_serious],
+        ))
+
+    if snapshot.get("unmapped"):
+        alerts.append((
+            "MEDIUM",
+            "Crashes in places not mapped to any metro",
+            ["Add these places to CITIES in pipeline/config.py (a new metro, or a "
+             "suburb of an existing one)."]
+            + [f"{place}: {n}" for place, n in snapshot["unmapped"].items()],
+        ))
+
+    if snapshot.get("testing_metro_crashes"):
+        alerts.append((
+            "MEDIUM",
+            "Driverless crashes in metros marked as not yet public",
+            ["Has Waymo opened public service there? If so, set status to "
+             "\"public\" in CITIES and update the metro lists in the prose."]
+            + [f"{metro}: {n}" for metro, n in snapshot["testing_metro_crashes"].items()],
+        ))
+
+    if snapshot["hub_data_through"] > baseline.get("hub_data_through", 0):
+        alerts.append((
+            "LOW",
+            "New Waymo Safety Impact Data Hub release",
+            ["The pipeline already ingested it. Read Waymo's release notes "
+             "(linked from waymo.com/safety/impact) for methodology changes and "
+             "check that the benchmark section still reads correctly.",
+             f"Hub data now through {snapshot['hub_data_through']} "
+             f"(reviewed: {baseline.get('hub_data_through')})."],
+        ))
+    return alerts

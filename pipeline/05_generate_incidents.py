@@ -25,19 +25,15 @@ import os
 import sys
 import json
 import re
-import random
 
 import pandas as pd
 
 # Add the project root to Python's path so we can import config
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline.config import (
-    PROCESSED_MERGED, WEB_SERIOUS_INCIDENTS, CITIES, GEOCODE_CACHE,
+    PROCESSED_MERGED, WEB_SERIOUS_INCIDENTS, WEB_CRASH_DATA, CITIES,
 )
-from pipeline.utils import (
-    is_moderate_plus, clean_coordinate, normalize_place, normalize_state,
-    geocode_cache_key,
-)
+from pipeline.utils import is_moderate_plus, normalize_place
 
 
 def clean_narrative(narrative):
@@ -99,54 +95,27 @@ def main():
     for severity, count in serious_df[severity_col].value_counts().items():
         print(f"    {severity}: {count}")
 
-    geocode_cache = {}
-    if os.path.exists(GEOCODE_CACHE):
-        with open(GEOCODE_CACHE, "r") as f:
-            geocode_cache = json.load(f)
-        print(f"  Loaded geocode cache: {len(geocode_cache)} entries")
-    else:
-        print("  WARNING: No geocode cache found. Run step 04 first for accurate locations.")
-
-    random.seed(42)
+    # Reuse the map's own placement (step 04) so a serious incident sits
+    # exactly where its marker does in the Explore map.
+    with open(WEB_CRASH_DATA) as f:
+        placed = {r["report_id"]: r for r in json.load(f) if r.get("report_id")}
 
     incidents = []
     geocoded_count = estimated_count = 0
 
     for _, row in serious_df.iterrows():
-        lat = clean_coordinate(row.get("Latitude"))
-        lon = clean_coordinate(row.get("Longitude"))
+        report_id = row.get("Report ID")
         city_code = str(row.get("Location", ""))
-        is_estimated = False
-
-        if lat is None or lon is None:
-            # 1) street-level geocode from cache
-            address = row.get("Location Address / Description")
-            cached = None
-            if pd.notna(address) and str(address).strip():
-                cached = geocode_cache.get(geocode_cache_key(
-                    address, row.get("City"), row.get("State"), city_code))
-            if cached is not None:
-                lat, lon = cached["lat"], cached["lon"]
-                geocoded_count += 1
-            else:
-                # 2) city centroid from cache
-                city = normalize_place(row.get("City"))
-                state = normalize_state(row.get("State"))
-                city_hit = geocode_cache.get(f"__city__{city}|{state}") if city and state else None
-                if city_hit is not None:
-                    lat = city_hit["lat"] + (random.random() - 0.5) * 0.01
-                    lon = city_hit["lon"] + (random.random() - 0.5) * 0.01
-                    is_estimated = True
-                    estimated_count += 1
-                elif city_code in CITIES:
-                    # 3) metro center fallback
-                    info = CITIES[city_code]
-                    lat = info["lat"] + (random.random() - 0.5) * 0.04
-                    lon = info["lon"] + (random.random() - 0.5) * 0.04
-                    is_estimated = True
-                    estimated_count += 1
-                else:
-                    continue
+        marker = placed.get(report_id)
+        if marker is None:
+            print(f"  WARNING: {report_id} not in crash_data.json — skipped")
+            continue
+        lat, lon = marker["lat"], marker["lon"]
+        is_estimated = marker["is_estimated_location"]
+        if is_estimated:
+            estimated_count += 1
+        else:
+            geocoded_count += 1
 
         crash_with_raw = row.get("Crash With")
         if pd.isna(crash_with_raw) or str(crash_with_raw).strip() in ("", "nan"):
@@ -168,6 +137,7 @@ def main():
 
         incident = {
             "id": len(incidents) + 1,
+            "report_id": report_id,
             "lat": round(float(lat), 6),
             "lon": round(float(lon), 6),
             "city": city_display,

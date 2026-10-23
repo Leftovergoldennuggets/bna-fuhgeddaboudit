@@ -44,12 +44,13 @@ from geopy.exc import GeocoderTimedOut, GeocoderServiceError
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline.config import (
     PROCESSED_MERGED, WEB_CRASH_DATA, WEB_SITE_DATA, CITIES,
-    OTHER_METRO_CODE, GEOCODE_CACHE,
+    OTHER_METRO_CODE, GEOCODE_CACHE, WEB_CRASH_CSV, STATIC_ZIP_REFERENCE,
 )
 from pipeline.utils import (
-    parse_time, categorize_time_period, extract_location_type,
+    parse_time, categorize_time_period, roadway_type,
     clean_coordinate, severity_level, normalize_place, normalize_state,
-    clean_zip, geocode_cache_key, reverse_cache_key,
+    clean_zip, geocode_cache_key, reverse_cache_key, hub_zip, zip_fit,
+    is_current_cache_key,
 )
 
 
@@ -233,6 +234,95 @@ def geocode_addresses(df, cache):
     return cache
 
 
+ZIP_FIT_MAX = 1.5  # accept a geocode only within 1.5 ZIP radii of the ZIP centre
+
+
+def load_zip_reference():
+    """Census ZCTA centres and radii (see pipeline/tools/build_zip_reference.py)."""
+    if not os.path.exists(STATIC_ZIP_REFERENCE):
+        print(f"  WARNING: {STATIC_ZIP_REFERENCE} missing — ZIP checks skipped")
+        return {}
+    with open(STATIC_ZIP_REFERENCE) as f:
+        return json.load(f)["zips"]
+
+
+def geocode_addresses_in_zip(df, cache, zip_ref):
+    """Geocode hub addresses that come with a ZIP code, checked against it.
+
+    Waymo reported a ZIP for every hub crash up to June 2025. A geocode is
+    accepted only if it lands inside that ZIP's area. Search order:
+      1. the existing v2 result, if it is intersection-level and fits
+      2. the intersection, searched only inside the ZIP's bounding box
+      3. either street alone, inside the ZIP's box  → "road" precision
+      4. the ZIP's own centre                       → "zip" precision
+    Results are cached under v3 keys (which include the ZIP).
+    """
+    jobs, seen = [], set()
+    for _, row in df.iterrows():
+        address = row.get("Location Address / Description")
+        zip_code = hub_zip(row)
+        if pd.isna(address) or not str(address).strip() or not zip_code or zip_code not in zip_ref:
+            continue
+        key = geocode_cache_key(address, row.get("City"), row.get("State"), row.get("Location", ""), zip_code)
+        if key in cache or key in seen:
+            continue
+        seen.add(key)
+        jobs.append((key, row, zip_code))
+
+    if not jobs:
+        print("  ZIP-checked geocodes: all cached")
+        return cache
+
+    reused = queried = fallback = 0
+    geocoder = None
+    print(f"  ZIP-checked geocoding for {len(jobs)} addresses...")
+    for i, (key, row, zip_code) in enumerate(jobs):
+        address = row.get("Location Address / Description")
+        zentry = zip_ref[zip_code]
+        city_code = row.get("Location", "")
+
+        old = cache.get(geocode_cache_key(address, row.get("City"), row.get("State"), city_code))
+        if old and old.get("precision") == "street" and zip_fit(old["lat"], old["lon"], zentry) <= ZIP_FIT_MAX:
+            cache[key] = old
+            reused += 1
+            continue
+
+        if geocoder is None:
+            geocoder = make_geocoder()
+        zlat, zlon, radius = zentry
+        pad = max(radius * 2, 1.0) / 111.0  # degrees, roughly
+        viewbox = [(zlat - pad, zlon - pad * 1.3), (zlat + pad, zlon + pad * 1.3)]
+        result, errored = None, False
+        for query, precision in build_geocode_queries(address, row.get("City"), row.get("State"), city_code):
+            try:
+                hit = geocoder.geocode(query, viewbox=viewbox, bounded=True)
+                time.sleep(1.1)  # Nominatim usage policy: max 1 request/second
+            except (GeocoderTimedOut, GeocoderServiceError):
+                errored = True
+                time.sleep(2.0)
+                continue
+            if hit and zip_fit(hit.latitude, hit.longitude, zentry) <= ZIP_FIT_MAX:
+                result = {"lat": round(hit.latitude, 6), "lon": round(hit.longitude, 6), "precision": precision}
+                break
+        if result:
+            queried += 1
+        elif errored:
+            # A timeout or rate limit isn't an answer: leave it uncached so
+            # the next run tries again (the row falls back to v2/city for now).
+            continue
+        else:
+            result = {"lat": zlat, "lon": zlon, "precision": "zip"}
+            fallback += 1
+        cache[key] = result
+        if (i + 1) % 50 == 0:
+            print(f"  Progress: {i + 1}/{len(jobs)} (reused {reused}, geocoded {queried}, ZIP centre {fallback})")
+            save_geocode_cache(cache)
+
+    print(f"  ZIP-checked geocoding: {reused} reused, {queried} geocoded inside ZIP, "
+          f"{fallback} placed at ZIP centre")
+    return cache
+
+
 def geocode_cities(df, cache):
     """Geocode city centroids for every city in the dataset.
 
@@ -274,6 +364,47 @@ def geocode_cities(df, cache):
 # MAIN
 # ===========================================================================
 
+# Columns of the public CSV download, in order: (csv column, record key).
+# Documented for readers in methodology.html ("Download the data").
+CSV_EXPORT_COLUMNS = [
+    ("report_id", "report_id"),
+    ("operation", "operation_type"),
+    ("date", "date"),
+    ("date_precision", "date_precision"),
+    ("hour", "hour"),
+    ("metro", "city"),
+    ("city", "city_name"),
+    ("zip_code", "zip_code"),
+    ("latitude", "lat"),
+    ("longitude", "lon"),
+    ("location_precision", "location_precision"),
+    ("roadway_type", "location_type"),
+    ("crash_type_waymo", "crash_type"),
+    ("crash_with", "crash_with"),
+    ("waymo_movement", "sv_movement"),
+    ("other_party_movement", "cp_movement"),
+    ("waymo_speed_mph", "speed_mph"),
+    ("highest_injury_alleged", "injury_severity"),
+    ("severity_level", "severity_level"),
+    ("in_waymo_hub", "in_hub"),
+    ("narrative", "narrative"),
+]
+
+
+def export_crash_csv(map_data):
+    """Write the cleaned, merged dataset as a CSV readers can download."""
+    rows = []
+    for rec in map_data:
+        row = {col: rec.get(key) for col, key in CSV_EXPORT_COLUMNS}
+        row["metro"] = CITIES.get(row["metro"], {}).get("name", "Other")
+        rows.append(row)
+    out = pd.DataFrame(rows, columns=[c for c, _ in CSV_EXPORT_COLUMNS])
+    out = out.sort_values(["date", "report_id"], na_position="first")
+    out.to_csv(WEB_CRASH_CSV, index=False)
+    print(f"  Saved: {WEB_CRASH_CSV} ({len(out)} rows, "
+          f"{os.path.getsize(WEB_CRASH_CSV) / 1024:.0f} KB)")
+
+
 def main():
     """Generate crash_data.json for the interactive map."""
     print("=" * 60)
@@ -288,7 +419,8 @@ def main():
     # Parse time — kept nullable; crashes without a time stay on the map
     df["_hour"], df["_minute"] = zip(*df["Incident Time (24:00)"].apply(parse_time))
     df["_time_period"] = df["_hour"].apply(categorize_time_period)
-    df["_location_type"] = df.apply(extract_location_type, axis=1)
+    df["_location_type"] = df["Roadway Type"].apply(roadway_type) if "Roadway Type" in df.columns \
+        else "Other/unknown"
     df["_date"] = pd.to_datetime(df["incident_date"], errors="coerce")
     has_day = df["date_precision"] == "day"
     df["_day_of_week"] = df["_date"].dt.day_name().where(has_day & df["_date"].notna())
@@ -305,8 +437,7 @@ def main():
     # Retire v1 cache entries (keyed by metro instead of the crash's
     # actual city — see geocode_cache_key). Everything re-geocodes once
     # under the v2 scheme and is cached again.
-    legacy = [k for k in cache
-              if not (k.startswith("v2|") or k.startswith("__city__") or k.startswith("__rev__"))]
+    legacy = [k for k in cache if not is_current_cache_key(k)]
     if legacy:
         print(f"  Purging {len(legacy)} legacy (v1) cache entries — addresses "
               f"re-geocode once with their actual city")
@@ -315,6 +446,8 @@ def main():
     cache_before = len(cache)
     cache = geocode_cities(df, cache)      # city centroids first: they anchor the sanity checks
     cache = geocode_addresses(df, cache)
+    zip_ref = load_zip_reference()
+    cache = geocode_addresses_in_zip(df, cache, zip_ref)
     save_geocode_cache(cache)
     if len(cache) > cache_before:
         print(f"  Cache updated: {len(cache) - cache_before} new entries (total: {len(cache)})")
@@ -326,7 +459,7 @@ def main():
     print("Building JSON records...")
     map_data = []
     pending_zip = []  # (record, hub_zip) — zips finalized after the reverse pass
-    precision_counts = {"exact": 0, "street": 0, "road": 0, "city": 0, "metro": 0, "skipped": 0}
+    precision_counts = {"exact": 0, "street": 0, "road": 0, "zip": 0, "city": 0, "metro": 0, "skipped": 0}
 
     for _, row in df.iterrows():
         lat, lon = row["_lat"], row["_lon"]
@@ -339,8 +472,14 @@ def main():
             # Street-level geocode (hub-enriched rows with an address)
             address = row.get("Location Address / Description")
             if pd.notna(address) and str(address).strip():
-                cached = cache.get(geocode_cache_key(
-                    address, row.get("City"), row.get("State"), city_code))
+                zip_code = hub_zip(row)
+                cached = None
+                if zip_code and zip_code in zip_ref:
+                    cached = cache.get(geocode_cache_key(
+                        address, row.get("City"), row.get("State"), city_code, zip_code))
+                if cached is None:
+                    cached = cache.get(geocode_cache_key(
+                        address, row.get("City"), row.get("State"), city_code))
                 if cached is not None:
                     lat, lon = cached["lat"], cached["lon"]
                     location_precision = cached.get("precision", "street")
@@ -403,12 +542,13 @@ def main():
         # After the merge the hub's column is "Zip Code_hub" for matched
         # rows (NHTSA's redacted "Zip Code" keeps the original name) and
         # plain "Zip Code" only for the two hub-only pre-SGO rows.
-        if row.get("record_source") == "hub_only":
-            hub_zip = clean_zip(row.get("Zip Code"))
-        else:
-            hub_zip = clean_zip(row.get("Zip Code_hub"))
+        row_zip = hub_zip(row)
 
+        report_id = row.get("Report ID")
+        if pd.isna(report_id):
+            report_id = row.get("SGO Report ID")
         record = {
+            "report_id": str(report_id) if pd.notna(report_id) else None,
             "lat": round(float(lat), 6),
             "lon": round(float(lon), 6),
             "hour": int(row["_hour"]) if pd.notna(row["_hour"]) else None,
@@ -422,7 +562,7 @@ def main():
             "date": date_str,
             "date_precision": row.get("date_precision"),
             "is_weekend": bool(row["_is_weekend"]) if pd.notna(row["_is_weekend"]) else False,
-            "is_estimated_location": location_precision in ("city", "metro"),
+            "is_estimated_location": location_precision in ("zip", "city", "metro"),
             "location_precision": location_precision,
             "operation_type": row.get("operation_type"),
             "in_hub": bool(row.get("in_hub")),
@@ -436,10 +576,10 @@ def main():
             "speed_mph": speed_mph,
             "injury_severity": text_or_none(row.get("Highest Injury Severity Alleged")),
             "narrative": text_or_none(row.get("Narrative")),
-            "zip_code": hub_zip,
+            "zip_code": row_zip,
         }
         map_data.append(record)
-        pending_zip.append((record, hub_zip))
+        pending_zip.append((record, row_zip))
 
     print(f"  Total records: {len(map_data)}")
     for tier, count in precision_counts.items():
@@ -477,13 +617,13 @@ def main():
         save_geocode_cache(cache)
 
     zip_filled = zip_checked = zip_matched = 0
-    for rec, hub_zip in precise:
+    for rec, reported_zip in precise:
         reverse_zip = cache.get(reverse_cache_key(rec["lat"], rec["lon"]))
-        if hub_zip and reverse_zip:
+        if reported_zip and reverse_zip:
             zip_checked += 1
-            if hub_zip == reverse_zip:
+            if reported_zip == reverse_zip:
                 zip_matched += 1
-        if not hub_zip and reverse_zip:
+        if not reported_zip and reverse_zip:
             rec["zip_code"] = reverse_zip
             zip_filled += 1
 
@@ -494,6 +634,10 @@ def main():
         print(f"  Placement audit: {zip_matched}/{zip_checked} street-level markers "
               f"({round(zip_matched / zip_checked * 100, 1)}%) sit in the zip the "
               f"federal record reports")
+
+    print()
+    print("Saving waymo_crashes.csv (public download)...")
+    export_crash_csv(map_data)
 
     print()
     print("Saving crash_data.json...")
@@ -533,6 +677,14 @@ def main():
         "zip_coverage_pct": round(dl_with_zip / total_mapped * 100, 1) if total_mapped else 0,
         "zip_checked": zip_checked,
         "zip_match_pct": round(zip_matched / zip_checked * 100, 1) if zip_checked else 0,
+        # Markers per precision tier: street = the intersection/address
+        # itself (or NHTSA coordinates); road = on the right street, exact
+        # point approximate; zip / city / metro = centre of that area.
+        "tiers": {
+            tier: sum(1 for r in driverless
+                      if r["location_precision"] == tier or (tier == "street" and r["location_precision"] == "exact"))
+            for tier in ("street", "road", "zip", "city", "metro")
+        },
     }
 
     print()

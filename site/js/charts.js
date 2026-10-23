@@ -241,86 +241,6 @@ const Charts = (function () {
     // ============================================
 
     /**
-     * Build a horizontal bar chart showing crashes by location type.
-     *
-     * @param {Object} stats — The parsed site-data.json object
-     */
-    function buildLocationTypeChart(stats) {
-        const canvas = document.getElementById("location-chart");
-        if (!canvas || !stats.location_types) return;
-
-        // Sort location types by count, highest first
-        // Object.entries() converts {key: value} into [[key, value], ...] array
-        const sorted = Object.entries(stats.location_types)
-            .sort((a, b) => b[1].count - a[1].count);
-
-        // Destructuring: [name] grabs the first element (key), [, info] skips the first and grabs the second
-        const labels = sorted.map(([name]) => name);
-        const values = sorted.map(([, info]) => info.count);
-        const pcts = sorted.map(([, info]) => info.percentage);
-
-        // Highlight the top category — same pattern as above
-        const maxVal = Math.max(...values);
-        const colors = values.map(v => v === maxVal ? ACCENT : GREY);
-
-        // Same pattern as buildDayOfWeekChart (horizontal bar)
-        new Chart(canvas, {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: colors,
-                    borderWidth: 0,
-                    borderRadius: 0,
-                }],
-            },
-            options: {
-                ...getDefaults(),
-                indexAxis: "y",  // Horizontal bar chart
-                scales: {
-                    x: {
-                        grid: {
-                            color: BORDER_COLOR,
-                            drawTicks: false,
-                        },
-                        ticks: {
-                            font: { family: MONO_FONT, size: 11 },
-                            color: TEXT_COLOR,
-                            padding: 8,
-                        },
-                        border: { display: false },
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { family: MONO_FONT, size: 11 },
-                            color: TEXT_DARK,
-                        },
-                        border: { color: BORDER_COLOR },
-                    },
-                },
-                plugins: {
-                    ...getDefaults().plugins,
-                    tooltip: {
-                        ...getDefaults().plugins.tooltip,
-                        callbacks: {
-                            // Show count AND percentage in tooltip
-                            label: function(item) {
-                                return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
-                            },
-                        },
-                    },
-                },
-            },
-        });
-    }
-
-    // ============================================
-    // Chart 4: Speed Distribution (horizontal bar)
-    // ============================================
-
-    /**
      * Build a horizontal bar chart showing Waymo vehicle speed
      * at the time of crash. The 0 mph bar is highlighted to
      * emphasize that most crashes happen while stationary.
@@ -346,7 +266,7 @@ const Charts = (function () {
         // Highlight the 0 mph bar specifically — it's the key finding
         const colors = bucketOrder.map(k => k === "0_mph" ? ACCENT : GREY);
 
-        // Same horizontal bar pattern as buildLocationTypeChart
+        // Same horizontal bar pattern as buildSpeedChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -388,7 +308,7 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
-                            // Similar to buildLocationTypeChart tooltip
+                            // Similar to buildSpeedChart tooltip
                             label: function(item) {
                                 return item.raw + " crashes (" + pcts[item.dataIndex] + "%)";
                             },
@@ -429,7 +349,7 @@ const Charts = (function () {
         const canvas = document.getElementById("crash-type-chart");
         if (!canvas || !stats.crash_circumstances || !stats.crash_circumstances.crash_type_plain) return;
 
-        // Sort by count descending — same pattern as buildLocationTypeChart
+        // Sort by count descending — same pattern as buildSpeedChart
         const sorted = Object.entries(stats.crash_circumstances.crash_type_plain)
             .sort((a, b) => b[1].count - a[1].count);
 
@@ -441,7 +361,7 @@ const Charts = (function () {
         const maxVal = Math.max(...values);
         const colors = values.map(v => v === maxVal ? ACCENT : GREY);
 
-        // Same horizontal bar pattern as buildLocationTypeChart
+        // Same horizontal bar pattern as buildSpeedChart
         new Chart(canvas, {
             type: "bar",
             data: {
@@ -505,73 +425,99 @@ const Charts = (function () {
     // ============================================
 
     /**
-     * Build a line chart showing Waymo's cumulative rider-only miles
-     * over time, from the manually compiled mileage milestones data.
-     *
-     * @param {Object} mileageMilestones — mileage_milestones.json (from data/static/)
+     * A Chart.js plugin that draws a dashed vertical line with a label —
+     * used to mark NHTSA's June 16, 2025 reporting-rule change. Configure
+     * with options.plugins.ruleLine = { x: <data index, may be fractional>, label }.
      */
-    function buildMileageChart(mileageMilestones) {
+    const ruleLinePlugin = {
+        id: "ruleLine",
+        afterDatasetsDraw(chart, args, opts) {
+            if (!opts || opts.x === undefined || opts.x === null) return;
+            const xScale = chart.scales.x;
+            const { top, bottom } = chart.chartArea;
+            const x = xScale.getPixelForValue(opts.x);
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.strokeStyle = TEXT_DARK;
+            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
+            ctx.stroke();
+            if (opts.label) {
+                ctx.setLineDash([]);
+                ctx.fillStyle = TEXT_DARK;
+                ctx.font = `11px ${MONO_FONT}`;
+                ctx.textAlign = opts.align || "left";
+                ctx.fillText(opts.label, x + (opts.align === "right" ? -6 : 6), top + 12);
+            }
+            ctx.restore();
+        },
+    };
+
+    /**
+     * Build the cumulative rider-only miles chart from stats.mileage_series
+     * (hand-sourced milestones merged with every quarterly hub release by
+     * the pipeline). Plotted on a true time axis (decimal years) so uneven
+     * gaps between data points are drawn to scale.
+     *
+     * @param {Object} stats — site-data.json
+     */
+    function buildMileageChart(stats) {
         const canvas = document.getElementById("mileage-chart");
-        // Exit early if canvas or data doesn't exist
-        if (!canvas || !mileageMilestones || !mileageMilestones.milestones) return;
+        if (!canvas || !stats.mileage_series || !stats.mileage_series.length) return;
 
-        const milestones = mileageMilestones.milestones;
-
-        // Build labels (formatted dates) and values (miles in millions)
-        const labels = milestones.map(m => {
-            // Parse the date string and format as "Mon YYYY" (e.g., "Jan 2023")
-            const d = new Date(m.date);
-            return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+        const points = stats.mileage_series.map((p) => {
+            const d = new Date(p.date + "T00:00:00");
+            const start = new Date(d.getFullYear(), 0, 1);
+            const year = d.getFullYear() + (d - start) / (365.25 * 24 * 3600 * 1000);
+            return { x: year, y: p.miles_millions, meta: p };
         });
-        const values = milestones.map(m => m.miles_millions);
 
-        // Create a line chart showing exponential mileage growth
         new Chart(canvas, {
             type: "line",
             data: {
-                labels: labels,
                 datasets: [{
-                    data: values,
-                    borderColor: ACCENT,           // Line color (earth tone brown)
-                    backgroundColor: ACCENT + "20", // Fill under line (same color, very transparent)
-                    fill: true,                     // Fill the area under the line
-                    borderWidth: 2.5,               // Line thickness
-                    pointRadius: 5,                 // Size of the data point dots
-                    pointBackgroundColor: ACCENT,   // Fill color of dots
-                    pointBorderColor: "#fff",       // White border on dots
-                    pointBorderWidth: 2,            // Dot border thickness
-                    pointHoverRadius: 7,            // Larger dot on hover
-                    tension: 0.3,                   // Slight curve smoothing (0 = straight lines)
+                    data: points,
+                    borderColor: ACCENT,
+                    backgroundColor: "rgba(139, 111, 71, 0.08)",
+                    fill: true,
+                    tension: 0,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: points.map((p) => p.meta.kind === "hub" ? ACCENT : "#faf8f5"),
+                    pointBorderColor: ACCENT,
+                    pointBorderWidth: 1.5,
                 }],
             },
             options: {
                 ...getDefaults(),
                 scales: {
                     x: {
+                        type: "linear",
+                        min: Math.floor(points[0].x),
+                        max: points[points.length - 1].x + 0.15,
                         grid: { display: false },
+                        border: { color: BORDER_COLOR },
                         ticks: {
+                            stepSize: 1,
+                            callback: (v) => Number.isInteger(v) ? String(v) : "",
                             font: { family: MONO_FONT, size: 11 },
                             color: TEXT_COLOR,
-                            maxRotation: 45,        // Rotate labels if they overlap
                         },
-                        border: { color: BORDER_COLOR },
                     },
                     y: {
-                        grid: {
-                            color: BORDER_COLOR,
-                            drawTicks: false,
-                        },
+                        beginAtZero: true,
+                        grid: { color: BORDER_COLOR, drawTicks: false },
+                        border: { display: false },
                         ticks: {
+                            callback: (v) => v + "M",
                             font: { family: MONO_FONT, size: 11 },
                             color: TEXT_COLOR,
                             padding: 8,
-                            // Format Y-axis as "50M", "100M", etc.
-                            callback: function(value) {
-                                return value + "M";
-                            },
                         },
-                        border: { display: false },
-                        beginAtZero: true,          // Y-axis starts at 0
                     },
                 },
                 plugins: {
@@ -579,18 +525,12 @@ const Charts = (function () {
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
-                            // Show date and miles in tooltip
-                            title: function(items) {
-                                return labels[items[0].dataIndex];
+                            title: (items) => {
+                                const d = new Date(items[0].raw.meta.date + "T00:00:00");
+                                return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
                             },
-                            label: function(item) {
-                                return item.raw + " million rider-only miles";
-                            },
-                            // Show the source for this data point
-                            afterLabel: function(item) {
-                                const milestone = milestones[item.dataIndex];
-                                return "Source: " + (milestone.source || "");
-                            },
+                            label: (item) => `${item.raw.y.toLocaleString("en-US")} million miles`,
+                            afterLabel: (item) => wrapText(item.raw.meta.source, 48),
                         },
                     },
                 },
@@ -598,9 +538,98 @@ const Charts = (function () {
         });
     }
 
-    // ============================================
-    // Chart 7: Monthly Crash Trend (bar chart over time)
-    // ============================================
+    /** Break a long string into lines of at most `width` characters. */
+    function wrapText(text, width) {
+        const words = String(text || "").split(" ");
+        const lines = [];
+        let line = "";
+        words.forEach((w) => {
+            if ((line + " " + w).trim().length > width) {
+                lines.push(line.trim());
+                line = w;
+            } else {
+                line += " " + w;
+            }
+        });
+        if (line.trim()) lines.push(line.trim());
+        return lines;
+    }
+
+    /**
+     * Two small multiples from stats.quarterly_rates: all reported crashes
+     * per million miles, and injury crashes per million miles, by quarter.
+     * Side by side they show that the mid-2025 drop in the first is a
+     * reporting-rule change (the second barely moves).
+     *
+     * @param {Object} stats — site-data.json
+     */
+    function buildRateCharts(stats) {
+        const qr = stats.quarterly_rates;
+        if (!qr || !qr.series || !qr.series["All metros"]) return;
+        const rows = qr.series["All metros"];
+        const labels = rows.map((r) => {
+            const year = Math.floor(r.quarter / 100);
+            return `Q${(r.quarter % 100) / 3} ${year}`;
+        });
+        // The rule took effect in the quarter ending amendment_3_quarter;
+        // draw the line just before the first full quarter under it.
+        const firstAfter = rows.findIndex((r) => r.quarter > qr.amendment_3_quarter);
+        const ruleX = firstAfter > 0 ? firstAfter - 0.5 : null;
+
+        const make = (canvasId, key, decimals, suggestedMax) => {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            new Chart(canvas, {
+                type: "line",
+                data: {
+                    labels,
+                    datasets: [{
+                        data: rows.map((r) => r[key]),
+                        borderColor: ACCENT,
+                        backgroundColor: ACCENT,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        tension: 0,
+                    }],
+                },
+                options: {
+                    ...getDefaults(),
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            border: { color: BORDER_COLOR },
+                            ticks: { font: { family: MONO_FONT, size: 10 }, color: TEXT_COLOR, maxRotation: 0, autoSkip: true },
+                        },
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax,
+                            grid: { color: BORDER_COLOR, drawTicks: false },
+                            border: { display: false },
+                            ticks: { font: { family: MONO_FONT, size: 11 }, color: TEXT_COLOR, padding: 8 },
+                        },
+                    },
+                    plugins: {
+                        ...getDefaults().plugins,
+                        ruleLine: { x: ruleX, label: "New rules", align: "left" },
+                        tooltip: {
+                            ...getDefaults().plugins.tooltip,
+                            callbacks: {
+                                label: (item) => {
+                                    const r = rows[item.dataIndex];
+                                    const count = key === "crashes_per_million" ? r.crashes : r.injury;
+                                    return [`${item.raw.toFixed(decimals)} per million miles`,
+                                        `${count} crashes over ${r.miles_millions.toFixed(1)}M miles`];
+                                },
+                            },
+                        },
+                    },
+                },
+                plugins: [ruleLinePlugin],
+            });
+        };
+        make("rate-all-chart", "crashes_per_million", 1, 12);
+        make("rate-injury-chart", "injury_per_million", 2, 1.5);
+    }
 
     /**
      * Build a bar chart of crashes per month across the whole dataset.
@@ -632,9 +661,16 @@ const Charts = (function () {
             return month === 1 ? MONTHS_SHORT[month] + " " + year : MONTHS_SHORT[month];
         });
         const values = entries.map(([, count]) => count);
-        const colors = entries.map(([ym]) =>
-            hubThrough && ym > hubThrough ? "#cfc4b4" : ACCENT
-        );
+        const completeThrough = stats.meta && stats.meta.federal_complete_through
+            ? String(stats.meta.federal_complete_through) : null;
+        // Three states: detailed by Waymo's hub / federal-only / still filling in
+        const stateOf = (ym) => completeThrough && ym > completeThrough ? "provisional"
+            : hubThrough && ym > hubThrough ? "federal" : "hub";
+        const COLORS = { hub: ACCENT, federal: "#c9b89d", provisional: "#e8e0d4" };
+        const colors = entries.map(([ym]) => COLORS[stateOf(ym)]);
+        const ruleMonth = stats.meta && stats.meta.sgo_amendment_3_date
+            ? stats.meta.sgo_amendment_3_date.slice(0, 7).replace("-", "") : null;
+        const ruleIndex = ruleMonth ? entries.findIndex(([ym]) => ym > ruleMonth) : -1;
 
         new Chart(canvas, {
             type: "bar",
@@ -652,6 +688,9 @@ const Charts = (function () {
                 ...getDefaults(),
                 plugins: {
                     ...getDefaults().plugins,
+                    ruleLine: ruleIndex > 0
+                        ? { x: ruleIndex - 0.5, label: "June 2025: reporting rules change", align: "right" }
+                        : {},
                     tooltip: {
                         ...getDefaults().plugins.tooltip,
                         callbacks: {
@@ -661,9 +700,12 @@ const Charts = (function () {
                             },
                             label: function (item) {
                                 const ym = entries[item.dataIndex][0];
-                                const pending = hubThrough && ym > hubThrough
-                                    ? " (preliminary federal count)" : "";
-                                return item.parsed.y + " crashes" + pending;
+                                const note = {
+                                    hub: "",
+                                    federal: " (federal reports; Waymo detail pending)",
+                                    provisional: " (incomplete — reports still arriving)",
+                                }[stateOf(ym)];
+                                return item.parsed.y + " crashes" + note;
                             },
                         },
                     },
@@ -692,6 +734,7 @@ const Charts = (function () {
                     },
                 },
             },
+            plugins: [ruleLinePlugin],
         });
     }
 
@@ -711,10 +754,10 @@ const Charts = (function () {
     return {
         buildHourlyChart,
         buildDayOfWeekChart,
-        buildLocationTypeChart,
         buildSpeedChart,
         buildCrashTypeChart,
         buildMileageChart,
+        buildRateCharts,
         buildTrendChart,
     };
 

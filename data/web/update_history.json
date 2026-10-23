@@ -1,0 +1,92 @@
+[
+  {
+    "date": "2026-06-09",
+    "total_crashes": 1602,
+    "supervised_crashes": 237,
+    "federal_data_through": 202604,
+    "hub_data_through": 202512,
+    "fatal_crashes": 2,
+    "moderate_plus": 17
+  },
+  {
+    "date": "2026-06-22",
+    "total_crashes": 1787,
+    "supervised_crashes": 243,
+    "federal_data_through": 202605,
+    "hub_data_through": 202512,
+    "fatal_crashes": 2,
+    "moderate_plus": 19,
+    "new_crashes": 185
+  },
+  {
+    "date": "2026-06-29",
+    "total_crashes": 1787,
+    "supervised_crashes": 243,
+    "federal_data_through": 202605,
+    "hub_data_through": 202603,
+    "fatal_crashes": 2,
+    "moderate_plus": 19,
+    "new_crashes": 0
+  },
+  {
+    "date": "2026-07-20",
+    "total_crashes": 1887,
+    "supervised_crashes": 245,
+    "federal_data_through": 202606,
+    "hub_data_through": 202603,
+    "fatal_crashes": 2,
+    "moderate_plus": 21,
+    "new_crashes": 100
+  },
+  {
+    "date": "2026-08-24",
+    "total_crashes": 1984,
+    "supervised_crashes": 251,
+    "federal_data_through": 202607,
+    "hub_data_through": 202603,
+    "fatal_crashes": 2,
+    "moderate_plus": 22,
+    "new_crashes": 97
+  },
+  {
+    "date": "2026-09-21",
+    "total_crashes": 2070,
+    "supervised_crashes": 259,
+    "federal_data_through": 202608,
+    "hub_data_through": 202603,
+    "fatal_crashes": 3,
+    "moderate_plus": 28,
+    "new_crashes": 86
+  },
+  {
+    "date": "2026-09-28",
+    "total_crashes": 2070,
+    "supervised_crashes": 259,
+    "federal_data_through": 202608,
+    "hub_data_through": 202606,
+    "fatal_crashes": 3,
+    "moderate_plus": 28,
+    "new_crashes": 0
+  },
+  {
+    "date": "2026-10-19",
+    "total_crashes": 2133,
+    "supervised_crashes": 268,
+    "federal_data_through": 202609,
+    "hub_data_through": 202606,
+    "fatal_crashes": 3,
+    "moderate_plus": 28,
+    "new_crashes": 63
+  },
+  {
+    "date": "2026-10-23",
+    "total_crashes": 2131,
+    "supervised_crashes": 270,
+    "federal_data_through": 202609,
+    "hub_data_through": 202606,
+    "fatal_crashes": 3,
+    "moderate_plus": 28,
+    "new_crashes": -2,
+    "note": "Review: 2 supervised crashes reclassified (see corrections)"
+  }
+]

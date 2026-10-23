@@ -1,0 +1,96 @@
+{
+  "description": "Cumulative rider-only miles per metro at each Waymo Safety Impact Data Hub release (CSV1). Each release covers Sept 2020 through the quarter-end in 'through' (YYYYMM). Regenerated automatically by the pipeline.",
+  "quarters": [
+    {
+      "through": 202409,
+      "total_miles_millions": 33.103,
+      "metros": {
+        "SAN_FRANCISCO": 10.209,
+        "PHOENIX": 20.823,
+        "AUSTIN": 0.124,
+        "LOS_ANGELES": 1.947
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202409-2022benchmark.csv"
+    },
+    {
+      "through": 202412,
+      "total_miles_millions": 50.083,
+      "metros": {
+        "AUSTIN": 0.555,
+        "SAN_FRANCISCO": 16.032,
+        "PHOENIX": 28.331,
+        "LOS_ANGELES": 5.165
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202412-2022benchmark.csv"
+    },
+    {
+      "through": 202503,
+      "total_miles_millions": 71.62,
+      "metros": {
+        "PHOENIX": 37.492,
+        "ATLANTA": 0.056,
+        "AUSTIN": 1.403,
+        "SAN_FRANCISCO": 23.024,
+        "LOS_ANGELES": 9.645
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202503-2022benchmark.csv"
+    },
+    {
+      "through": 202506,
+      "total_miles_millions": 95.965,
+      "metros": {
+        "AUSTIN": 3.225,
+        "PHOENIX": 46.39,
+        "SAN_FRANCISCO": 29.888,
+        "LOS_ANGELES": 16.462
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202506-2022benchmark.csv"
+    },
+    {
+      "through": 202509,
+      "total_miles_millions": 127.158,
+      "metros": {
+        "AUSTIN": 6.337,
+        "LOS_ANGELES": 25.47,
+        "PHOENIX": 56.535,
+        "SAN_FRANCISCO": 38.816
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202509-2022benchmark.csv"
+    },
+    {
+      "through": 202512,
+      "total_miles_millions": 170.712,
+      "metros": {
+        "SAN_FRANCISCO": 53.52,
+        "PHOENIX": 68.613,
+        "LOS_ANGELES": 37.857,
+        "AUSTIN": 10.722
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202512-2022benchmark.csv"
+    },
+    {
+      "through": 202603,
+      "total_miles_millions": 220.613,
+      "metros": {
+        "SAN_FRANCISCO": 67.078,
+        "ATLANTA": 5.379,
+        "AUSTIN": 15.789,
+        "LOS_ANGELES": 51.816,
+        "PHOENIX": 80.551
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202603-2022benchmark.csv"
+    },
+    {
+      "through": 202606,
+      "total_miles_millions": 271.329,
+      "metros": {
+        "PHOENIX": 92.121,
+        "SAN_FRANCISCO": 82.421,
+        "AUSTIN": 21.064,
+        "ATLANTA": 8.624,
+        "LOS_ANGELES": 67.098
+      },
+      "source_url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202606-2022benchmark.csv"
+    }
+  ]
+}

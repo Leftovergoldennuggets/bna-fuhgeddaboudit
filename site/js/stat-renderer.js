@@ -12,7 +12,7 @@
  *
  * Supported attributes:
  *   data-stat      — Dot-separated path into site-data.json
- *   data-format    — "date" (format ISO date), "percent", "millions" (127M+)
+ *   data-format    — "date" (format ISO date), "percent", "round", "millions" (127M+)
  *   data-suffix    — Text appended after the number (e.g., "%")
  *   data-animate   — "true" to animate counting up from 0
  */
@@ -53,6 +53,10 @@ const StatRenderer = (function () {
             case "percent":
                 // .toFixed(1) rounds to 1 decimal place: 46.929 → "46.9"
                 return Number(value).toFixed(1);
+
+            case "round":
+                // 82.1 → "82" (for headline numbers)
+                return typeof value === "number" ? String(Math.round(value)) : value;
 
             case "millions":
                 // Convert 127000000 to "127M+"

@@ -46,7 +46,7 @@ from pipeline.config import (
     REQUIRED_NHTSA_COLUMNS, REQUIRED_HUB_COLUMNS,
 )
 from pipeline.utils import (
-    normalize_place, resolve_metro, classify_operation,
+    normalize_place, resolve_metro, classify_operation, narrative_says_test_driver,
     parse_incident_date, to_year_month, validate_columns,
 )
 
@@ -184,6 +184,18 @@ def add_unified_columns(df):
     # Hub-only rows have no NHTSA operator column — the hub covers
     # driverless operations only, so they are driverless by definition.
     df.loc[df["record_source"] == "hub_only", "operation_type"] = "driverless"
+
+    # NHTSA sometimes leaves the operator field blank for supervised
+    # crashes. When the narrative says a test driver was aboard and Waymo's
+    # rider-only hub does not list the crash, it was not driverless.
+    blank_op = df.get(op_col, pd.Series(index=df.index)).map(normalize_place) == ""
+    narrated = df["Narrative"].apply(narrative_says_test_driver) if "Narrative" in df.columns else False
+    fix = blank_op & narrated & (df["record_source"] == "nhtsa_only")
+    if fix.any():
+        df.loc[fix, "operation_type"] = "supervised"
+        print(f"  Reclassified {int(fix.sum())} blank-operator crash(es) as supervised "
+              f"(narrative reports a test driver; not in Waymo's rider-only hub): "
+              f"{sorted(df.loc[fix, 'Report ID'])}")
 
     known_types = {"", "In-Vehicle (Commercial / Test)",
                    "In-Vehicle and Remote (Commercial / Test)",

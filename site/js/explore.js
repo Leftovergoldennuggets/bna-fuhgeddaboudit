@@ -46,6 +46,7 @@ const Explore = (function () {
         roadUser: null,             // null = "All" | "Pedestrian" | "Cyclist" | "Motorcycle"
         timeOfDay: null,            // null = "All" | "daytime" | "night" | "rush"
         zipCode: null,              // null = no zip filter | "94110" = filter by zip
+        text: "",                   // "" = no text search | words to find in the report
         includeSupervised: false,   // false = driverless only (the headline dataset)
     };
 
@@ -122,6 +123,23 @@ const Explore = (function () {
             zipClearBtn.addEventListener("click", clearZipSearch);
         }
 
+        // Search the crash reports (debounced so typing stays smooth)
+        const textInput = document.getElementById("text-search");
+        if (textInput) {
+            let timer = null;
+            textInput.addEventListener("input", () => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    filters.text = textInput.value.trim().toLowerCase();
+                    applyFilters();
+                }, 200);
+            });
+        }
+
+        // Shareable links: #crash=<NHTSA report ID> opens that crash
+        window.addEventListener("hashchange", openCrashFromHash);
+        openCrashFromHash();
+
         // Toggle for supervised test-driver crashes (off by default — the
         // headline dataset covers driverless operations only)
         const supervisedToggle = document.getElementById("supervised-toggle");
@@ -149,23 +167,8 @@ const Explore = (function () {
             attributionControl: true,      // Show map credits
         });
 
-        // Base tiles: CARTO light without labels — same as the scrollytelling map
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-            {
-                attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-                    '&copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: "abcd",
-                maxZoom: 19,
-            }
-        ).addTo(exploreMap);  // .addTo() adds this tile layer to the explore map
-
-        // Label layer on top — same pattern as MapController
-        L.tileLayer(
-            "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-            { subdomains: "abcd", maxZoom: 19, pane: "shadowPane" }
-        ).addTo(exploreMap);
+        // Background map (OpenFreeMap — see basemap.js)
+        Basemap.addTo(exploreMap);
 
         // L.markerClusterGroup() groups nearby markers into clusters — same setup as MapController
         exploreCluster = L.markerClusterGroup({
@@ -220,6 +223,14 @@ const Explore = (function () {
 
             // .bindPopup() attaches a popup — same pattern as MapController.buildCrashMarkers
             marker.bindPopup(popupHTML, { maxWidth: 320 });
+
+            // Opening a crash puts its permalink in the address bar, so the
+            // page URL can be copied and shared (see openCrashFromHash)
+            if (crash.report_id) {
+                marker.on("popupopen", () => {
+                    history.replaceState(null, "", "#crash=" + crash.report_id);
+                });
+            }
 
             // Store the marker in the allMarkers array (same index as allCrashes)
             allMarkers.push(marker);
@@ -459,6 +470,15 @@ const Explore = (function () {
                 show = false;
             }
 
+            // Text search: every word must appear in the report narrative,
+            // the city, or the other party (case-insensitive)
+            if (filters.text) {
+                const haystack = searchText(crash);
+                if (!filters.text.split(/\s+/).every((word) => haystack.includes(word))) {
+                    show = false;
+                }
+            }
+
             // Time of day filter (derived from the crash hour).
             // Crashes with no recorded time are excluded while a time
             // filter is active — "daytime" shouldn't show unknown times.
@@ -495,6 +515,40 @@ const Explore = (function () {
             // .toLocaleString() adds commas for readability (e.g., 1,123 instead of 1123)
             countEl.textContent = shownCount.toLocaleString("en-US");
         }
+    }
+
+    /** Lower-cased text a search can match, cached on the crash record. */
+    function searchText(crash) {
+        if (crash._search === undefined) {
+            crash._search = [crash.narrative, crash.city_name, crash.crash_with, crash.report_id]
+                .filter(Boolean).join(" ").toLowerCase();
+        }
+        return crash._search;
+    }
+
+    /**
+     * If the URL ends in #crash=<report ID>, scroll to the explore map,
+     * zoom to that crash and open its popup. Supervised-testing crashes
+     * switch the supervised toggle on so the marker is on the map.
+     */
+    function openCrashFromHash() {
+        const match = window.location.hash.match(/^#crash=([\w-]+)$/);
+        if (!match) return;
+        const index = allCrashes.findIndex((c) => c.report_id === match[1]);
+        if (index === -1) return;
+        resetFilters();
+        if (allCrashes[index].operation_type === "supervised") {
+            const toggle = document.getElementById("supervised-toggle");
+            if (toggle) toggle.checked = true;
+            filters.includeSupervised = true;
+            applyFilters();
+        }
+        const section = document.getElementById("explore");
+        if (section) section.scrollIntoView({ behavior: "smooth" });
+        const marker = allMarkers[index];
+        setTimeout(() => {
+            exploreCluster.zoomToShowLayer(marker, () => marker.openPopup());
+        }, 600);
     }
 
     /**
@@ -541,7 +595,10 @@ const Explore = (function () {
         filters.roadUser = null;
         filters.timeOfDay = null;
         filters.zipCode = null;
+        filters.text = "";
         filters.includeSupervised = false;
+        const textInput = document.getElementById("text-search");
+        if (textInput) textInput.value = "";
         const supervisedToggle = document.getElementById("supervised-toggle");
         if (supervisedToggle) supervisedToggle.checked = false;
 
