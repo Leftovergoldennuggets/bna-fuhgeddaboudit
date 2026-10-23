@@ -2,6 +2,7 @@
   "sf_incidents": [
     {
       "id": 2,
+      "report_id": "30270-11016",
       "lat": 37.791973,
       "lon": -122.400826,
       "city": "San Francisco",
@@ -17,6 +18,7 @@
     },
     {
       "id": 3,
+      "report_id": "30270-11450",
       "lat": 37.72798,
       "lon": -122.452368,
       "city": "San Francisco",
@@ -32,8 +34,9 @@
     },
     {
       "id": 7,
-      "lat": 37.770637,
-      "lon": -122.510908,
+      "report_id": "30270-14003",
+      "lat": 37.762862,
+      "lon": -122.493219,
       "city": "San Francisco",
       "date": "February 7, 2026",
       "time": "23:06",
@@ -47,6 +50,7 @@
     },
     {
       "id": 8,
+      "report_id": "30270-14618",
       "lat": 37.764214,
       "lon": -122.507519,
       "city": "San Francisco",
@@ -62,8 +66,9 @@
     },
     {
       "id": 16,
-      "lat": 37.787155,
-      "lon": -122.412222,
+      "report_id": "30270-16023",
+      "lat": 37.782671,
+      "lon": -122.412532,
       "city": "San Francisco",
       "date": "July 2026",
       "time": "12:20",
@@ -77,6 +82,7 @@
     },
     {
       "id": 19,
+      "report_id": "30270-6579",
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -92,6 +98,7 @@
     },
     {
       "id": 21,
+      "report_id": "30270-7959",
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -107,8 +114,9 @@
     },
     {
       "id": 22,
-      "lat": 37.774598,
-      "lon": -122.433494,
+      "report_id": "30270-8968",
+      "lat": 37.775328,
+      "lon": -122.427762,
       "city": "San Francisco",
       "date": "October 28, 2024",
       "time": "08:58",
@@ -122,6 +130,7 @@
     },
     {
       "id": 25,
+      "report_id": "30270-9724",
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -137,8 +146,9 @@
     },
     {
       "id": 27,
-      "lat": 37.777498,
-      "lon": -122.408788,
+      "report_id": "30270-9987",
+      "lat": 37.775392,
+      "lon": -122.406155,
       "city": "San Francisco",
       "date": "February 16, 2025",
       "time": "12:10",
@@ -154,8 +164,9 @@
   "all_incidents": [
     {
       "id": 1,
-      "lat": 33.449831,
-      "lon": -112.078891,
+      "report_id": "30270-10112",
+      "lat": 33.32351,
+      "lon": -111.87616,
       "city": "Phoenix",
       "date": "February 28, 2025",
       "time": "03:39",
@@ -169,6 +180,7 @@
     },
     {
       "id": 2,
+      "report_id": "30270-11016",
       "lat": 37.791973,
       "lon": -122.400826,
       "city": "San Francisco",
@@ -184,6 +196,7 @@
     },
     {
       "id": 3,
+      "report_id": "30270-11450",
       "lat": 37.72798,
       "lon": -122.452368,
       "city": "San Francisco",
@@ -199,6 +212,7 @@
     },
     {
       "id": 4,
+      "report_id": "30270-11713",
       "lat": 33.417416,
       "lon": -111.927227,
       "city": "Phoenix",
@@ -214,8 +228,9 @@
     },
     {
       "id": 5,
-      "lat": 33.768858,
-      "lon": -84.412586,
+      "report_id": "30270-11841",
+      "lat": 33.756424,
+      "lon": -84.412087,
       "city": "Atlanta",
       "date": "October 3, 2025",
       "time": "09:55",
@@ -229,8 +244,9 @@
     },
     {
       "id": 6,
-      "lat": 33.728468,
-      "lon": -111.881391,
+      "report_id": "30270-13161",
+      "lat": 33.584405,
+      "lon": -111.88276,
       "city": "Phoenix",
       "date": "November 19, 2025",
       "time": "00:02",
@@ -244,8 +260,9 @@
     },
     {
       "id": 7,
-      "lat": 37.770637,
-      "lon": -122.510908,
+      "report_id": "30270-14003",
+      "lat": 37.762862,
+      "lon": -122.493219,
       "city": "San Francisco",
       "date": "February 7, 2026",
       "time": "23:06",
@@ -259,6 +276,7 @@
     },
     {
       "id": 8,
+      "report_id": "30270-14618",
       "lat": 37.764214,
       "lon": -122.507519,
       "city": "San Francisco",
@@ -274,8 +292,9 @@
     },
     {
       "id": 9,
-      "lat": 33.768243,
-      "lon": -84.333015,
+      "report_id": "30270-14805",
+      "lat": 33.790432,
+      "lon": -84.321875,
       "city": "Atlanta",
       "date": "April 24, 2026",
       "time": "20:16",
@@ -289,8 +308,9 @@
     },
     {
       "id": 10,
-      "lat": 33.480458,
-      "lon": -112.11757,
+      "report_id": "30270-15174",
+      "lat": 33.51978,
+      "lon": -111.99359,
       "city": "Phoenix",
       "date": "May 23, 2026",
       "time": "15:59",
@@ -299,13 +319,14 @@
       "crash_type": "V2V Intersection",
       "address": "Thomas Road at N. 36th Street",
       "narrative": "On May [REDACTED], 2026 at 3:59 PM MT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Phoenix, Arizona was in a collision involving a pickup truck on [REDACTED] at [REDACTED].\n\nThe Waymo AV was traveling westbound in the second to the right lane on [REDACTED] and proceeding straight at a green light at the intersection with [REDACTED]. As the Waymo AV began to cross the intersection, a pickup truck traveling northbound in the designated right turn lane on [REDACTED]t proceeded to enter the intersection against a red light and began to maneuver to the left. The Waymo AV braked and maneuvered to the right as the pickup truck continued to proceed forward, and the front of the pickup truck made contact with the left side of the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles sustained damage. Two passengers in the Waymo AV were not belted at the time of the collision. Two passengers in the Waymo AV were transported to a hospital by an ambulance with moderate injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because individuals involved were transported from the scene to a hospital for medical treatment and a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false,
+      "is_estimated_location": true,
       "in_hub": true
     },
     {
       "id": 11,
-      "lat": 34.058379,
-      "lon": -118.412112,
+      "report_id": "30270-15192",
+      "lat": 34.03531,
+      "lon": -118.42649,
       "city": "Los Angeles",
       "date": "May 22, 2026",
       "time": "17:43",
@@ -314,13 +335,14 @@
       "crash_type": "Secondary Crash",
       "address": "W. Olympic Boulevard near Midvale Avenue",
       "narrative": "On May [REDACTED], 2026 at 5:43 PM PT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Los Angeles, California was in a collision involving a passenger car on [REDACTED] near [REDACTED]. \n\nThe Waymo AV was traveling northeastbound in the second from the right lane on [REDACTED], slowing to yield to a queue of traffic ahead. While the Waymo AV was slowing, a passenger car traveling southeastbound on [REDACTED] proceeded straight to cross the intersection with [REDACTED]. As the passenger car approached the exit of the intersection, the front of the passenger car made contact with the left side of a second passenger car traveling northeastbound in the rightmost lane on [REDACTED]. As a result of the contact, the second passenger car rotated counterclockwise as it continued northeastbound, and while rotating, the front left side of the passenger car made contact with the front right side of an SUV stopped directly behind the stopped Waymo AV. The second passenger car continued northeastbound as the Waymo AV began to proceed forward, and the front right side of the second passenger car then made contact with the rear of the Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both passenger cars and the SUV sustained damage. The driver of the first passenger car alleged minor injuries and the driver of the second passenger car sedan alleged moderate injuries. \n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because a vehicle involved was towed away. Waymo may supplement or correct its reporting with additional information as it may become available.",
-      "is_estimated_location": false,
+      "is_estimated_location": true,
       "in_hub": true
     },
     {
       "id": 12,
-      "lat": 33.465902,
-      "lon": -111.899006,
+      "report_id": "30270-15547",
+      "lat": 33.465571,
+      "lon": -111.933522,
       "city": "Phoenix",
       "date": "June 20, 2026",
       "time": "02:53",
@@ -334,8 +356,9 @@
     },
     {
       "id": 13,
-      "lat": 25.79067,
-      "lon": -80.138069,
+      "report_id": "30270-15830",
+      "lat": 25.785375,
+      "lon": -80.128679,
       "city": "Miami",
       "date": "July 2026",
       "time": "20:56",
@@ -349,9 +372,10 @@
     },
     {
       "id": 14,
-      "lat": 36.169791,
-      "lon": -115.146646,
-      "city": "Other",
+      "report_id": "30270-15896",
+      "lat": 36.161422,
+      "lon": -115.142331,
+      "city": "Las Vegas",
       "date": "July 2026",
       "time": "09:40",
       "crash_party": "Vehicle (SUV)",
@@ -364,8 +388,9 @@
     },
     {
       "id": 15,
-      "lat": 33.758388,
-      "lon": -84.393946,
+      "report_id": "30270-15996",
+      "lat": 33.746776,
+      "lon": -84.399392,
       "city": "Atlanta",
       "date": "July 2026",
       "time": "20:55",
@@ -379,8 +404,9 @@
     },
     {
       "id": 16,
-      "lat": 37.787155,
-      "lon": -122.412222,
+      "report_id": "30270-16023",
+      "lat": 37.782671,
+      "lon": -122.412532,
       "city": "San Francisco",
       "date": "July 2026",
       "time": "12:20",
@@ -394,8 +420,9 @@
     },
     {
       "id": 17,
-      "lat": 34.050877,
-      "lon": -118.242712,
+      "report_id": "30270-16028",
+      "lat": 34.054166,
+      "lon": -118.250733,
       "city": "Los Angeles",
       "date": "July 2026",
       "time": "5:41",
@@ -409,8 +436,9 @@
     },
     {
       "id": 18,
-      "lat": 32.771537,
-      "lon": -96.799868,
+      "report_id": "30270-16196",
+      "lat": 32.781758,
+      "lon": -96.793431,
       "city": "Dallas",
       "date": "August 2026",
       "time": "23:31",
@@ -424,6 +452,7 @@
     },
     {
       "id": 19,
+      "report_id": "30270-6579",
       "lat": 37.771975,
       "lon": -122.413839,
       "city": "San Francisco",
@@ -439,6 +468,7 @@
     },
     {
       "id": 20,
+      "report_id": "30270-7733",
       "lat": 33.40914,
       "lon": -111.972736,
       "city": "Phoenix",
@@ -454,6 +484,7 @@
     },
     {
       "id": 21,
+      "report_id": "30270-7959",
       "lat": 37.751261,
       "lon": -122.436426,
       "city": "San Francisco",
@@ -469,8 +500,9 @@
     },
     {
       "id": 22,
-      "lat": 37.774598,
-      "lon": -122.433494,
+      "report_id": "30270-8968",
+      "lat": 37.775328,
+      "lon": -122.427762,
       "city": "San Francisco",
       "date": "October 28, 2024",
       "time": "08:58",
@@ -484,6 +516,7 @@
     },
     {
       "id": 23,
+      "report_id": "30270-9081",
       "lat": 33.524274,
       "lon": -112.100773,
       "city": "Phoenix",
@@ -499,8 +532,9 @@
     },
     {
       "id": 24,
-      "lat": 33.445872,
-      "lon": -111.995488,
+      "report_id": "30270-9634",
+      "lat": 33.404887,
+      "lon": -111.995399,
       "city": "Phoenix",
       "date": "January 9, 2025",
       "time": "16:04",
@@ -514,6 +548,7 @@
     },
     {
       "id": 25,
+      "report_id": "30270-9724",
       "lat": 37.777313,
       "lon": -122.40429,
       "city": "San Francisco",
@@ -529,8 +564,9 @@
     },
     {
       "id": 26,
-      "lat": 34.015224,
-      "lon": -118.279299,
+      "report_id": "30270-9860",
+      "lat": 34.033012,
+      "lon": -118.268106,
       "city": "Los Angeles",
       "date": "February 6, 2025",
       "time": "21:56",
@@ -544,8 +580,9 @@
     },
     {
       "id": 27,
-      "lat": 37.777498,
-      "lon": -122.408788,
+      "report_id": "30270-9987",
+      "lat": 37.775392,
+      "lon": -122.406155,
       "city": "San Francisco",
       "date": "February 16, 2025",
       "time": "12:10",
@@ -559,8 +596,9 @@
     },
     {
       "id": 28,
-      "lat": 33.488982,
-      "lon": -111.960478,
+      "report_id": "30270-9992",
+      "lat": 33.4951,
+      "lon": -111.994872,
       "city": "Phoenix",
       "date": "February 17, 2025",
       "time": "13:39",
@@ -602,6 +640,11 @@
     "Dallas": {
       "lat": 32.7767,
       "lon": -96.797,
+      "count": 1
+    },
+    "Las Vegas": {
+      "lat": 36.1699,
+      "lon": -115.1398,
       "count": 1
     }
   },

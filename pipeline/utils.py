@@ -372,6 +372,15 @@ def zip_fit(lat, lon, zip_entry):
     return distance_km(lat, lon, zlat, zlon) / radius
 
 
+def is_current_cache_key(key):
+    """True for geocode-cache keys of the schemes still in use.
+
+    Step 04 purges anything else (the retired v1 scheme). Every new key
+    scheme must be listed here, or each run would delete and re-geocode it.
+    """
+    return key.startswith(("v3|", "v2|", "__city__", "__rev__"))
+
+
 def reverse_cache_key(lat, lon):
     """Cache key for a reverse-geocode (coordinates → zip) lookup."""
     return f"__rev__{lat:.4f},{lon:.4f}"

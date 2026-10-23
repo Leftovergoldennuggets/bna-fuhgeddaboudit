@@ -17,6 +17,7 @@ from pipeline.utils import (
     roadway_type, add_months, quarter_end, parse_month_label, complete_through,
     parse_csv1_miles, benchmark_summary, zip_fit, distance_km,
     narrative_says_test_driver, geocode_cache_key, hub_zip, editorial_alerts,
+    is_current_cache_key,
 )
 
 
@@ -239,3 +240,12 @@ def test_benchmark_skips_metro_split_across_counties():
     ])
     out = benchmark_summary(csv3, TestBenchmarkSummary.OUTCOMES)
     assert "AUSTIN" not in out["by_metro"]
+
+
+def test_cache_keys_produced_are_never_purged():
+    # Regression: v3 keys were purged as "legacy" on every run
+    for key in [geocode_cache_key("A at B", "Tempe", "AZ", "PHOENIX", "85281"),
+                geocode_cache_key("A at B", "Tempe", "AZ", "PHOENIX"),
+                "__city__Tempe|AZ", "__rev__33.4255,-111.9400"]:
+        assert is_current_cache_key(key)
+    assert not is_current_cache_key("A at B|PHOENIX")  # retired v1 scheme

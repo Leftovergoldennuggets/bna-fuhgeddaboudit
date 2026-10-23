@@ -50,6 +50,7 @@ from pipeline.utils import (
     parse_time, categorize_time_period, roadway_type,
     clean_coordinate, severity_level, normalize_place, normalize_state,
     clean_zip, geocode_cache_key, reverse_cache_key, hub_zip, zip_fit,
+    is_current_cache_key,
 )
 
 
@@ -436,8 +437,7 @@ def main():
     # Retire v1 cache entries (keyed by metro instead of the crash's
     # actual city — see geocode_cache_key). Everything re-geocodes once
     # under the v2 scheme and is cached again.
-    legacy = [k for k in cache
-              if not (k.startswith("v2|") or k.startswith("__city__") or k.startswith("__rev__"))]
+    legacy = [k for k in cache if not is_current_cache_key(k)]
     if legacy:
         print(f"  Purging {len(legacy)} legacy (v1) cache entries — addresses "
               f"re-geocode once with their actual city")

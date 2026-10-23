@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-19T16:44:49.597740",
+    "generated_at": "2026-10-23T13:28:47.661481",
     "pipeline_version": "2.0",
     "total_rows_in_merged": 2401,
     "date_range_start": 202009,
@@ -8,36 +8,40 @@
     "federal_data_through": 202609,
     "federal_data_through_label": "September 2026",
     "hub_data_through": 202606,
-    "hub_data_through_label": "June 2026"
+    "hub_data_through_label": "June 2026",
+    "latest_submission_month": 202609,
+    "federal_complete_through": 202607,
+    "federal_complete_through_label": "July 2026",
+    "sgo_amendment_3_date": "2025-06-16"
   },
   "overview": {
-    "total_crashes": 2133,
-    "supervised_crashes": 268,
+    "total_crashes": 2131,
+    "supervised_crashes": 270,
     "total_all_operations": 2401,
-    "preliminary_count": 163,
+    "preliminary_count": 161,
     "cities_count": 13,
-    "public_metros_count": 11,
+    "public_metros_count": 15,
     "cities_list": [
       "Atlanta",
       "Austin",
       "Dallas",
       "Denver",
       "Houston",
+      "Las Vegas",
       "Los Angeles",
       "Miami",
       "Nashville",
       "Orlando",
       "Phoenix",
       "San Antonio",
-      "San Francisco",
-      "Washington, D.C."
+      "San Francisco"
     ],
-    "total_with_time_data": 2131
+    "total_with_time_data": 2129
   },
   "city_breakdown": {
     "San Francisco": {
       "code": "SAN_FRANCISCO",
-      "count": 875,
+      "count": 874,
       "percentage": 41.0,
       "status": "public"
     },
@@ -50,7 +54,7 @@
     "Los Angeles": {
       "code": "LOS_ANGELES",
       "count": 470,
-      "percentage": 22.0,
+      "percentage": 22.1,
       "status": "public"
     },
     "Austin": {
@@ -101,23 +105,17 @@
       "percentage": 0.2,
       "status": "public"
     },
-    "Washington, D.C.": {
-      "code": "WASHINGTON_DC",
+    "Las Vegas": {
+      "code": "LAS_VEGAS",
       "count": 1,
       "percentage": 0.0,
-      "status": "testing"
-    },
-    "Other": {
-      "code": "OTHER",
-      "count": 1,
-      "percentage": 0.0,
-      "status": "other"
+      "status": "public"
     },
     "Denver": {
       "code": "DENVER",
       "count": 1,
       "percentage": 0.0,
-      "status": "testing"
+      "status": "public"
     }
   },
   "cities": {
@@ -128,7 +126,9 @@
       "lon": -122.4194,
       "status": "public",
       "public_since": "2023",
-      "count": 875
+      "launched": "2023-08",
+      "testing": null,
+      "count": 874
     },
     "PHOENIX": {
       "name": "Phoenix",
@@ -137,6 +137,8 @@
       "lon": -112.074,
       "status": "public",
       "public_since": "2020",
+      "launched": "2020-10",
+      "testing": null,
       "count": 471
     },
     "LOS_ANGELES": {
@@ -146,6 +148,8 @@
       "lon": -118.2437,
       "status": "public",
       "public_since": "2024",
+      "launched": "2024-03",
+      "testing": null,
       "count": 470
     },
     "AUSTIN": {
@@ -155,6 +159,8 @@
       "lon": -97.7431,
       "status": "public",
       "public_since": "2025",
+      "launched": "2025-03",
+      "testing": null,
       "count": 177
     },
     "ATLANTA": {
@@ -164,6 +170,8 @@
       "lon": -84.388,
       "status": "public",
       "public_since": "2025",
+      "launched": "2025-06",
+      "testing": null,
       "count": 74
     },
     "MIAMI": {
@@ -173,6 +181,8 @@
       "lon": -80.1918,
       "status": "public",
       "public_since": "2026",
+      "launched": "2026-01",
+      "testing": null,
       "count": 19
     },
     "ORLANDO": {
@@ -182,6 +192,8 @@
       "lon": -81.3792,
       "status": "public",
       "public_since": "2026",
+      "launched": "2026-02",
+      "testing": null,
       "count": 7
     },
     "DALLAS": {
@@ -191,6 +203,8 @@
       "lon": -96.797,
       "status": "public",
       "public_since": "2026",
+      "launched": "2026-02",
+      "testing": null,
       "count": 13
     },
     "HOUSTON": {
@@ -200,6 +214,8 @@
       "lon": -95.3698,
       "status": "public",
       "public_since": "2026",
+      "launched": "2026-02",
+      "testing": null,
       "count": 12
     },
     "SAN_ANTONIO": {
@@ -209,6 +225,8 @@
       "lon": -98.4946,
       "status": "public",
       "public_since": "2026",
+      "launched": "2026-02",
+      "testing": null,
       "count": 4
     },
     "NASHVILLE": {
@@ -218,7 +236,64 @@
       "lon": -86.7816,
       "status": "public",
       "public_since": "2026",
+      "launched": "2026-04",
+      "testing": null,
       "count": 8
+    },
+    "DENVER": {
+      "name": "Denver",
+      "state": "CO",
+      "lat": 39.7392,
+      "lon": -104.9903,
+      "status": "public",
+      "public_since": "2026",
+      "launched": "2026-09",
+      "testing": null,
+      "count": 1
+    },
+    "SAN_DIEGO": {
+      "name": "San Diego",
+      "state": "CA",
+      "lat": 32.7157,
+      "lon": -117.1611,
+      "status": "public",
+      "public_since": "2026",
+      "launched": "2026-09",
+      "testing": null,
+      "count": 0
+    },
+    "TAMPA": {
+      "name": "Tampa",
+      "state": "FL",
+      "lat": 27.9506,
+      "lon": -82.4572,
+      "status": "public",
+      "public_since": "2026",
+      "launched": "2026-09",
+      "testing": null,
+      "count": 0
+    },
+    "LAS_VEGAS": {
+      "name": "Las Vegas",
+      "state": "NV",
+      "lat": 36.1699,
+      "lon": -115.1398,
+      "status": "public",
+      "public_since": "2026",
+      "launched": "2026-09",
+      "testing": null,
+      "count": 1
+    },
+    "DETROIT": {
+      "name": "Detroit",
+      "state": "MI",
+      "lat": 42.3314,
+      "lon": -83.0458,
+      "status": "testing",
+      "public_since": null,
+      "launched": null,
+      "testing": "driverless",
+      "count": 0
     },
     "WASHINGTON_DC": {
       "name": "Washington, D.C.",
@@ -227,16 +302,9 @@
       "lon": -77.0369,
       "status": "testing",
       "public_since": null,
-      "count": 1
-    },
-    "DENVER": {
-      "name": "Denver",
-      "state": "CO",
-      "lat": 39.7392,
-      "lon": -104.9903,
-      "status": "testing",
-      "public_since": null,
-      "count": 1
+      "launched": null,
+      "testing": "supervised",
+      "count": 0
     },
     "PHILADELPHIA": {
       "name": "Philadelphia",
@@ -245,28 +313,12 @@
       "lon": -75.1652,
       "status": "testing",
       "public_since": null,
+      "launched": null,
+      "testing": "supervised",
       "count": 0
     }
   },
   "expansion": [
-    {
-      "name": "Las Vegas",
-      "state": "NV",
-      "lat": 36.1699,
-      "lon": -115.1398
-    },
-    {
-      "name": "San Diego",
-      "state": "CA",
-      "lat": 32.7157,
-      "lon": -117.1611
-    },
-    {
-      "name": "Detroit",
-      "state": "MI",
-      "lat": 42.3314,
-      "lon": -83.0458
-    },
     {
       "name": "New York",
       "state": "NY",
@@ -284,12 +336,6 @@
       "state": "LA",
       "lat": 29.9511,
       "lon": -90.0715
-    },
-    {
-      "name": "Tampa",
-      "state": "FL",
-      "lat": 27.9506,
-      "lon": -82.4572
     },
     {
       "name": "Baltimore",
@@ -310,12 +356,6 @@
       "lon": -90.1994
     },
     {
-      "name": "Boston",
-      "state": "MA",
-      "lat": 42.3601,
-      "lon": -71.0589
-    },
-    {
       "name": "Charlotte",
       "state": "NC",
       "lat": 35.2271,
@@ -326,12 +366,6 @@
       "state": "IL",
       "lat": 41.8781,
       "lon": -87.6298
-    },
-    {
-      "name": "Sacramento",
-      "state": "CA",
-      "lat": 38.5816,
-      "lon": -121.4944
     },
     {
       "name": "Seattle",
@@ -433,7 +467,7 @@
   },
   "crash_types_meta": {
     "classified_count": 1970,
-    "unclassified_count": 163
+    "unclassified_count": 161
   },
   "monthly_trend": {
     "202009": 1,
@@ -443,7 +477,7 @@
     "202208": 2,
     "202211": 1,
     "202212": 1,
-    "202301": 4,
+    "202301": 3,
     "202302": 3,
     "202303": 3,
     "202304": 5,
@@ -481,13 +515,21 @@
     "202512": 90,
     "202601": 91,
     "202602": 72,
-    "202603": 110,
+    "202603": 109,
     "202604": 109,
     "202605": 100,
     "202606": 102,
     "202607": 87,
     "202608": 66,
     "202609": 7
+  },
+  "monthly_trend_meta": {
+    "complete_through": 202607,
+    "provisional_months": [
+      "202608",
+      "202609"
+    ],
+    "provisional_count": 73
   },
   "time_periods": {
     "Early Morning": {
@@ -511,7 +553,7 @@
       "percentage": 16.0
     },
     "Evening Rush": {
-      "count": 327,
+      "count": 325,
       "percentage": 15.3
     },
     "Night": {
@@ -524,11 +566,11 @@
     }
   },
   "temporal": {
-    "rush_hour_count": 611,
-    "rush_hour_percentage": 28.7,
+    "rush_hour_count": 609,
+    "rush_hour_percentage": 28.6,
     "late_night_count": 372,
     "late_night_percentage": 17.5,
-    "daytime_count": 1426,
+    "daytime_count": 1424,
     "daytime_percentage": 66.9,
     "nighttime_count": 705,
     "nighttime_percentage": 33.1,
@@ -550,9 +592,9 @@
       "14": 95,
       "15": 128,
       "16": 118,
-      "17": 120,
+      "17": 119,
       "18": 121,
-      "19": 86,
+      "19": 85,
       "20": 90,
       "21": 102,
       "22": 104,
@@ -603,9 +645,9 @@
   },
   "city_peaks": {
     "San Francisco": {
-      "peak_hour": 17,
-      "peak_label": "5:00 PM",
-      "total_crashes": 875
+      "peak_hour": 18,
+      "peak_label": "6:00 PM",
+      "total_crashes": 874
     },
     "Phoenix": {
       "peak_hour": 15,
@@ -644,35 +686,39 @@
     }
   },
   "location_types": {
+    "Street": {
+      "count": 1461,
+      "percentage": 68.6
+    },
     "Intersection": {
-      "count": 962,
-      "percentage": 45.1
+      "count": 463,
+      "percentage": 21.7
     },
-    "Street/Road": {
-      "count": 572,
-      "percentage": 26.8
+    "Parking lot": {
+      "count": 188,
+      "percentage": 8.8
     },
-    "Parking": {
-      "count": 560,
-      "percentage": 26.3
+    "Highway/freeway": {
+      "count": 10,
+      "percentage": 0.5
     },
-    "Highway/Freeway": {
-      "count": 25,
-      "percentage": 1.2
+    "Traffic circle": {
+      "count": 5,
+      "percentage": 0.2
     },
-    "Other/Unknown": {
-      "count": 12,
-      "percentage": 0.6
+    "Other/unknown": {
+      "count": 4,
+      "percentage": 0.2
     }
   },
   "crash_circumstances": {
     "speed_distribution": {
       "0_mph": {
         "count": 1306,
-        "percentage": 61.3
+        "percentage": 61.4
       },
       "1_5_mph": {
-        "count": 311,
+        "count": 310,
         "percentage": 14.6
       },
       "6_15_mph": {
@@ -684,20 +730,31 @@
         "percentage": 7.5
       },
       "26_35_mph": {
-        "count": 70,
-        "percentage": 3.3
+        "count": 69,
+        "percentage": 3.2
       },
       "36_plus_mph": {
         "count": 33,
         "percentage": 1.6
       }
     },
+    "stationary": {
+      "count": 1293,
+      "known_base": 2128,
+      "percentage": 60.8
+    },
     "speed_stats": {
-      "total_with_speed_data": 2129,
+      "total_with_speed_data": 2127,
       "median_speed_mph": 0.0,
       "mean_speed_mph": 4.8,
-      "stopped_pct": 61.3,
+      "stopped_pct": 61.4,
       "under_5mph_pct": 76.0
+    },
+    "rear_end": {
+      "count": 542,
+      "waymo_struck_from_behind": 526,
+      "waymo_struck_from_behind_pct": 97.0,
+      "waymo_front_contact": 10
     },
     "crash_type_plain": {
       "Rear-end collision": {
@@ -756,102 +813,1429 @@
   "city_mileage": {
     "San Francisco": {
       "miles_millions": 82.421,
-      "crashes_per_million_miles": 10.6
+      "crashes_in_window": 817,
+      "crashes_per_million_miles": 9.9
     },
     "Phoenix": {
       "miles_millions": 92.121,
-      "crashes_per_million_miles": 5.1
+      "crashes_in_window": 450,
+      "crashes_per_million_miles": 4.9
     },
     "Los Angeles": {
       "miles_millions": 67.098,
-      "crashes_per_million_miles": 7.0
+      "crashes_in_window": 440,
+      "crashes_per_million_miles": 6.6
     },
     "Austin": {
       "miles_millions": 21.064,
-      "crashes_per_million_miles": 8.4
+      "crashes_in_window": 162,
+      "crashes_per_million_miles": 7.7
     },
     "Atlanta": {
-      "miles_millions": null,
-      "crashes_per_million_miles": null
+      "miles_millions": 8.624,
+      "crashes_in_window": 61,
+      "crashes_per_million_miles": 7.1
     },
     "Miami": {
       "miles_millions": null,
+      "crashes_in_window": 13,
       "crashes_per_million_miles": null
     },
     "Orlando": {
       "miles_millions": null,
+      "crashes_in_window": 6,
       "crashes_per_million_miles": null
     },
     "Dallas": {
       "miles_millions": null,
+      "crashes_in_window": 6,
       "crashes_per_million_miles": null
     },
     "Houston": {
       "miles_millions": null,
+      "crashes_in_window": 8,
       "crashes_per_million_miles": null
     },
     "San Antonio": {
       "miles_millions": null,
+      "crashes_in_window": 4,
       "crashes_per_million_miles": null
     },
     "Nashville": {
       "miles_millions": null,
-      "crashes_per_million_miles": null
-    },
-    "Washington, D.C.": {
-      "miles_millions": null,
+      "crashes_in_window": 4,
       "crashes_per_million_miles": null
     },
     "Denver": {
       "miles_millions": null,
+      "crashes_in_window": 0,
+      "crashes_per_million_miles": null
+    },
+    "San Diego": {
+      "miles_millions": null,
+      "crashes_in_window": 0,
+      "crashes_per_million_miles": null
+    },
+    "Tampa": {
+      "miles_millions": null,
+      "crashes_in_window": 0,
+      "crashes_per_million_miles": null
+    },
+    "Las Vegas": {
+      "miles_millions": null,
+      "crashes_in_window": 0,
+      "crashes_per_million_miles": null
+    },
+    "Detroit": {
+      "miles_millions": null,
+      "crashes_in_window": 0,
+      "crashes_per_million_miles": null
+    },
+    "Washington, D.C.": {
+      "miles_millions": null,
+      "crashes_in_window": 0,
       "crashes_per_million_miles": null
     },
     "Philadelphia": {
       "miles_millions": null,
+      "crashes_in_window": 0,
       "crashes_per_million_miles": null
     }
   },
   "city_mileage_meta": {
     "data_through": "June 2026",
+    "data_through_ym": 202606,
     "source_url": "https://waymo.com/safety/impact/#downloads"
   },
+  "benchmarks": {
+    "overall": {
+      "serious_injury": {
+        "waymo_count": 3,
+        "predicted_human_count": 57.9,
+        "waymo_rate_per_million": 0.011,
+        "human_rate_per_million": 0.213,
+        "reduction_pct": 94.8,
+        "reduction_ci_low": 83.2,
+        "reduction_ci_high": 99.2
+      },
+      "any_injury": {
+        "waymo_count": 183,
+        "predicted_human_count": 1023.9,
+        "waymo_rate_per_million": 0.674,
+        "human_rate_per_million": 3.774,
+        "reduction_pct": 82.1,
+        "reduction_ci_low": 78.9,
+        "reduction_ci_high": 85.0
+      },
+      "airbag": {
+        "waymo_count": 80,
+        "predicted_human_count": 438.3,
+        "waymo_rate_per_million": 0.295,
+        "human_rate_per_million": 1.615,
+        "reduction_pct": 81.7,
+        "reduction_ci_low": 76.6,
+        "reduction_ci_high": 86.0
+      },
+      "police": {
+        "waymo_count": 392,
+        "predicted_human_count": 1510.8,
+        "waymo_rate_per_million": 1.445,
+        "human_rate_per_million": 5.568,
+        "reduction_pct": 74.1,
+        "reduction_ci_low": 70.9,
+        "reduction_ci_high": 76.9
+      },
+      "fatal": {
+        "waymo_count": 2,
+        "predicted_human_count": 9.6,
+        "waymo_rate_per_million": 0.007,
+        "human_rate_per_million": 0.036,
+        "reduction_pct": 79.3,
+        "reduction_ci_low": 15.3,
+        "reduction_ci_high": 98.3
+      }
+    },
+    "by_metro": {
+      "San Francisco": {
+        "serious_injury": {
+          "waymo_count": 2,
+          "predicted_human_count": 32.2,
+          "waymo_rate_per_million": 0.024,
+          "human_rate_per_million": 0.391,
+          "reduction_pct": 93.8,
+          "reduction_ci_low": 74.6,
+          "reduction_ci_high": 99.5
+        },
+        "any_injury": {
+          "waymo_count": 55,
+          "predicted_human_count": 547.2,
+          "waymo_rate_per_million": 0.667,
+          "human_rate_per_million": 6.639,
+          "reduction_pct": 89.9,
+          "reduction_ci_low": 86.4,
+          "reduction_ci_high": 92.7
+        },
+        "airbag": {
+          "waymo_count": 26,
+          "predicted_human_count": 158.2,
+          "waymo_rate_per_million": 0.315,
+          "human_rate_per_million": 1.919,
+          "reduction_pct": 83.6,
+          "reduction_ci_low": 74.7,
+          "reduction_ci_high": 90.0
+        },
+        "police": {
+          "waymo_count": 119,
+          "predicted_human_count": 563.9,
+          "waymo_rate_per_million": 1.444,
+          "human_rate_per_million": 6.842,
+          "reduction_pct": 78.9,
+          "reduction_ci_low": 74.1,
+          "reduction_ci_high": 83.0
+        },
+        "fatal": {
+          "waymo_count": 1,
+          "predicted_human_count": 5.0,
+          "waymo_rate_per_million": 0.012,
+          "human_rate_per_million": 0.06,
+          "reduction_pct": 79.8,
+          "reduction_ci_low": -33.8,
+          "reduction_ci_high": 99.7
+        }
+      },
+      "Atlanta": {
+        "serious_injury": {
+          "waymo_count": 0,
+          "predicted_human_count": 2.0,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.229,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -87.4,
+          "reduction_ci_high": 100.0
+        },
+        "any_injury": {
+          "waymo_count": 7,
+          "predicted_human_count": 56.8,
+          "waymo_rate_per_million": 0.812,
+          "human_rate_per_million": 6.58,
+          "reduction_pct": 87.7,
+          "reduction_ci_low": 72.5,
+          "reduction_ci_high": 95.7
+        },
+        "airbag": {
+          "waymo_count": 2,
+          "predicted_human_count": 24.4,
+          "waymo_rate_per_million": 0.232,
+          "human_rate_per_million": 2.831,
+          "reduction_pct": 91.8,
+          "reduction_ci_low": 66.7,
+          "reduction_ci_high": 99.3
+        },
+        "police": {
+          "waymo_count": 17,
+          "predicted_human_count": 152.2,
+          "waymo_rate_per_million": 1.971,
+          "human_rate_per_million": 17.644,
+          "reduction_pct": 88.8,
+          "reduction_ci_low": 81.1,
+          "reduction_ci_high": 94.0
+        },
+        "fatal": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.2,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.018,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -2366.5,
+          "reduction_ci_high": 100.0
+        }
+      },
+      "Los Angeles": {
+        "serious_injury": {
+          "waymo_count": 0,
+          "predicted_human_count": 10.5,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.156,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": 64.8,
+          "reduction_ci_high": 100.0
+        },
+        "any_injury": {
+          "waymo_count": 58,
+          "predicted_human_count": 171.4,
+          "waymo_rate_per_million": 0.864,
+          "human_rate_per_million": 2.554,
+          "reduction_pct": 66.2,
+          "reduction_ci_low": 54.7,
+          "reduction_ci_high": 75.3
+        },
+        "airbag": {
+          "waymo_count": 19,
+          "predicted_human_count": 84.9,
+          "waymo_rate_per_million": 0.283,
+          "human_rate_per_million": 1.266,
+          "reduction_pct": 77.6,
+          "reduction_ci_low": 63.1,
+          "reduction_ci_high": 87.5
+        },
+        "police": {
+          "waymo_count": 80,
+          "predicted_human_count": 245.1,
+          "waymo_rate_per_million": 1.192,
+          "human_rate_per_million": 3.653,
+          "reduction_pct": 67.4,
+          "reduction_ci_low": 58.2,
+          "reduction_ci_high": 75.0
+        },
+        "fatal": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.6,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.025,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -124.3,
+          "reduction_ci_high": 100.0
+        }
+      },
+      "Phoenix": {
+        "serious_injury": {
+          "waymo_count": 1,
+          "predicted_human_count": 9.5,
+          "waymo_rate_per_million": 0.011,
+          "human_rate_per_million": 0.104,
+          "reduction_pct": 89.5,
+          "reduction_ci_low": 33.0,
+          "reduction_ci_high": 99.9
+        },
+        "any_injury": {
+          "waymo_count": 52,
+          "predicted_human_count": 180.0,
+          "waymo_rate_per_million": 0.564,
+          "human_rate_per_million": 1.954,
+          "reduction_pct": 71.1,
+          "reduction_ci_low": 60.7,
+          "reduction_ci_high": 79.3
+        },
+        "airbag": {
+          "waymo_count": 28,
+          "predicted_human_count": 121.8,
+          "waymo_rate_per_million": 0.304,
+          "human_rate_per_million": 1.323,
+          "reduction_pct": 77.0,
+          "reduction_ci_low": 65.2,
+          "reduction_ci_high": 85.6
+        },
+        "police": {
+          "waymo_count": 151,
+          "predicted_human_count": 423.0,
+          "waymo_rate_per_million": 1.639,
+          "human_rate_per_million": 4.592,
+          "reduction_pct": 64.3,
+          "reduction_ci_low": 57.2,
+          "reduction_ci_high": 70.5
+        },
+        "fatal": {
+          "waymo_count": 1,
+          "predicted_human_count": 2.3,
+          "waymo_rate_per_million": 0.011,
+          "human_rate_per_million": 0.025,
+          "reduction_pct": 57.2,
+          "reduction_ci_low": -174.4,
+          "reduction_ci_high": 99.5
+        }
+      },
+      "Austin": {
+        "serious_injury": {
+          "waymo_count": 0,
+          "predicted_human_count": 3.7,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.175,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -0.2,
+          "reduction_ci_high": 100.0
+        },
+        "any_injury": {
+          "waymo_count": 11,
+          "predicted_human_count": 68.6,
+          "waymo_rate_per_million": 0.522,
+          "human_rate_per_million": 3.255,
+          "reduction_pct": 84.0,
+          "reduction_ci_low": 69.3,
+          "reduction_ci_high": 92.8
+        },
+        "airbag": {
+          "waymo_count": 5,
+          "predicted_human_count": 48.9,
+          "waymo_rate_per_million": 0.237,
+          "human_rate_per_million": 2.323,
+          "reduction_pct": 89.8,
+          "reduction_ci_low": 73.9,
+          "reduction_ci_high": 97.2
+        },
+        "police": {
+          "waymo_count": 25,
+          "predicted_human_count": 126.5,
+          "waymo_rate_per_million": 1.187,
+          "human_rate_per_million": 6.006,
+          "reduction_pct": 80.2,
+          "reduction_ci_low": 69.4,
+          "reduction_ci_high": 88.0
+        },
+        "fatal": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.6,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.026,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -570.8,
+          "reduction_ci_high": 100.0
+        }
+      }
+    },
+    "by_partner": {
+      "serious_injury": {
+        "All Others": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.0,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.004,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -296.7,
+          "reduction_ci_high": 100.0
+        },
+        "Cyclist": {
+          "waymo_count": 0,
+          "predicted_human_count": 4.6,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.017,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": 20.0,
+          "reduction_ci_high": 100.0
+        },
+        "Motorcycle": {
+          "waymo_count": 1,
+          "predicted_human_count": 6.9,
+          "waymo_rate_per_million": 0.004,
+          "human_rate_per_million": 0.026,
+          "reduction_pct": 85.6,
+          "reduction_ci_low": 7.5,
+          "reduction_ci_high": 99.8
+        },
+        "Pedestrian": {
+          "waymo_count": 0,
+          "predicted_human_count": 14.1,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.052,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": 73.7,
+          "reduction_ci_high": 100.0
+        },
+        "Secondary Crash": {
+          "waymo_count": 2,
+          "predicted_human_count": 4.1,
+          "waymo_rate_per_million": 0.008,
+          "human_rate_per_million": 0.016,
+          "reduction_pct": 51.7,
+          "reduction_ci_low": -98.4,
+          "reduction_ci_high": 96.0
+        },
+        "Single Vehicle": {
+          "waymo_count": 0,
+          "predicted_human_count": 5.5,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.02,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": 32.7,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Backing": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.0,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.0,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -16763.4,
+          "reduction_ci_high": 100.0
+        },
+        "V2V F2R": {
+          "waymo_count": 0,
+          "predicted_human_count": 3.1,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.012,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -18.4,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Head-on": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.7,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.006,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -116.2,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Intersection": {
+          "waymo_count": 0,
+          "predicted_human_count": 14.9,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.055,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": 75.2,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Lateral": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.7,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.006,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -120.0,
+          "reduction_ci_high": 100.0
+        }
+      },
+      "any_injury": {
+        "All Others": {
+          "waymo_count": 3,
+          "predicted_human_count": 20.0,
+          "waymo_rate_per_million": 0.011,
+          "human_rate_per_million": 0.074,
+          "reduction_pct": 85.0,
+          "reduction_ci_low": 51.3,
+          "reduction_ci_high": 97.6
+        },
+        "Cyclist": {
+          "waymo_count": 9,
+          "predicted_human_count": 65.1,
+          "waymo_rate_per_million": 0.033,
+          "human_rate_per_million": 0.24,
+          "reduction_pct": 86.2,
+          "reduction_ci_low": 71.7,
+          "reduction_ci_high": 94.4
+        },
+        "Motorcycle": {
+          "waymo_count": 8,
+          "predicted_human_count": 43.5,
+          "waymo_rate_per_million": 0.029,
+          "human_rate_per_million": 0.16,
+          "reduction_pct": 81.6,
+          "reduction_ci_low": 60.8,
+          "reduction_ci_high": 93.1
+        },
+        "Pedestrian": {
+          "waymo_count": 7,
+          "predicted_human_count": 93.4,
+          "waymo_rate_per_million": 0.026,
+          "human_rate_per_million": 0.344,
+          "reduction_pct": 92.5,
+          "reduction_ci_low": 83.3,
+          "reduction_ci_high": 97.4
+        },
+        "Secondary Crash": {
+          "waymo_count": 23,
+          "predicted_human_count": 55.7,
+          "waymo_rate_per_million": 0.087,
+          "human_rate_per_million": 0.212,
+          "reduction_pct": 58.7,
+          "reduction_ci_low": 34.8,
+          "reduction_ci_high": 75.6
+        },
+        "Single Vehicle": {
+          "waymo_count": 2,
+          "predicted_human_count": 72.3,
+          "waymo_rate_per_million": 0.007,
+          "human_rate_per_million": 0.266,
+          "reduction_pct": 97.2,
+          "reduction_ci_low": 88.8,
+          "reduction_ci_high": 99.8
+        },
+        "V2V Backing": {
+          "waymo_count": 6,
+          "predicted_human_count": 8.5,
+          "waymo_rate_per_million": 0.022,
+          "human_rate_per_million": 0.031,
+          "reduction_pct": 29.6,
+          "reduction_ci_low": -68.0,
+          "reduction_ci_high": 78.1
+        },
+        "V2V F2R": {
+          "waymo_count": 88,
+          "predicted_human_count": 169.7,
+          "waymo_rate_per_million": 0.324,
+          "human_rate_per_million": 0.626,
+          "reduction_pct": 48.2,
+          "reduction_ci_low": 34.3,
+          "reduction_ci_high": 59.8
+        },
+        "V2V Head-on": {
+          "waymo_count": 10,
+          "predicted_human_count": 20.0,
+          "waymo_rate_per_million": 0.037,
+          "human_rate_per_million": 0.074,
+          "reduction_pct": 50.1,
+          "reduction_ci_low": 1.2,
+          "reduction_ci_high": 78.7
+        },
+        "V2V Intersection": {
+          "waymo_count": 15,
+          "predicted_human_count": 405.5,
+          "waymo_rate_per_million": 0.055,
+          "human_rate_per_million": 1.495,
+          "reduction_pct": 96.3,
+          "reduction_ci_low": 93.5,
+          "reduction_ci_high": 98.1
+        },
+        "V2V Lateral": {
+          "waymo_count": 12,
+          "predicted_human_count": 68.6,
+          "waymo_rate_per_million": 0.044,
+          "human_rate_per_million": 0.253,
+          "reduction_pct": 82.5,
+          "reduction_ci_low": 67.3,
+          "reduction_ci_high": 91.8
+        }
+      },
+      "airbag": {
+        "All Others": {
+          "waymo_count": 2,
+          "predicted_human_count": 9.7,
+          "waymo_rate_per_million": 0.007,
+          "human_rate_per_million": 0.036,
+          "reduction_pct": 79.4,
+          "reduction_ci_low": 15.9,
+          "reduction_ci_high": 98.3
+        },
+        "Cyclist": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.6,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.002,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -519.3,
+          "reduction_ci_high": 100.0
+        },
+        "Motorcycle": {
+          "waymo_count": 0,
+          "predicted_human_count": 2.3,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.009,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -59.3,
+          "reduction_ci_high": 100.0
+        },
+        "Pedestrian": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.2,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.004,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -225.4,
+          "reduction_ci_high": 100.0
+        },
+        "Secondary Crash": {
+          "waymo_count": 19,
+          "predicted_human_count": 30.3,
+          "waymo_rate_per_million": 0.072,
+          "human_rate_per_million": 0.115,
+          "reduction_pct": 37.3,
+          "reduction_ci_low": -3.7,
+          "reduction_ci_high": 65.1
+        },
+        "Single Vehicle": {
+          "waymo_count": 0,
+          "predicted_human_count": 54.3,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.2,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": 93.2,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Backing": {
+          "waymo_count": 1,
+          "predicted_human_count": 1.6,
+          "waymo_rate_per_million": 0.004,
+          "human_rate_per_million": 0.006,
+          "reduction_pct": 38.7,
+          "reduction_ci_low": -301.3,
+          "reduction_ci_high": 99.2
+        },
+        "V2V F2R": {
+          "waymo_count": 34,
+          "predicted_human_count": 57.8,
+          "waymo_rate_per_million": 0.125,
+          "human_rate_per_million": 0.213,
+          "reduction_pct": 41.1,
+          "reduction_ci_low": 14.0,
+          "reduction_ci_high": 61.5
+        },
+        "V2V Head-on": {
+          "waymo_count": 9,
+          "predicted_human_count": 13.7,
+          "waymo_rate_per_million": 0.033,
+          "human_rate_per_million": 0.05,
+          "reduction_pct": 34.2,
+          "reduction_ci_low": -35.2,
+          "reduction_ci_high": 73.5
+        },
+        "V2V Intersection": {
+          "waymo_count": 12,
+          "predicted_human_count": 242.7,
+          "waymo_rate_per_million": 0.044,
+          "human_rate_per_million": 0.895,
+          "reduction_pct": 95.1,
+          "reduction_ci_low": 90.8,
+          "reduction_ci_high": 97.7
+        },
+        "V2V Lateral": {
+          "waymo_count": 3,
+          "predicted_human_count": 23.4,
+          "waymo_rate_per_million": 0.011,
+          "human_rate_per_million": 0.086,
+          "reduction_pct": 87.2,
+          "reduction_ci_low": 58.3,
+          "reduction_ci_high": 98.0
+        }
+      },
+      "police": {
+        "All Others": {
+          "waymo_count": 9,
+          "predicted_human_count": 27.0,
+          "waymo_rate_per_million": 0.033,
+          "human_rate_per_million": 0.1,
+          "reduction_pct": 66.7,
+          "reduction_ci_low": 31.8,
+          "reduction_ci_high": 86.5
+        },
+        "Cyclist": {
+          "waymo_count": 6,
+          "predicted_human_count": 46.4,
+          "waymo_rate_per_million": 0.022,
+          "human_rate_per_million": 0.171,
+          "reduction_pct": 87.1,
+          "reduction_ci_low": 69.3,
+          "reduction_ci_high": 96.0
+        },
+        "Motorcycle": {
+          "waymo_count": 9,
+          "predicted_human_count": 32.3,
+          "waymo_rate_per_million": 0.033,
+          "human_rate_per_million": 0.119,
+          "reduction_pct": 72.1,
+          "reduction_ci_low": 42.9,
+          "reduction_ci_high": 88.7
+        },
+        "Pedestrian": {
+          "waymo_count": 5,
+          "predicted_human_count": 65.2,
+          "waymo_rate_per_million": 0.018,
+          "human_rate_per_million": 0.24,
+          "reduction_pct": 92.3,
+          "reduction_ci_low": 80.4,
+          "reduction_ci_high": 97.9
+        },
+        "Secondary Crash": {
+          "waymo_count": 40,
+          "predicted_human_count": 65.6,
+          "waymo_rate_per_million": 0.152,
+          "human_rate_per_million": 0.249,
+          "reduction_pct": 39.0,
+          "reduction_ci_low": 13.4,
+          "reduction_ci_high": 58.6
+        },
+        "Single Vehicle": {
+          "waymo_count": 11,
+          "predicted_human_count": 212.5,
+          "waymo_rate_per_million": 0.041,
+          "human_rate_per_million": 0.783,
+          "reduction_pct": 94.8,
+          "reduction_ci_low": 90.1,
+          "reduction_ci_high": 97.7
+        },
+        "V2V Backing": {
+          "waymo_count": 39,
+          "predicted_human_count": 24.1,
+          "waymo_rate_per_million": 0.144,
+          "human_rate_per_million": 0.089,
+          "reduction_pct": -61.9,
+          "reduction_ci_low": -131.6,
+          "reduction_ci_high": -8.9
+        },
+        "V2V F2R": {
+          "waymo_count": 123,
+          "predicted_human_count": 294.8,
+          "waymo_rate_per_million": 0.453,
+          "human_rate_per_million": 1.087,
+          "reduction_pct": 58.3,
+          "reduction_ci_low": 49.0,
+          "reduction_ci_high": 66.3
+        },
+        "V2V Head-on": {
+          "waymo_count": 35,
+          "predicted_human_count": 36.4,
+          "waymo_rate_per_million": 0.129,
+          "human_rate_per_million": 0.134,
+          "reduction_pct": 3.8,
+          "reduction_ci_low": -39.9,
+          "reduction_ci_high": 36.7
+        },
+        "V2V Intersection": {
+          "waymo_count": 58,
+          "predicted_human_count": 529.2,
+          "waymo_rate_per_million": 0.214,
+          "human_rate_per_million": 1.95,
+          "reduction_pct": 89.0,
+          "reduction_ci_low": 85.3,
+          "reduction_ci_high": 92.0
+        },
+        "V2V Lateral": {
+          "waymo_count": 57,
+          "predicted_human_count": 175.9,
+          "waymo_rate_per_million": 0.21,
+          "human_rate_per_million": 0.648,
+          "reduction_pct": 67.6,
+          "reduction_ci_low": 56.5,
+          "reduction_ci_high": 76.5
+        }
+      },
+      "fatal": {
+        "All Others": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.2,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.001,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -2492.0,
+          "reduction_ci_high": 100.0
+        },
+        "Cyclist": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.2,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.001,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -2248.4,
+          "reduction_ci_high": 100.0
+        },
+        "Motorcycle": {
+          "waymo_count": 1,
+          "predicted_human_count": 1.2,
+          "waymo_rate_per_million": 0.004,
+          "human_rate_per_million": 0.004,
+          "reduction_pct": 15.0,
+          "reduction_ci_low": -462.2,
+          "reduction_ci_high": 98.9
+        },
+        "Pedestrian": {
+          "waymo_count": 0,
+          "predicted_human_count": 3.4,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.013,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -8.1,
+          "reduction_ci_high": 100.0
+        },
+        "Secondary Crash": {
+          "waymo_count": 1,
+          "predicted_human_count": 0.7,
+          "waymo_rate_per_million": 0.004,
+          "human_rate_per_million": 0.003,
+          "reduction_pct": -41.7,
+          "reduction_ci_low": -857.5,
+          "reduction_ci_high": 98.3
+        },
+        "Single Vehicle": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.4,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.005,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -174.9,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Backing": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.0,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.0,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -68038.2,
+          "reduction_ci_high": 100.0
+        },
+        "V2V F2R": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.2,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.001,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -2279.9,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Head-on": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.4,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.001,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -1010.7,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Intersection": {
+          "waymo_count": 0,
+          "predicted_human_count": 1.9,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.007,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -93.0,
+          "reduction_ci_high": 100.0
+        },
+        "V2V Lateral": {
+          "waymo_count": 0,
+          "predicted_human_count": 0.1,
+          "waymo_rate_per_million": 0.0,
+          "human_rate_per_million": 0.0,
+          "reduction_pct": 100.0,
+          "reduction_ci_low": -5019.6,
+          "reduction_ci_high": 100.0
+        }
+      }
+    }
+  },
   "waymo_context": {
-    "miles_study_period": "56.7 million",
-    "serious_crash_reduction_pct": 92,
-    "injury_crash_reduction_pct": 82,
-    "airbag_crash_reduction_pct": 83,
-    "pedestrian_injury_reduction_pct": 92,
-    "cyclist_injury_reduction_pct": 85,
-    "motorcycle_injury_reduction_pct": 81,
     "source_url": "https://waymo.com/safety/impact/",
     "study_url": "https://doi.org/10.1080/15389588.2025.2499887",
+    "study_citation": "Kusano et al. (2025), Traffic Injury Prevention",
     "total_rider_only_miles": 271329000,
-    "data_through": "June 2026"
+    "data_through": "June 2026",
+    "serious_crash_reduction_pct": 94.8,
+    "injury_crash_reduction_pct": 82.1,
+    "airbag_crash_reduction_pct": 81.7
   },
+  "quarterly_rates": {
+    "amendment_3_quarter": 202506,
+    "series": {
+      "All metros": [
+        {
+          "quarter": 202412,
+          "miles_millions": 16.98,
+          "crashes": 192,
+          "injury": 12,
+          "police": 33,
+          "crashes_per_million": 11.31,
+          "injury_per_million": 0.71,
+          "police_per_million": 1.94
+        },
+        {
+          "quarter": 202503,
+          "miles_millions": 21.481,
+          "crashes": 200,
+          "injury": 24,
+          "police": 33,
+          "crashes_per_million": 9.31,
+          "injury_per_million": 1.12,
+          "police_per_million": 1.54
+        },
+        {
+          "quarter": 202506,
+          "miles_millions": 24.401,
+          "crashes": 235,
+          "injury": 11,
+          "police": 39,
+          "crashes_per_million": 9.63,
+          "injury_per_million": 0.45,
+          "police_per_million": 1.6
+        },
+        {
+          "quarter": 202509,
+          "miles_millions": 31.193,
+          "crashes": 150,
+          "injury": 18,
+          "police": 36,
+          "crashes_per_million": 4.81,
+          "injury_per_million": 0.58,
+          "police_per_million": 1.15
+        },
+        {
+          "quarter": 202512,
+          "miles_millions": 43.554,
+          "crashes": 251,
+          "injury": 27,
+          "police": 60,
+          "crashes_per_million": 5.76,
+          "injury_per_million": 0.62,
+          "police_per_million": 1.38
+        },
+        {
+          "quarter": 202603,
+          "miles_millions": 44.522,
+          "crashes": 249,
+          "injury": 29,
+          "police": 63,
+          "crashes_per_million": 5.59,
+          "injury_per_million": 0.65,
+          "police_per_million": 1.42
+        },
+        {
+          "quarter": 202606,
+          "miles_millions": 50.715,
+          "crashes": 284,
+          "injury": 27,
+          "police": 47,
+          "crashes_per_million": 5.6,
+          "injury_per_million": 0.53,
+          "police_per_million": 0.93
+        }
+      ],
+      "San Francisco": [
+        {
+          "quarter": 202412,
+          "miles_millions": 5.823,
+          "crashes": 100,
+          "injury": 4,
+          "police": 17,
+          "crashes_per_million": 17.17,
+          "injury_per_million": 0.69,
+          "police_per_million": 2.92
+        },
+        {
+          "quarter": 202503,
+          "miles_millions": 6.992,
+          "crashes": 95,
+          "injury": 9,
+          "police": 10,
+          "crashes_per_million": 13.59,
+          "injury_per_million": 1.29,
+          "police_per_million": 1.43
+        },
+        {
+          "quarter": 202506,
+          "miles_millions": 6.864,
+          "crashes": 108,
+          "injury": 4,
+          "police": 16,
+          "crashes_per_million": 15.73,
+          "injury_per_million": 0.58,
+          "police_per_million": 2.33
+        },
+        {
+          "quarter": 202509,
+          "miles_millions": 8.928,
+          "crashes": 63,
+          "injury": 7,
+          "police": 7,
+          "crashes_per_million": 7.06,
+          "injury_per_million": 0.78,
+          "police_per_million": 0.78
+        },
+        {
+          "quarter": 202512,
+          "miles_millions": 14.704,
+          "crashes": 103,
+          "injury": 7,
+          "police": 23,
+          "crashes_per_million": 7.0,
+          "injury_per_million": 0.48,
+          "police_per_million": 1.56
+        },
+        {
+          "quarter": 202603,
+          "miles_millions": 13.558,
+          "crashes": 94,
+          "injury": 6,
+          "police": 16,
+          "crashes_per_million": 6.93,
+          "injury_per_million": 0.44,
+          "police_per_million": 1.18
+        },
+        {
+          "quarter": 202606,
+          "miles_millions": 15.343,
+          "crashes": 92,
+          "injury": 8,
+          "police": 11,
+          "crashes_per_million": 6.0,
+          "injury_per_million": 0.52,
+          "police_per_million": 0.72
+        }
+      ],
+      "Phoenix": [
+        {
+          "quarter": 202412,
+          "miles_millions": 7.508,
+          "crashes": 45,
+          "injury": 3,
+          "police": 10,
+          "crashes_per_million": 5.99,
+          "injury_per_million": 0.4,
+          "police_per_million": 1.33
+        },
+        {
+          "quarter": 202503,
+          "miles_millions": 9.161,
+          "crashes": 45,
+          "injury": 7,
+          "police": 13,
+          "crashes_per_million": 4.91,
+          "injury_per_million": 0.76,
+          "police_per_million": 1.42
+        },
+        {
+          "quarter": 202506,
+          "miles_millions": 8.898,
+          "crashes": 52,
+          "injury": 1,
+          "police": 16,
+          "crashes_per_million": 5.84,
+          "injury_per_million": 0.11,
+          "police_per_million": 1.8
+        },
+        {
+          "quarter": 202509,
+          "miles_millions": 10.145,
+          "crashes": 27,
+          "injury": 4,
+          "police": 12,
+          "crashes_per_million": 2.66,
+          "injury_per_million": 0.39,
+          "police_per_million": 1.18
+        },
+        {
+          "quarter": 202512,
+          "miles_millions": 12.078,
+          "crashes": 54,
+          "injury": 7,
+          "police": 21,
+          "crashes_per_million": 4.47,
+          "injury_per_million": 0.58,
+          "police_per_million": 1.74
+        },
+        {
+          "quarter": 202603,
+          "miles_millions": 11.938,
+          "crashes": 45,
+          "injury": 6,
+          "police": 19,
+          "crashes_per_million": 3.77,
+          "injury_per_million": 0.5,
+          "police_per_million": 1.59
+        },
+        {
+          "quarter": 202606,
+          "miles_millions": 11.57,
+          "crashes": 40,
+          "injury": 6,
+          "police": 11,
+          "crashes_per_million": 3.46,
+          "injury_per_million": 0.52,
+          "police_per_million": 0.95
+        }
+      ],
+      "Los Angeles": [
+        {
+          "quarter": 202412,
+          "miles_millions": 3.218,
+          "crashes": 39,
+          "injury": 5,
+          "police": 5,
+          "crashes_per_million": 12.12,
+          "injury_per_million": 1.55,
+          "police_per_million": 1.55
+        },
+        {
+          "quarter": 202503,
+          "miles_millions": 4.48,
+          "crashes": 47,
+          "injury": 7,
+          "police": 8,
+          "crashes_per_million": 10.49,
+          "injury_per_million": 1.56,
+          "police_per_million": 1.79
+        },
+        {
+          "quarter": 202506,
+          "miles_millions": 6.817,
+          "crashes": 50,
+          "injury": 4,
+          "police": 7,
+          "crashes_per_million": 7.33,
+          "injury_per_million": 0.59,
+          "police_per_million": 1.03
+        },
+        {
+          "quarter": 202509,
+          "miles_millions": 9.008,
+          "crashes": 47,
+          "injury": 6,
+          "police": 14,
+          "crashes_per_million": 5.22,
+          "injury_per_million": 0.67,
+          "police_per_million": 1.55
+        },
+        {
+          "quarter": 202512,
+          "miles_millions": 12.387,
+          "crashes": 69,
+          "injury": 10,
+          "police": 11,
+          "crashes_per_million": 5.57,
+          "injury_per_million": 0.81,
+          "police_per_million": 0.89
+        },
+        {
+          "quarter": 202603,
+          "miles_millions": 13.959,
+          "crashes": 75,
+          "injury": 13,
+          "police": 19,
+          "crashes_per_million": 5.37,
+          "injury_per_million": 0.93,
+          "police_per_million": 1.36
+        },
+        {
+          "quarter": 202606,
+          "miles_millions": 15.282,
+          "crashes": 88,
+          "injury": 11,
+          "police": 15,
+          "crashes_per_million": 5.76,
+          "injury_per_million": 0.72,
+          "police_per_million": 0.98
+        }
+      ],
+      "Austin": [
+        {
+          "quarter": 202506,
+          "miles_millions": 1.822,
+          "crashes": 25,
+          "injury": 2,
+          "police": 0,
+          "crashes_per_million": 13.72,
+          "injury_per_million": 1.1,
+          "police_per_million": 0.0
+        },
+        {
+          "quarter": 202509,
+          "miles_millions": 3.112,
+          "crashes": 13,
+          "injury": 1,
+          "police": 3,
+          "crashes_per_million": 4.18,
+          "injury_per_million": 0.32,
+          "police_per_million": 0.96
+        },
+        {
+          "quarter": 202512,
+          "miles_millions": 4.385,
+          "crashes": 25,
+          "injury": 3,
+          "police": 5,
+          "crashes_per_million": 5.7,
+          "injury_per_million": 0.68,
+          "police_per_million": 1.14
+        },
+        {
+          "quarter": 202603,
+          "miles_millions": 5.067,
+          "crashes": 35,
+          "injury": 4,
+          "police": 9,
+          "crashes_per_million": 6.91,
+          "injury_per_million": 0.79,
+          "police_per_million": 1.78
+        },
+        {
+          "quarter": 202606,
+          "miles_millions": 5.275,
+          "crashes": 41,
+          "injury": 0,
+          "police": 5,
+          "crashes_per_million": 7.77,
+          "injury_per_million": 0.0,
+          "police_per_million": 0.95
+        }
+      ],
+      "Atlanta": [
+        {
+          "quarter": 202606,
+          "miles_millions": 3.245,
+          "crashes": 23,
+          "injury": 2,
+          "police": 5,
+          "crashes_per_million": 7.09,
+          "injury_per_million": 0.62,
+          "police_per_million": 1.54
+        }
+      ]
+    }
+  },
+  "mileage_series": [
+    {
+      "date": "2023-01-31",
+      "miles_millions": 1,
+      "source": "Waymo blog: first million rider-only miles, reached January 2023",
+      "url": "https://waymo.com/blog/2023/02/first-million-rider-only-miles-how",
+      "kind": "milestone"
+    },
+    {
+      "date": "2023-10-31",
+      "miles_millions": 7.14,
+      "source": "Waymo research paper (Dec 2023): 7.14 million rider-only miles through the end of October 2023",
+      "url": "https://waymo.com/research/comparison-of-waymo-rider-only-crash-data-to-human/",
+      "kind": "milestone"
+    },
+    {
+      "date": "2024-06-30",
+      "miles_millions": 22,
+      "source": "Waymo blog (Sept 5, 2024, Safety Impact Data Hub launch): 'over 22 million rider-only miles \u2026 through the end of June'",
+      "url": "https://waymo.com/blog/2024/09/safety-data-hub",
+      "kind": "milestone"
+    },
+    {
+      "date": "2024-07-31",
+      "miles_millions": 25.308,
+      "source": "Waymo Safety Impact Data Hub CSV1, off-cycle 202009-202407 release",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202407-2022benchmark.csv",
+      "kind": "milestone"
+    },
+    {
+      "date": "2024-09-30",
+      "miles_millions": 33.103,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through September 2024",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202409-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2024-12-31",
+      "miles_millions": 50.083,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through December 2024",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202412-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2025-01-31",
+      "miles_millions": 56.7,
+      "source": "Kusano et al. (2025), Traffic Injury Prevention: 56.7 million rider-only miles through January 2025",
+      "url": "https://doi.org/10.1080/15389588.2025.2499887",
+      "kind": "milestone"
+    },
+    {
+      "date": "2025-03-31",
+      "miles_millions": 71.62,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through March 2025",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202503-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2025-06-30",
+      "miles_millions": 95.965,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through June 2025",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202506-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2025-07-15",
+      "miles_millions": 100,
+      "source": "Waymo (X post, July 15, 2025): '100 million real world, fully autonomous miles'",
+      "url": "https://x.com/Waymo/status/1945106097741664630",
+      "kind": "milestone"
+    },
+    {
+      "date": "2025-09-30",
+      "miles_millions": 127.158,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through September 2025",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202509-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2025-12-31",
+      "miles_millions": 170.712,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through December 2025",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202512-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2026-02-23",
+      "miles_millions": 200,
+      "source": "Waymo (X post, Feb 23, 2026): 'Over 200 million fully autonomous miles'",
+      "url": "https://x.com/Waymo/status/2025979468620128257",
+      "kind": "milestone"
+    },
+    {
+      "date": "2026-03-31",
+      "miles_millions": 220.613,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through March 2026",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202603-2022benchmark.csv",
+      "kind": "hub"
+    },
+    {
+      "date": "2026-06-30",
+      "miles_millions": 271.329,
+      "source": "Waymo Safety Impact Data Hub CSV1, data through June 2026",
+      "url": "https://storage.googleapis.com/waymo-uploads/files/documents/safety/safety-impact-data/CSV1%20-%20RO%20Miles%20per%20Location%20202009-202606-2022benchmark.csv",
+      "kind": "hub"
+    }
+  ],
+  "fatal_crashes": [
+    {
+      "report_id": "30270-9724",
+      "year_month": 202501,
+      "month_label": "January 2025",
+      "metro": "San Francisco",
+      "city": "San Francisco",
+      "sv_movement": "Stopped",
+      "speed_mph": 0.0,
+      "crash_with": "Passenger Car"
+    },
+    {
+      "report_id": "30270-11713",
+      "year_month": 202509,
+      "month_label": "September 2025",
+      "metro": "Phoenix",
+      "city": "Tempe",
+      "sv_movement": "Making Right Turn",
+      "speed_mph": 8.0,
+      "crash_with": "Motorcycle"
+    },
+    {
+      "report_id": "30270-16196",
+      "year_month": 202608,
+      "month_label": "August 2026",
+      "metro": "Dallas",
+      "city": "Dallas",
+      "sv_movement": "Proceeding Straight",
+      "speed_mph": 5.0,
+      "crash_with": "Non-Motorist: Pedestrian"
+    }
+  ],
   "geocoding": {
-    "total_mapped": 2133,
-    "accurate": 1907,
-    "estimated": 226,
-    "accuracy_pct": 89.4,
+    "total_mapped": 2131,
+    "accurate": 1780,
+    "estimated": 351,
+    "accuracy_pct": 83.5,
     "by_city": {
-      "San Francisco": 92,
-      "Phoenix": 89,
-      "Los Angeles": 92,
-      "Austin": 89,
-      "Atlanta": 77,
+      "San Francisco": 87,
+      "Phoenix": 82,
+      "Los Angeles": 84,
+      "Austin": 86,
+      "Atlanta": 73,
       "Houston": 67,
       "Orlando": 71,
-      "Nashville": 50,
+      "Nashville": 38,
       "San Antonio": 100,
       "Dallas": 46,
-      "Miami": 58,
-      "Washington, D.C.": 0,
-      "OTHER": 0,
+      "Miami": 37,
+      "Las Vegas": 0,
       "Denver": 0
     },
     "zip_coverage": 1966,
-    "zip_coverage_pct": 92.2,
-    "zip_checked": 1752,
-    "zip_match_pct": 49.2
+    "zip_coverage_pct": 92.3,
+    "zip_checked": 1625,
+    "zip_match_pct": 63.3,
+    "tiers": {
+      "street": 571,
+      "road": 1209,
+      "zip": 184,
+      "city": 167,
+      "metro": 0
+    }
   }
 }

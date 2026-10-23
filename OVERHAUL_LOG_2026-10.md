@@ -316,4 +316,42 @@ findings were verified and fixed:
 
 ## 5. Verification
 
-_(filled in at the end)_
+Final state (2026-10-23), before merging to `main`:
+
+- **Data:** 2,131 driverless crashes (2,133 before the reclassification),
+  270 supervised; federal data through Sept 2026, complete through July
+  2026; Waymo hub through June 2026.
+- **Benchmarks (CSV3, dynamic):** serious-injury+ −94.8% [83.2–99.2],
+  any-injury −82.1% [78.9–85.0], airbag −81.7% [76.6–86.0],
+  police-reported −74.1% [70.9–76.9], fatal −79.3% [15.3–98.3].
+- **Quarterly rate:** 10.1 → 5.4 reported crashes per million miles
+  (matched populations) across the June 2025 rule change; injury rate
+  ~0.5–1.1, no step.
+- **Map precision (driverless):** 571 intersection/address, 1,210 on the
+  right street, 184 ZIP centre, 436 city centre (mostly not yet in the
+  hub). Placement audit (marker inside reported ZIP per OSM reverse
+  geocode): 49.2% → 63.3%; the remainder is mostly OSM ZIP quirks and
+  boundary intersections.
+- **Bug found in final run and fixed:** step 04's legacy-cache purge
+  didn't recognise the new v3 keys, so every run (incl. weekly CI) would
+  have deleted and re-geocoded ~1,500 addresses (~90 min of Nominatim
+  traffic). Fixed via `utils.is_current_cache_key`, regression test
+  added. Verified: a full re-run now takes 2.4 s with zero lookups.
+- **Editorial baseline accepted** (3 fatal, 28 moderate+, hub 202606)
+  after the reviews in §1 and §4a; the check now reports no alerts.
+- **Tests:** 86 passing. **Pages:** every `data-stat` filled on all four
+  pages; no page errors (only MapLibre style warnings); no horizontal
+  scroll at 390 px; desktop and mobile screenshots reviewed.
+
+## 6. Open items for Anders
+
+- Confirm the course name ("COMM 277T" — README says "Building News
+  Apps", the old FAQ said "Computational Journalism").
+- The About page line "Residents … did not sign up for a safety
+  experiment, but they are part of one" was softened; revert if you want
+  your original voice.
+- The stashed local geocode cache from before the overhaul can be dropped
+  (`git stash drop`) — origin's cache superseded it.
+- Next Waymo hub release (~mid-December 2026) will open an
+  `editorial-alert` issue (LOW): skim the release notes, then
+  `python pipeline/06_editorial_checks.py --accept`.
