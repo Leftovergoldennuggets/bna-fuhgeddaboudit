@@ -179,11 +179,110 @@ verified announcements. Carson, Harbor City, Torrance added to LA.
 
 ## 3. Changes — facts & journalism
 
-_(filled in as work lands)_
+Guiding choices: state what the data supports and no more; attribute
+Waymo's claims to Waymo; show uncertainty; never let hand-written text
+silently go stale.
+
+**Home page**
+- Hero: "must report every crash … the complete public record" →
+  "must report their crashes … every one Waymo has reported". The "13
+  metro areas" stat (incl. testing cities) → "15 cities with public
+  service"; driverless miles now carry their as-of date.
+- Scrolly: "crashes caused moderate or worse injuries" → "involved a
+  moderate or worse injury to someone", plus "an injury on this list
+  doesn't mean the Waymo caused the crash". The SF step now gives the per-
+  mile comparison with Phoenix instead of only the raw share.
+- Where: explains that counts track miles; cards give rates and Waymo's
+  per-metro injury comparison with CI; roadway chart retitled and sourced.
+- What happens: "Waymo stopped or parked" (60.8%, structured field)
+  leads; the rear-end sentence now quantified (97% the Waymo was hit from
+  behind); injury levels explained as "alleged, anyone involved".
+- **Fatal crashes panel (new):** each death summarized with sources
+  (Waymo reports; police via CBS SF, azfamily, NBC DFW, Fox 4). Wording
+  on fault is deliberately careful — "no Waymo has been found at fault";
+  Dallas: "police had not publicly assigned fault in the latest reports"
+  (sources conflict on whether police called it no-fault).
+- **"Are Waymos getting safer — and safer than people?" (new):** mileage
+  growth; the rule-change finding in plain words with two side-by-side
+  rate charts; Waymo's benchmarks with CIs and counts; a caveat box ("this
+  is Waymo's analysis of Waymo"; few events behind the rarest outcomes);
+  the independent IIHS study (68% / 81%; SF only 35%; Austin +4%).
+- When: labels fixed (7–10 a.m. & 5–8 p.m.; 11 p.m.–5 a.m.); exposure
+  caveat (patterns follow when Waymo drives; no miles-by-hour data);
+  "Day of week" notes it covers exact-dated crashes only.
+- Explore: honest precision breakdown; corrected ZIP note; CSV download.
+
+**FAQ** — rewritten throughout. Removed "Why are there so many crashes in
+parking lots?" (built on the regex error) and "Why do *most* crashes
+happen during rush hour?" (→ "When do most crashes happen?", 28.6%).
+New: "Are Waymos getting safer over time?", "Does this mean Waymo wasn't
+at fault?". Updated: thresholds (Federal Register 2026-10363), 15 metros
+with years, testing cities, recalls/investigations (adds work-zone recall
+26E-035, NTSB probes, San Antonio 5-month pause), mileage list now
+generated from data, fatal list with automatic fallback.
+
+**Methodology** — rewritten: sources (incl. CSV1/CSV3), base-record
+choice, operation type (incl. the new reclassification rule),
+completeness (provisional months, rule change, Waymo-filed narratives,
+duplicates), rates (window alignment, quarterly method, benchmark method
+and limits incl. the unresolved two-Waymo crash 30270-13817 that Waymo
+counts as "unknown" severity), map precision tiers with the ZIP audit,
+field definitions, the six-step pipeline, a data dictionary for the CSV,
+and a public **Corrections** list plus the weekly **update history**.
+
+**About** — "eleven metros / largest AV deployment in the world" →
+"largest robotaxi service in the United States … fifteen metro areas";
+threshold sentence fixed; "pipeline that runs quarterly" → weekly.
+Editorial line "Residents … did not sign up for a safety experiment, but
+they are part of one" softened to "People in these cities share their
+streets with this technology whether or not they ever ride in it", since
+the page's own principles say "We avoid editorializing". *(Author's voice
+— flagged for Anders to keep or revert.)*
+
+Course name standardized to "begun in Stanford's COMM 277T" (README said
+"Building News Apps", FAQ "Computational Journalism" — *Anders to
+confirm*).
 
 ## 4. Changes — design & UX
 
-_(filled in as work lands)_
+- **Maps fixed (F1):** `site/js/basemap.js` — OpenFreeMap "positron"
+  (free, open source, no key, no limits) through MapLibre GL 4.7.1 and
+  maplibre-gl-leaflet 0.0.22; OSM raster fallback without WebGL. Sets max
+  zoom (needed by marker clustering) and resizes with its container.
+- Overview map also shows public metros without crashes (San Diego,
+  Tampa) and testing cities (Detroit, D.C., Philadelphia), each labeled.
+- City cards: 2-column grid on phones (was a 14-card single column);
+  metros with < 10 crashes collapsed into one "Also:" line; noisy "peak
+  hour" removed; drawings added for San Diego, Tampa, Las Vegas, Detroit.
+- Benchmark rows: dot + CI bar on a 0–100% scale, counts underneath;
+  stacks on mobile.
+- Monthly chart: three shades (hub-detailed / federal-only / still
+  filling in) with legend; dashed rule-change line. Rate charts share the
+  marker. Mileage chart on a true time axis; hub points filled, announced
+  milestones hollow; source in tooltip.
+- Explore: map fills its column (removed an empty band under the map);
+  marker popups show the NHTSA report ID and ZIP-centre placement.
+- Favicon on every page; meta descriptions updated.
+
+**New features (added after Anders asked about features/storytelling):**
+- **"What We Found"** section under the hero: four findings with live
+  numbers, each linking to its evidence — Waymo stopped/parked in 60.8%;
+  82% fewer injury crashes than humans (Waymo's analysis; IIHS smaller
+  gap); reported-crash rate 10.2 → 5.7 per million miles across the rule
+  change; 3 deaths, none found Waymo's fault (falls back to neutral
+  wording if an unreviewed fatal crash appears).
+- **Narrative search** in Explore (all words must match the narrative,
+  city or other party): "school bus" → 4 crashes.
+- **Shareable crash links**: `#crash=<NHTSA report ID>` opens that crash
+  on the Explore map; opening a popup writes its link to the address bar.
+- **Latest update** line in the hero (from `update_history.json`).
+- Popup badges distinguish Fatal / Serious injury / Moderate injury (the
+  fatal Dallas crash had been badged "Serious").
+
+**Considered and not done:** comparing Waymo with Tesla/Zoox (their
+crashes are in the same NHTSA file, but neither publishes miles, so only
+misleading raw counts are possible); a full visual redesign (the existing
+editorial look works; the problems were broken maps and missing context).
 
 ## 5. Verification
 

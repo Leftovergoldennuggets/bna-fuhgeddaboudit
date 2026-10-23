@@ -5,12 +5,12 @@
 An evergreen data journalism website analyzing every publicly reported crash
 involving a driverless Waymo vehicle in the United States. Originally built
 for Stanford COMM277T: Building News Apps; substantially overhauled in
-June 2026.
+June 2026 and again in October 2026 (see `OVERHAUL_LOG_2026-10.md`).
 
 ## About
 
 Self-driving cars are expanding rapidly across American cities — Waymo's
-driverless service is open to the public in eleven metros as of mid-2026.
+driverless service is open to the public in fifteen metros as of October 2026.
 Every time a Waymo vehicle is involved in a crash, the company is required
 to report it to the National Highway Traffic Safety Administration. This
 project makes that federal data accessible: mapping every reported incident,
@@ -21,16 +21,21 @@ The site merges two public data sources:
 - **NHTSA Standing General Order reports** — the legally required federal
   crash record, refreshed roughly monthly. **This is the base dataset**:
   every reported crash enters the site within a week of publication.
-- **Waymo Safety Impact Data Hub** — Waymo's curated quarterly release,
-  used to *enrich* matched crashes with exact dates, street-level
-  addresses, and crash type classifications.
+- **Waymo Safety Impact Data Hub** — Waymo's quarterly release: CSV2
+  *enriches* matched crashes with exact dates, street-level addresses and
+  crash types; CSV1 (every historical release) gives miles driven per
+  metro and quarter; CSV3 gives Waymo's comparisons with human drivers.
 
 Headline statistics cover **driverless operation only** (no human behind
 the wheel). Crashes from supervised testing with a safety driver are
 tracked separately and visible in the Explore section.
 
 All statistics are computed from data. The site updates automatically every
-week via GitHub Actions.
+week via GitHub Actions; changes that need an editor (e.g. a new fatal
+crash) open a GitHub issue labelled `editorial-alert`.
+
+The cleaned dataset is published as `data/web/waymo_crashes.csv`
+(documented on the methodology page).
 
 ## Team
 
@@ -47,7 +52,7 @@ week via GitHub Actions.
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
 # Run the full data pipeline
 make data
@@ -72,7 +77,7 @@ Tests run in CI on every push and before every automated data update.
 
 - **Pipeline:** Python (pandas, requests, geopy)
 - **Website:** HTML/CSS/JavaScript (no build step)
-- **Maps:** Leaflet + MarkerCluster
+- **Maps:** Leaflet + MarkerCluster on an OpenFreeMap background (MapLibre GL)
 - **Charts:** Chart.js
 - **Hosting:** GitHub Pages
 - **Auto-updates:** GitHub Actions (weekly)
