@@ -7,6 +7,7 @@ This is the master script that runs all pipeline steps in order:
   3. Compute all statistics for the website
   4. Generate map data (crash_data.json)
   5. Extract serious incidents (serious_incidents.json)
+  6. Flag changes that need an editor (data/processed/editorial_alerts.md)
 
 Usage:
   python pipeline/run_pipeline.py           # Run all steps
@@ -31,6 +32,7 @@ STEPS = [
     ("03_compute_statistics.py",  "Computing all statistics for the website"),
     ("04_generate_map_data.py",   "Generating map data (crash_data.json)"),
     ("05_generate_incidents.py",  "Extracting serious incidents"),
+    ("06_editorial_checks.py",    "Checking for changes that need editorial review"),
 ]
 
 

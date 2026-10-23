@@ -16,9 +16,11 @@ What it computes:
   - Monthly crash trend (for the crashes-over-time chart)
   - Time period analysis (rush hour %, late night %, peak hours)
   - Crash type distribution, severity rates, speed distribution
-  - Location type analysis, city-specific peak hours
+  - Roadway type analysis (NHTSA's structured field), city peak hours
   - Metro metadata (coordinates, status) the map reads at runtime
-  - Waymo published safety context (miles driven, vs-human comparisons)
+  - Reporting completeness (which recent months are still filling in)
+  - Per-metro and quarterly crash rates per million rider-only miles
+  - Waymo's own comparisons against human benchmarks (hub CSV3)
 
 Inputs:
   - data/processed/waymo_merged.csv (from step 02)
@@ -41,13 +43,16 @@ import pandas as pd
 # Add the project root to Python's path so we can import config
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pipeline.config import (
-    PROCESSED_MERGED, WEB_SITE_DATA,
+    PROCESSED_MERGED, WEB_SITE_DATA, WEB_UPDATE_HISTORY, RAW_WAYMO_CSV3,
     TIME_PERIODS, CITIES, OTHER_METRO_CODE, ANNOUNCED_METROS,
-    WAYMO_PUBLISHED_STATS, STATIC_MILES_BY_CITY,
+    WAYMO_PUBLISHED_STATS, STATIC_MILES_BY_CITY, STATIC_MILES_QUARTERLY,
+    STATIC_MILEAGE_MILESTONES,
+    BENCHMARK_OUTCOMES, SGO_AMENDMENT_3_DATE,
 )
 from pipeline.utils import (
-    parse_time, categorize_time_period, extract_location_type,
-    severity_level, is_moderate_plus,
+    parse_time, categorize_time_period, roadway_type,
+    is_moderate_plus, parse_month_label, complete_through,
+    quarter_end, benchmark_summary,
 )
 
 
@@ -71,6 +76,94 @@ def metro_display_name(code):
     return CITIES.get(code, {}).get("name", code)
 
 
+def compute_mileage_series():
+    """Cumulative rider-only miles over time, oldest first.
+
+    Merges the hand-sourced milestones (press releases, papers) with the
+    cumulative total of every quarterly CSV1 release, so the chart extends
+    itself each quarter. Each point keeps its source and URL.
+    """
+    import calendar
+    points = []
+    if os.path.exists(STATIC_MILEAGE_MILESTONES):
+        with open(STATIC_MILEAGE_MILESTONES) as f:
+            for m in json.load(f).get("milestones", []):
+                points.append({**m, "kind": "milestone"})
+    if os.path.exists(STATIC_MILES_QUARTERLY):
+        with open(STATIC_MILES_QUARTERLY) as f:
+            for q in json.load(f).get("quarters", []):
+                year, month = divmod(int(q["through"]), 100)
+                last_day = calendar.monthrange(year, month)[1]
+                points.append({
+                    "date": f"{year}-{month:02d}-{last_day:02d}",
+                    "miles_millions": q["total_miles_millions"],
+                    "source": f"Waymo Safety Impact Data Hub CSV1, data through {year_month_label(q['through'])}",
+                    "url": q.get("source_url"),
+                    "kind": "hub",
+                })
+    return sorted(points, key=lambda p: p["date"])
+
+
+def compute_quarterly_rates(df):
+    """Crash rates per million rider-only miles for each quarter.
+
+    Returns {"amendment_3_quarter": YYYYMM, "series": {metro: [rows]}},
+    where metro is "All metros" or a metro display name and each row has
+    the quarter-end, miles driven that quarter, and counts/rates for all
+    hub crashes, injury crashes and police-reported crashes.
+    """
+    if not os.path.exists(STATIC_MILES_QUARTERLY):
+        return {}
+    with open(STATIC_MILES_QUARTERLY) as f:
+        quarters = json.load(f).get("quarters", [])
+    if len(quarters) < 2:
+        return {}
+
+    hub = df[df["in_hub"].astype(bool)].copy()
+    hub["_quarter"] = hub["Year Month"].astype(int).map(quarter_end)
+    flags = {
+        "injury": hub.get("Is Any-Injury-Reported", pd.Series(index=hub.index)).astype(str) == "True",
+        "police": hub.get("Is Police-Reported", pd.Series(index=hub.index)).astype(str) == "True",
+    }
+
+    def row_for(quarter, miles, mask):
+        sub = hub[(hub["_quarter"] == quarter) & mask]
+        counts = {
+            "crashes": int(len(sub)),
+            "injury": int(flags["injury"][sub.index].sum()),
+            "police": int(flags["police"][sub.index].sum()),
+        }
+        return {
+            "quarter": quarter,
+            "miles_millions": round(miles, 3),
+            **counts,
+            **{f"{k}_per_million": round(v / miles, 2) for k, v in counts.items()},
+        }
+
+    series = {"All metros": []}
+    for prev, cur in zip(quarters, quarters[1:]):
+        q = cur["through"]
+        if prev["total_miles_millions"] and cur["total_miles_millions"]:
+            miles = cur["total_miles_millions"] - prev["total_miles_millions"]
+            if miles > 0:
+                series["All metros"].append(row_for(q, miles, pd.Series(True, index=hub.index)))
+        for code, cum in cur["metros"].items():
+            before = prev["metros"].get(code)
+            if before is None or code not in CITIES:
+                continue
+            miles = cum - before
+            # Skip quarters with too few miles for a meaningful rate
+            if miles < 1.0:
+                continue
+            series.setdefault(CITIES[code]["name"], []).append(
+                row_for(q, miles, hub["Location"] == code))
+
+    return {
+        "amendment_3_quarter": quarter_end(int(SGO_AMENDMENT_3_DATE[:7].replace("-", ""))),
+        "series": series,
+    }
+
+
 def compute_all_statistics(df_all):
     """Compute every statistic the website needs.
 
@@ -88,6 +181,15 @@ def compute_all_statistics(df_all):
     federal_through = df_all["Year Month"].max()
     hub_through = df.loc[in_hub, "Year Month"].max()
 
+    # Reporting completeness: the newest months are still filling in
+    # (see complete_through in utils.py for the reasoning).
+    submissions = df_all["Report Submission Date"].map(parse_month_label).dropna() \
+        if "Report Submission Date" in df_all.columns else pd.Series(dtype=float)
+    latest_submission = int(submissions.max()) if len(submissions) else None
+    complete = complete_through(latest_submission)
+    if complete is None or complete > federal_through:
+        complete = int(federal_through)
+
     # -------------------------------------------------------------------
     # META
     # -------------------------------------------------------------------
@@ -101,6 +203,10 @@ def compute_all_statistics(df_all):
         "federal_data_through_label": year_month_label(federal_through),
         "hub_data_through": int(hub_through),
         "hub_data_through_label": year_month_label(hub_through),
+        "latest_submission_month": latest_submission,
+        "federal_complete_through": int(complete),
+        "federal_complete_through_label": year_month_label(complete),
+        "sgo_amendment_3_date": SGO_AMENDMENT_3_DATE,
     }
 
     # -------------------------------------------------------------------
@@ -223,6 +329,12 @@ def compute_all_statistics(df_all):
     # -------------------------------------------------------------------
     monthly = df["Year Month"].dropna().astype(int).value_counts().sort_index()
     stats["monthly_trend"] = {str(ym): int(n) for ym, n in monthly.items()}
+    provisional = monthly[monthly.index > complete]
+    stats["monthly_trend_meta"] = {
+        "complete_through": int(complete),
+        "provisional_months": [str(ym) for ym in provisional.index],
+        "provisional_count": int(provisional.sum()),
+    }
 
     # -------------------------------------------------------------------
     # TEMPORAL ANALYSIS
@@ -325,14 +437,15 @@ def compute_all_statistics(df_all):
     stats["city_peaks"] = city_peaks
 
     # -------------------------------------------------------------------
-    # LOCATION TYPES
+    # ROADWAY TYPES — NHTSA's structured field, every driverless crash
     # -------------------------------------------------------------------
-    df_time["_location_type"] = df_time.apply(extract_location_type, axis=1)
-    loc_counts = df_time["_location_type"].value_counts()
+    road = df["Roadway Type"].apply(roadway_type) if "Roadway Type" in df.columns \
+        else pd.Series("Other/unknown", index=df.index)
+    loc_counts = road.value_counts()
     stats["location_types"] = {
         lt: {
             "count": int(count),
-            "percentage": round(count / total_with_time * 100, 1) if total_with_time else 0,
+            "percentage": round(count / total_crashes * 100, 1),
         }
         for lt, count in loc_counts.items()
     }
@@ -360,6 +473,16 @@ def compute_all_statistics(df_all):
         for name, mask in buckets
     }
     stopped_or_crawling = int((speeds <= 5).sum())
+    # What the Waymo was doing: NHTSA's structured pre-crash movement field.
+    movement = df["SV Pre-Crash Movement"].fillna("").astype(str).str.strip()
+    known_movement = movement[(movement != "") & ~movement.str.contains("Unknown", case=False)]
+    stationary = known_movement.isin(["Stopped", "Parked"])
+    crash_circumstances["stationary"] = {
+        "count": int(stationary.sum()),
+        "known_base": int(len(known_movement)),
+        "percentage": round(stationary.sum() / len(known_movement) * 100, 1) if len(known_movement) else 0,
+    }
+
     crash_circumstances["speed_stats"] = {
         "total_with_speed_data": total_with_speed,
         "median_speed_mph": round(float(speeds.median()), 1),
@@ -381,6 +504,21 @@ def compute_all_statistics(df_all):
         "Cyclist": "Cyclist",
         "Pedestrian": "Pedestrian",
     }
+    # Rear-end ("front-to-rear") crashes can go either way. NHTSA's contact
+    # area fields say which end of the Waymo was hit.
+    f2r = df[df["Crash Type"] == "V2V F2R"]
+    rear_cols = [c for c in df.columns if c.startswith("SV Contact Area - Rear")]
+    front_cols = [c for c in df.columns if c.startswith("SV Contact Area - Front")]
+    if len(f2r) and rear_cols:
+        rear_hit = (f2r[rear_cols] == "Y").any(axis=1)
+        front_hit = (f2r[front_cols] == "Y").any(axis=1)
+        crash_circumstances["rear_end"] = {
+            "count": int(len(f2r)),
+            "waymo_struck_from_behind": int((rear_hit & ~front_hit).sum()),
+            "waymo_struck_from_behind_pct": round((rear_hit & ~front_hit).sum() / len(f2r) * 100, 1),
+            "waymo_front_contact": int(front_hit.sum()),
+        }
+
     crash_circumstances["crash_type_plain"] = {
         crash_type_labels.get(code, code): {
             "count": int(count),
@@ -416,20 +554,27 @@ def compute_all_statistics(df_all):
         with open(STATIC_MILES_BY_CITY, "r") as f:
             miles_data = json.load(f)
 
+        # Rates compare like with like: only crashes up to the month the
+        # mileage figures run through (CSV1 lags the federal record).
+        miles_through = miles_data.get("data_through_ym") or int(hub_through)
+        in_window = df[df["Year Month"] <= miles_through]
+        window_counts = in_window["Location"].value_counts()
         city_mileage = {}
         for code, info in CITIES.items():
             display_name = info["name"]
-            crash_count = int(city_counts.get(code, 0))
+            crash_count = int(window_counts.get(code, 0))
             miles_entry = miles_data.get("cities", {}).get(display_name, {})
             miles_millions = miles_entry.get("miles_millions")
             rate = round(crash_count / miles_millions, 1) if miles_millions else None
             city_mileage[display_name] = {
                 "miles_millions": miles_millions,
+                "crashes_in_window": crash_count,
                 "crashes_per_million_miles": rate,
             }
         stats["city_mileage"] = city_mileage
         stats["city_mileage_meta"] = {
             "data_through": miles_data.get("data_through"),
+            "data_through_ym": miles_through,
             "source_url": miles_data.get("source_url"),
         }
     else:
@@ -446,9 +591,95 @@ def compute_all_statistics(df_all):
         if total_millions is not None:
             waymo_context["total_rider_only_miles"] = int(total_millions * 1_000_000)
         waymo_context["data_through"] = miles_for_context.get("data_through")
+
+    # Waymo's comparisons against human drivers, straight from hub CSV3
+    if os.path.exists(RAW_WAYMO_CSV3):
+        csv3 = pd.read_csv(RAW_WAYMO_CSV3)
+        bench = benchmark_summary(csv3, BENCHMARK_OUTCOMES)
+        bench["by_metro"] = {
+            CITIES[code]["name"]: rows for code, rows in bench["by_metro"].items()
+        }
+        stats["benchmarks"] = bench
+        overall = bench["overall"]
+        # Flat keys kept for simple data-stat bindings
+        for key, flat in [("serious_injury", "serious_crash_reduction_pct"),
+                          ("any_injury", "injury_crash_reduction_pct"),
+                          ("airbag", "airbag_crash_reduction_pct")]:
+            if key in overall:
+                waymo_context[flat] = overall[key]["reduction_pct"]
+        print("  Benchmarks (CSV3): " + ", ".join(
+            f"{k} −{v['reduction_pct']}% [{v['reduction_ci_low']}–{v['reduction_ci_high']}]"
+            for k, v in overall.items()))
+    else:
+        print(f"  WARNING: {RAW_WAYMO_CSV3} not found — skipping benchmark comparisons")
     stats["waymo_context"] = waymo_context
 
+    # -------------------------------------------------------------------
+    # QUARTERLY RATES — hub crashes per million rider-only miles
+    # -------------------------------------------------------------------
+    # Miles per quarter = difference between consecutive cumulative CSV1
+    # releases. Crashes = hub-matched driverless crashes in that quarter
+    # (the hub and CSV1 cover the same rider-only operations). Quarters
+    # where a metro's mileage is missing from either release are skipped.
+    stats["quarterly_rates"] = compute_quarterly_rates(df)
+
+    # -------------------------------------------------------------------
+    # MILEAGE SERIES — hand-sourced milestones + every hub CSV1 release
+    # -------------------------------------------------------------------
+    stats["mileage_series"] = compute_mileage_series()
+
+    # -------------------------------------------------------------------
+    # FATAL CRASHES — listed individually (facts only; prose is editorial)
+    # -------------------------------------------------------------------
+    stats["fatal_crashes"] = [
+        {
+            "report_id": row["Report ID"],
+            "year_month": int(row["Year Month"]),
+            "month_label": year_month_label(row["Year Month"]),
+            "metro": metro_display_name(row["Location"]),
+            "city": row.get("City") or None,
+            "sv_movement": row.get("SV Pre-Crash Movement") if pd.notna(row.get("SV Pre-Crash Movement")) else None,
+            "speed_mph": float(row["SV Precrash Speed (MPH)"]) if pd.notna(row.get("SV Precrash Speed (MPH)")) else None,
+            "crash_with": row.get("Crash With") if pd.notna(row.get("Crash With")) else None,
+        }
+        for _, row in df[fatality_mask].sort_values("Year Month").iterrows()
+    ]
+
     return stats
+
+
+def update_history(stats):
+    """Append an entry to update_history.json when the data changed.
+
+    A public, machine-readable record of what each automatic update added
+    (shown on the methodology page). An entry is only added when the crash
+    count or a data-through date differs from the previous entry, so
+    re-running the pipeline on unchanged data is a no-op.
+    """
+    history = []
+    if os.path.exists(WEB_UPDATE_HISTORY):
+        with open(WEB_UPDATE_HISTORY) as f:
+            history = json.load(f)
+    entry = {
+        "date": datetime.now().date().isoformat(),
+        "total_crashes": stats["overview"]["total_crashes"],
+        "supervised_crashes": stats["overview"]["supervised_crashes"],
+        "federal_data_through": stats["meta"]["federal_data_through"],
+        "hub_data_through": stats["meta"]["hub_data_through"],
+        "fatal_crashes": len(stats.get("fatal_crashes", [])),
+        "moderate_plus": stats["severity"]["moderate_plus"]["count"],
+    }
+    key = ("total_crashes", "federal_data_through", "hub_data_through")
+    if history and all(history[-1].get(k) == entry[k] for k in key):
+        print("  No change since last entry")
+        return
+    if history:
+        entry["new_crashes"] = entry["total_crashes"] - history[-1]["total_crashes"]
+    history.append(entry)
+    with open(WEB_UPDATE_HISTORY, "w") as f:
+        json.dump(history[-104:], f, indent=2)  # two years of weekly runs
+        f.write("\n")
+    print(f"  Added entry: {entry}")
 
 
 def main():
@@ -465,6 +696,10 @@ def main():
     print()
     print("Computing statistics...")
     stats = compute_all_statistics(df_all)
+
+    print()
+    print("Updating update_history.json...")
+    update_history(stats)
 
     print()
     print("Saving site-data.json...")

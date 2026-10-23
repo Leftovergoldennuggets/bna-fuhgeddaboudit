@@ -1,13 +1,17 @@
 """
 01_download_data.py — Download raw crash data from NHTSA and Waymo
 ==========================================================================
-Downloads four CSV files:
+Downloads five CSV files:
   1. NHTSA ADS crashes AFTER June 16, 2025 (Amendment 3 format)
   2. NHTSA ADS crashes BEFORE June 16, 2025 (Amendment 2 format, archived)
   3. Waymo Safety Impact Data Hub CSV2 (Waymo's curated crash list)
   4. Waymo Safety Impact Data Hub CSV1 (rider-only miles by city)
+  5. Waymo Safety Impact Data Hub CSV3 (Waymo vs. human benchmarks)
 
-Also auto-updates data/static/miles_by_city.json with fresh mileage from CSV1.
+Also regenerates two static files from CSV1:
+  - data/static/miles_by_city.json   (latest cumulative miles per metro)
+  - data/static/miles_quarterly.json (cumulative miles per metro at every
+    quarterly release Waymo still hosts — a mileage time series)
 
 These get saved into data/raw/ and are the starting point for the pipeline.
 
@@ -31,29 +35,13 @@ from pipeline.config import (
     NHTSA_POST_URL, NHTSA_PRIOR_URL,
     WAYMO_HUB_CSV1_PREFIX, WAYMO_HUB_CSV1_FALLBACK,
     WAYMO_HUB_CSV2_PREFIX, WAYMO_HUB_CSV2_FALLBACK,
-    RAW_NHTSA_POST, RAW_NHTSA_PRIOR, RAW_WAYMO_HUB, RAW_WAYMO_CSV1, RAW_DIR,
-    STATIC_MILES_BY_CITY,
+    WAYMO_HUB_CSV3_PREFIX, WAYMO_HUB_CSV3_FALLBACK,
+    WAYMO_MILEAGE_HISTORY_START, CITIES,
+    RAW_NHTSA_POST, RAW_NHTSA_PRIOR, RAW_WAYMO_HUB, RAW_WAYMO_CSV1,
+    RAW_WAYMO_CSV3, RAW_DIR,
+    STATIC_MILES_BY_CITY, STATIC_MILES_QUARTERLY,
 )
-
-
-# Mapping from CSV1 county/region names to display city names
-# CSV1 uses county names (e.g., "Maricopa") while the site uses city names (e.g., "Phoenix")
-_CSV1_COUNTY_TO_CITY = {
-    "Maricopa": "Phoenix",
-    "San Francisco Bay Area": "San Francisco",
-    "Los Angeles": "Los Angeles",
-    "Travis": "Austin",
-    # Atlanta / Fulton not yet in CSV1 as of Dec 2025
-}
-
-# City launch notes for the miles_by_city.json file
-_CITY_NOTES = {
-    "Phoenix": "Waymo's first commercial market. Waymo One launched December 2018.",
-    "San Francisco": "Public launch 2023. Denser traffic environment than Phoenix.",
-    "Los Angeles": "Public launch 2024.",
-    "Austin": "Waymo's newest major market.",
-    "Atlanta": "Mileage not yet published by Waymo on the Safety Impact Data Hub.",
-}
+from pipeline.utils import parse_csv1_miles, add_months
 
 
 def _build_waymo_url(prefix, fallback):
@@ -146,48 +134,40 @@ def download_file(url, output_path, description):
     print(f"    Saved: {output_path} ({size_mb:.1f} MB)")
 
 
+def _read_csv1_rows(text):
+    """CSV1 text → [(location_name, miles)] regardless of header names."""
+    reader = csv.reader(io.StringIO(text))
+    next(reader, None)  # header: "County Name" (new) or "Ops Depot" (old)
+    return [(r[0], r[1]) for r in reader if len(r) >= 2]
+
+
 def update_miles_by_city(csv1_path, end_date_str):
     """
     Parse CSV1 (rider-only miles by location) and update miles_by_city.json.
 
-    This replaces the previously hand-maintained static file with fresh data
-    from Waymo's CSV1, so mileage stats stay current automatically.
+    Every metro Waymo publishes mileage for is included automatically —
+    location names are resolved by parse_csv1_miles (utils.py), which
+    understands both CSV1 formats Waymo has used.
     """
     print("  Updating miles_by_city.json from CSV1...")
 
     with open(csv1_path, "r") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
+        total_miles, metro_miles, unknown = parse_csv1_miles(_read_csv1_rows(f.read()))
+    if unknown:
+        print(f"    WARNING: unrecognized CSV1 location(s) {unknown} — add them to "
+              f"CSV1_AGGREGATES or a metro's counties in config.py")
 
-    # Parse mileage per county/region
-    miles_col = "Waymo RO Miles (Millions)"
-    total_miles = None
-    city_miles = {}
-
-    for row in rows:
-        name = row["County Name"].strip()
-        miles = float(row[miles_col].strip())
-
-        if name == "All Locations (mileage blended)":
-            total_miles = miles
-        elif name in _CSV1_COUNTY_TO_CITY:
-            city_miles[_CSV1_COUNTY_TO_CITY[name]] = miles
-
-    # Build the JSON structure (matches the existing miles_by_city.json format)
     data_through = _end_date_to_human(end_date_str) or "Unknown"
-
-    cities = {}
-    for city_name in ["Phoenix", "San Francisco", "Los Angeles", "Austin", "Atlanta"]:
-        miles = city_miles.get(city_name)
-        cities[city_name] = {
-            "miles_millions": miles,
-            "note": _CITY_NOTES.get(city_name, ""),
-        }
+    cities = {
+        info["name"]: {"miles_millions": metro_miles.get(code)}
+        for code, info in CITIES.items()
+    }
 
     output = {
-        "description": "Rider-only miles by city from the Waymo Safety Impact Data Hub. Updated automatically by the pipeline from CSV1.",
+        "description": "Cumulative rider-only miles by metro from the Waymo Safety Impact Data Hub (CSV1). Regenerated automatically by the pipeline.",
         "source_url": "https://waymo.com/safety/impact/#downloads",
         "data_through": data_through,
+        "data_through_ym": int(end_date_str) if end_date_str else None,
         "last_updated": date.today().isoformat(),
         "cities": cities,
         "total_miles_millions": total_miles,
@@ -198,9 +178,64 @@ def update_miles_by_city(csv1_path, end_date_str):
         json.dump(output, f, indent=2)
         f.write("\n")
 
+    published = {CITIES[c]["name"]: m for c, m in metro_miles.items()}
     print(f"    Data through: {data_through}")
-    print(f"    Total miles: {total_miles}M")
+    print(f"    Total miles: {total_miles}M; by metro: {published}")
     print(f"    Saved: {STATIC_MILES_BY_CITY}")
+
+
+def update_mileage_history(end_date_str):
+    """
+    Build data/static/miles_quarterly.json from every hosted CSV1 release.
+
+    Each quarterly release holds cumulative miles since Sept 2020, so the
+    releases together form a time series. Quarters that fail to download
+    keep their previously saved values — Waymo removing an old file must
+    never erase history from the site.
+    """
+    print("  Updating miles_quarterly.json from all hosted CSV1 releases...")
+    existing = {}
+    if os.path.exists(STATIC_MILES_QUARTERLY):
+        with open(STATIC_MILES_QUARTERLY) as f:
+            existing = {q["through"]: q for q in json.load(f).get("quarters", [])}
+
+    quarters = {}
+    if end_date_str:
+        ym = int(WAYMO_MILEAGE_HISTORY_START)
+        while ym <= int(end_date_str):
+            url = WAYMO_HUB_CSV1_PREFIX + f"202009-{ym}-2022benchmark.csv"
+            try:
+                resp = requests.get(url, timeout=60)
+                resp.raise_for_status()
+                total, metro_miles, unknown = parse_csv1_miles(_read_csv1_rows(resp.text))
+                if unknown:
+                    print(f"    WARNING ({ym}): unrecognized CSV1 location(s) {unknown}")
+                quarters[ym] = {
+                    "through": ym,
+                    "total_miles_millions": total,
+                    "metros": metro_miles,
+                    "source_url": url,
+                }
+            except requests.exceptions.RequestException as e:
+                if ym in existing:
+                    quarters[ym] = existing[ym]
+                    print(f"    {ym}: download failed ({e.__class__.__name__}) — kept saved values")
+                else:
+                    print(f"    {ym}: not available ({e.__class__.__name__})")
+            ym = add_months(ym, 3)
+    for ym, q in existing.items():
+        quarters.setdefault(ym, q)
+
+    output = {
+        "description": "Cumulative rider-only miles per metro at each Waymo Safety Impact Data Hub release (CSV1). Each release covers Sept 2020 through the quarter-end in 'through' (YYYYMM). Regenerated automatically by the pipeline.",
+        "quarters": [quarters[k] for k in sorted(quarters)],
+    }
+    with open(STATIC_MILES_QUARTERLY, "w") as f:
+        json.dump(output, f, indent=2)
+        f.write("\n")
+    summary = ", ".join(f"{k}={quarters[k]['total_miles_millions']}M" for k in sorted(quarters))
+    print(f"    {len(quarters)} quarterly releases: {summary}")
+    print(f"    Saved: {STATIC_MILES_QUARTERLY}")
 
 
 def main():
@@ -214,6 +249,7 @@ def main():
     print("  Auto-detecting latest Waymo data URLs...")
     csv2_url, end_date = _build_waymo_url(WAYMO_HUB_CSV2_PREFIX, WAYMO_HUB_CSV2_FALLBACK)
     csv1_url, _ = _build_waymo_url(WAYMO_HUB_CSV1_PREFIX, WAYMO_HUB_CSV1_FALLBACK)
+    csv3_url, _ = _build_waymo_url(WAYMO_HUB_CSV3_PREFIX, WAYMO_HUB_CSV3_FALLBACK)
     print()
 
     # List of (URL, save path, description) for each file to download
@@ -222,6 +258,7 @@ def main():
         (NHTSA_PRIOR_URL, RAW_NHTSA_PRIOR, "NHTSA ADS — prior to June 16, 2025 (Amendment 2)"),
         (csv2_url,        RAW_WAYMO_HUB,   "Waymo Safety Impact Data Hub (CSV2 — crashes)"),
         (csv1_url,        RAW_WAYMO_CSV1,   "Waymo Safety Impact Data Hub (CSV1 — miles)"),
+        (csv3_url,        RAW_WAYMO_CSV3,   "Waymo Safety Impact Data Hub (CSV3 — benchmarks)"),
     ]
 
     for url, path, desc in downloads:
@@ -248,6 +285,8 @@ def main():
 
     # Update miles_by_city.json from the freshly downloaded CSV1
     update_miles_by_city(RAW_WAYMO_CSV1, end_date)
+    print()
+    update_mileage_history(end_date)
     print()
 
     print("All downloads complete!")
