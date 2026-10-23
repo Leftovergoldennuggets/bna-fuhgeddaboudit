@@ -229,7 +229,7 @@
                 const body = document.querySelector('#update-history tbody');
                 body.innerHTML = history.slice().reverse().map((h) => `
                     <tr><td>${h.date}</td><td>${h.total_crashes.toLocaleString('en-US')}</td>
-                    <td>${h.new_crashes === undefined ? '—' : (h.new_crashes >= 0 ? '+' : '') + h.new_crashes}</td>
+                    <td>${h.new_crashes === undefined ? '—' : (h.new_crashes >= 0 ? '+' : '') + h.new_crashes}${h.note ? `<br><small>${h.note}</small>` : ''}</td>
                     <td>${fmtYm(h.federal_data_through)}</td><td>${fmtYm(h.hub_data_through)}</td></tr>`).join('');
             } catch (e) {
                 console.warn('Methodology: Could not load update history', e);

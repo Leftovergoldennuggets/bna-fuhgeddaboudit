@@ -284,6 +284,20 @@ crashes are in the same NHTSA file, but neither publishes miles, so only
 misleading raw counts are possible); a full visual redesign (the existing
 editorial look works; the problems were broken maps and missing context).
 
+## 4a. Review of the serious-injury crashes
+
+An agent read all 28 moderate-or-worse driverless narratives (Waymo's
+own accounts). Findings: Waymo stationary in 14, moving in 14 (7 of
+those at ≤ 8 mph); the Waymo's front made contact in 3. Cases where the
+Waymo or its riders plausibly contributed: passengers opening doors into
+a cyclist (30270-9987) and a scooter rider (-11016); a Waymo stopped
+across two lanes in front of a bus (-16023); a Waymo that rolled onto an
+alighting rider's foot (-13161). Riders injured in 10; six reports note
+unbelted riders. No children, school zones or signal-running. A dated
+paragraph summarizing this was added after the fatal-crash panel, so the
+page doesn't imply the Waymo is always the victim. This review is the
+basis for accepting the editorial baseline.
+
 ## 4b. Independent code review
 
 A separate review agent read the whole diff with fresh eyes. All
