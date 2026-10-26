@@ -3,7 +3,7 @@
   "source_url": "https://waymo.com/safety/impact/#downloads",
   "data_through": "June 2026",
   "data_through_ym": 202606,
-  "last_updated": "2026-10-23",
+  "last_updated": "2026-10-26",
   "cities": {
     "San Francisco": {
       "miles_millions": 82.421
@@ -38,10 +38,22 @@
     "Nashville": {
       "miles_millions": null
     },
-    "Washington, D.C.": {
+    "Denver": {
       "miles_millions": null
     },
-    "Denver": {
+    "San Diego": {
+      "miles_millions": null
+    },
+    "Tampa": {
+      "miles_millions": null
+    },
+    "Las Vegas": {
+      "miles_millions": null
+    },
+    "Detroit": {
+      "miles_millions": null
+    },
+    "Washington, D.C.": {
       "miles_millions": null
     },
     "Philadelphia": {
