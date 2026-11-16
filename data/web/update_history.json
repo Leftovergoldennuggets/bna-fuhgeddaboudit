@@ -88,5 +88,15 @@
     "moderate_plus": 28,
     "new_crashes": -2,
     "note": "Review: 2 supervised crashes reclassified (see corrections)"
+  },
+  {
+    "date": "2026-11-16",
+    "total_crashes": 2280,
+    "supervised_crashes": 279,
+    "federal_data_through": 202610,
+    "hub_data_through": 202606,
+    "fatal_crashes": 3,
+    "moderate_plus": 31,
+    "new_crashes": 149
   }
 ]

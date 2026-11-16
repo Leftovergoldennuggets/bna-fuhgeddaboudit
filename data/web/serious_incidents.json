@@ -81,7 +81,7 @@
       "in_hub": false
     },
     {
-      "id": 19,
+      "id": 22,
       "report_id": "30270-6579",
       "lat": 37.771975,
       "lon": -122.413839,
@@ -97,7 +97,7 @@
       "in_hub": true
     },
     {
-      "id": 21,
+      "id": 24,
       "report_id": "30270-7959",
       "lat": 37.751261,
       "lon": -122.436426,
@@ -113,7 +113,7 @@
       "in_hub": true
     },
     {
-      "id": 22,
+      "id": 25,
       "report_id": "30270-8968",
       "lat": 37.775328,
       "lon": -122.427762,
@@ -129,7 +129,7 @@
       "in_hub": true
     },
     {
-      "id": 25,
+      "id": 28,
       "report_id": "30270-9724",
       "lat": 37.777313,
       "lon": -122.40429,
@@ -145,7 +145,7 @@
       "in_hub": true
     },
     {
-      "id": 27,
+      "id": 30,
       "report_id": "30270-9987",
       "lat": 37.775392,
       "lon": -122.406155,
@@ -452,6 +452,54 @@
     },
     {
       "id": 19,
+      "report_id": "30270-16670",
+      "lat": 34.053667,
+      "lon": -118.242138,
+      "city": "Los Angeles",
+      "date": "September 2026",
+      "time": "22:07",
+      "crash_party": "Vehicle (SUV)",
+      "severity": "Serious W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Los Angeles (exact location pending Waymo data)",
+      "narrative": "On September [REDACTED], 2026 at 10:07 PM PDT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Los Angeles, California was in a collision involving an SUV on [REDACTED] near [REDACTED].\n\nThe Waymo AV was traveling southeastbound in the right lane on [REDACTED] when an SUV traveling, at a high rate of speed, northwestbound in the rightmost lane of northwestbound [REDACTED], entered the intersection with [REDACTED] and crossed the intersection westbound across three lanes of traffic towards the Waymo AV. The Waymo AV began to slow to yield to the SUV as the SUV continued forward against the proper direction of traffic, and the front of the SUV made contact with the front of the Waymo AV. The Waymo AV was pushed backward, and the rear of the Waymo AV made contact with a streetlight on the south curb of [REDACTED]. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. Both vehicles and the streetlight sustained damage. The driver of the SUV was transported from the scene to a hospital for medical treatment with alleged serious injuries.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because  an individual involved was transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 20,
+      "report_id": "30270-16816",
+      "lat": 33.757972,
+      "lon": -84.38555,
+      "city": "Atlanta",
+      "date": "September 2026",
+      "time": "03:46",
+      "crash_party": "Vehicle (Passenger Car)",
+      "severity": "Moderate W/O Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Atlanta (exact location pending Waymo data)",
+      "narrative": "On September [REDACTED], 2026 at 3:46 AM EDT a Waymo Autonomous Vehicle a (\"Waymo AV\") operating in Atlanta, Georgia was in a collision involving a passenger car on [REDACTED] at [REDACTED].\n\nThe Waymo AV was stopped facing south in the dedicated left turn lane on [REDACTED] for a red light at the intersection with [REDACTED]. While the Waymo AV was stopped, a passenger car traveling southbound on [REDACTED] maneuvered left into the dedicated left turn lane and approached the Waymo AV from behind, and the front of the passenger car made contact with the rear of the stationary Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. The Waymo AV sustained damage. A passenger in the Waymo AV alleged moderate injury.\n\nWaymo is reporting this crash under Request No. 2 of Standing General Order 2021-01. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 21,
+      "report_id": "30270-17066",
+      "lat": 33.759238,
+      "lon": -84.393472,
+      "city": "Atlanta",
+      "date": "October 2026",
+      "time": "06:19",
+      "crash_party": "Vehicle (Passenger Car)",
+      "severity": "Serious W/ Hospitalization",
+      "crash_type": "Pending classification",
+      "address": "Atlanta (exact location pending Waymo data)",
+      "narrative": "On October [REDACTED], 2026 at 6:19 AM PDT a Waymo Autonomous Vehicle (\"Waymo AV\") operating in Atlanta, Georgia was in a collision involving a passenger car on [REDACTED] near [REDACTED].\n\nThe Waymo AV was traveling southbound on [REDACTED] when a passenger car, traveling northbound on [REDACTED] at a high rate of speed, entered the intersection with [REDACTED], and the front of the passenger car made contact with the right side of an SUV traveling eastbound on [REDACTED]. The SUV and the passenger car both made contact with the east curb of [REDACTED] and a wall located along the curb, and the passenger car continued northwestbound across [REDACTED] towards the Waymo AV, entering the Waymo AV's lane of travel. As the Waymo AV slowed to a stop in-lane to yield to the passenger car, the front of the passenger car made contact with the front left side of the stationary Waymo AV. At the time of the impact, the Waymo AV's Level 4 ADS was engaged in autonomous mode. All three vehicles involved sustained damage. Two passengers in the passenger car alleged serious injury and were transported from the scene to a hospital for medical treatment.\n\nWaymo is reporting this crash under Request No. 1 of Standing General Order 2021-01 because individuals involved were transported from the scene to a hospital for medical treatment. Waymo may supplement or correct its reporting with additional information as it may become available.",
+      "is_estimated_location": true,
+      "in_hub": false
+    },
+    {
+      "id": 22,
       "report_id": "30270-6579",
       "lat": 37.771975,
       "lon": -122.413839,
@@ -467,7 +515,7 @@
       "in_hub": true
     },
     {
-      "id": 20,
+      "id": 23,
       "report_id": "30270-7733",
       "lat": 33.40914,
       "lon": -111.972736,
@@ -483,7 +531,7 @@
       "in_hub": true
     },
     {
-      "id": 21,
+      "id": 24,
       "report_id": "30270-7959",
       "lat": 37.751261,
       "lon": -122.436426,
@@ -499,7 +547,7 @@
       "in_hub": true
     },
     {
-      "id": 22,
+      "id": 25,
       "report_id": "30270-8968",
       "lat": 37.775328,
       "lon": -122.427762,
@@ -515,7 +563,7 @@
       "in_hub": true
     },
     {
-      "id": 23,
+      "id": 26,
       "report_id": "30270-9081",
       "lat": 33.524274,
       "lon": -112.100773,
@@ -531,7 +579,7 @@
       "in_hub": true
     },
     {
-      "id": 24,
+      "id": 27,
       "report_id": "30270-9634",
       "lat": 33.404887,
       "lon": -111.995399,
@@ -547,7 +595,7 @@
       "in_hub": true
     },
     {
-      "id": 25,
+      "id": 28,
       "report_id": "30270-9724",
       "lat": 37.777313,
       "lon": -122.40429,
@@ -563,7 +611,7 @@
       "in_hub": true
     },
     {
-      "id": 26,
+      "id": 29,
       "report_id": "30270-9860",
       "lat": 34.033012,
       "lon": -118.268106,
@@ -579,7 +627,7 @@
       "in_hub": true
     },
     {
-      "id": 27,
+      "id": 30,
       "report_id": "30270-9987",
       "lat": 37.775392,
       "lon": -122.406155,
@@ -595,7 +643,7 @@
       "in_hub": true
     },
     {
-      "id": 28,
+      "id": 31,
       "report_id": "30270-9992",
       "lat": 33.4951,
       "lon": -111.994872,
@@ -625,12 +673,12 @@
     "Los Angeles": {
       "lat": 34.0522,
       "lon": -118.2437,
-      "count": 3
+      "count": 4
     },
     "Atlanta": {
       "lat": 33.749,
       "lon": -84.388,
-      "count": 3
+      "count": 5
     },
     "Miami": {
       "lat": 25.7617,
@@ -648,5 +696,5 @@
       "count": 1
     }
   },
-  "total_serious": 28
+  "total_serious": 31
 }
